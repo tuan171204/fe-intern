@@ -1,0 +1,38 @@
+<header class="sticky top-0 left-0 w-full mb-2 md:mb-10 bg-bg-primary z-50 shadow-sm md:shadow-none">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between relative">
+    
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center shrink-0">
+      <img src="../assets/icons/logo.svg" alt="Apps Cyclone Logo" class="h-6 sm:h-8">
+    </a>
+
+    <!-- Mobile Menu Toggle Button  -->
+    <button id="menu-toggle" type="button" aria-label="Toggle Navigation" class="md:hidden p-2 text-txt-primary focus:outline-none">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <!-- Navigation Links -->
+    <nav id="nav-menu" class="hidden absolute top-full left-0 w-full bg-white z-50 border-b border-gray-100 p-6 flex-col shadow-lg md:shadow-none md:border-none md:p-0 md:static md:w-auto md:bg-transparent md:flex md:flex-row md:items-center md:gap-6 lg:gap-8 text-xs">
+      <a href="index.html" class="px-4 py-2.5 sm:py-3.5 rounded-full font-extrabold text-txt-primary hover:text-white hover:bg-gray-900 transition text-center md:text-left">Home</a>
+      <a href="courses.html" class="px-4 py-2.5 sm:py-3.5 rounded-full font-extrabold text-txt-secondary hover:text-white hover:bg-gray-900 transition text-center md:text-left">Courses</a>
+      <a href="register.html" class="px-6 py-3 sm:py-3.5 rounded-full bg-[#0D0F35] text-white font-extrabold hover:bg-gray-700 transition text-center mt-2 md:mt-0">
+        Registered
+      </a>
+    </nav>
+
+  </div>
+</header>
+
+<!-- toggle Mobile Menu -->
+<script>
+  const toggleBtn = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  if (toggleBtn && navMenu) {
+    toggleBtn.addEventListener('click', () => {
+      navMenu.classList.toggle('hidden');
+      navMenu.classList.toggle('flex');
+    });
+  }
+</script>
