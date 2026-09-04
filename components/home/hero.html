@@ -1,0 +1,54 @@
+<section id="hero" class="relative w-full min-h-[calc(100vh-80px)] flex items-center overflow-hidden bg-white">
+  <!-- Layer 0: Shape Top Right -->
+  <div class="absolute inset-0 pointer-events-none z-0">
+    <img 
+      src="./assets/images/image 400.png" 
+      alt="" 
+      class="absolute top-0 right-0 max-w-[45%] md:max-w-[35%] object-contain"
+    />
+  </div>
+
+  <!-- Layer 1: Layout Grid -->
+  <div class="w-full relative z-10 py-6 lg:py-0">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center min-h-[calc(100vh-80px)]">
+      
+      <!-- Cột Trái: Hình học sinh nằm sát mép trái màn hình -->
+      <div class="lg:col-span-6 flex justify-start items-end h-full order-2 lg:order-1 pl-0">
+        <div class="relative w-full max-w-lg lg:max-w-none">
+          <img 
+            src="./assets/images/image 398.png" 
+            alt="Frontend Dev Training Student" 
+            class="w-auto h-auto object-contain max-h-[75vh] lg:max-h-[85vh] drop-shadow-sm block"
+          />
+        </div>
+      </div>
+
+      <!-- Cột Phải: Nội dung văn bản -->
+      <div class="lg:col-span-6 flex flex-col justify-center items-start space-y-6 px-6 lg:px-12 order-1 lg:order-2">
+        
+        <!-- Tiêu đề 2 dòng với khoảng cách giữa 2 dòng rõ ràng -->
+        <h1 class="text-xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 flex flex-col space-y-4">
+          <span>Frontend Dev</span>
+          <span class="text-[#00A8A4]">Training Center</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-base sm:text-lg text-gray-500 max-w-sm font-bold leading-relaxed">
+          Teach from experience, learn from reality to create products of high value
+        </p>
+
+        <!-- CTA Button: Nhỏ hơn chút (text-sm) và dùng màu chuẩn Tailwind -->
+        <div class="pt-6">
+          <a 
+            href="#courses" 
+            class="inline-flex items-center justify-center px-6 py-3 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          >
+            Start learning
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>

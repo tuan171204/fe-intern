@@ -1,5 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    content: [
+        "./*.html",
+        "./components/**/*.html",
+        "./js/**/*.js"
+    ],
     theme: {
         extend: {
             fontFamily: {
@@ -29,5 +34,6 @@ module.exports = {
                 'h4': ['34px', { lineHeight: '42px' }],
             }
         }
-    }
+    },
+    plugins: [],
 }
