@@ -14,37 +14,49 @@
 
   <!-- Main Content -->
   <main class="max-w-3xl mx-auto px-4">
-    <h1 class="text-3xl font-extrabold text-left text-[#0D1829] mb-10">Register for the Course</h1>
+    <h1 class="text-3xl font-extrabold text-left text-txt-primary mb-10">Register for the Course</h1>
 
-    <form id="register-form" class="space-y-6">
+    <form id="register-form" class="space-y-6" novalidate>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Name -->
         <div>
-          <label class="block font-extrabold text-sm text-gray-800 mb-4">Name</label>
-          <input type="text" required placeholder="Enter name" 
-            class="w-full text-xs px-4 py-5 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition" />
+          <label class="block font-extrabold text-sm text-txt-primary mb-4">Name <span class="text-red-500">*</span></label>
+          <input type="text" id="name" placeholder="Enter name" 
+            class="w-full text-xs px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main transition" />
+          
+            <!-- Validate name field -->
+            <div id="name-requirements" class="mt-2 space-y-1 text-xs text-txt-tertiary">
+                <p id="rule-length" class="flex items-center gap-1.5 transition-colors">
+                    <span>•</span> Minimum 6 characters
+                </p>
+                <p id="rule-special" class="flex items-center gap-1.5 transition-colors">
+                    <span>•</span> No special characters or numbers allowed
+                </p>
+          </div>
         </div>
 
         <!-- Email -->
         <div>
-          <label class="block font-extrabold text-sm text-gray-800 mb-4">Email</label>
-          <input type="email" required placeholder="Enter your email" 
-            class="w-full text-xs px-4 py-5 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition" />
+          <label class="block font-extrabold text-sm text-txt-primary mb-4">Email <span class="text-red-500">*</span></label>
+          <input type="email" id="email" placeholder="Enter your email" 
+            class="w-full text-xs px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main transition" />
+          <p class="error-msg text-red-500 text-xs mt-1 hidden"></p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Phone -->
         <div>
-          <label class="block font-extrabold text-sm text-gray-800 mb-4">Phone</label>
-          <input type="tel" required placeholder="Enter your phone number" 
-            class="w-full text-xs px-4 py-5 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition" />
+          <label class="block font-extrabold text-sm text-txt-primary mb-4">Phone <span class="text-red-500">*</span></label>
+          <input type="tel" id="phone" placeholder="Enter your phone number" 
+            class="w-full text-xs px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main transition" />
+          <p class="error-msg text-red-500 text-xs mt-1 hidden"></p>
         </div>
 
         <!-- Learning form -->
         <div>
-          <label class="block font-extrabold text-sm text-black mb-4">Learning form</label>
-          <select class="w-full text-xs font-bold px-4 py-5 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white transition">
+          <label class="block font-extrabold text-sm text-txt-primary mb-4">Learning form</label>
+          <select id="learning-form" class="w-full text-xs font-extrabold px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main bg-white transition">
             <option value="offline">Learn offline</option>
             <option value="online">Learn online</option>
           </select>
@@ -53,22 +65,23 @@
 
       <!-- Facebook URL -->
       <div>
-        <label class="block font-extrabold text-sm text-gray-800 mb-4">Facebook URL</label>
-        <input type="url" placeholder="Enter your facebook URL" 
-          class="w-full text-xs px-4 py-5 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition" />
+        <label class="block font-extrabold text-sm text-txt-primary mb-4">Facebook URL</label>
+        <input type="url" id="facebook" placeholder="Enter your facebook URL" 
+          class="w-full text-xs px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main transition" />
+        <p class="error-msg text-red-500 text-xs mt-1 hidden"></p>
       </div>
 
       <!-- Personal opinion -->
       <div>
-        <label class="block font-extrabold text-sm text-gray-800 mb-4">Personal opinion</label>
-        <textarea rows="4" placeholder="" 
-          class="w-full text-xs px-4 py-5 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+        <label class="block font-extrabold text-sm text-txt-primary mb-4">Personal opinion</label>
+        <textarea id="opinion" rows="4" placeholder="Enter your opinion" 
+          class="w-full text-xs px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main transition resize-none"></textarea>
       </div>
 
       <!-- Submit Button -->
       <div class="pt-8">
-        <button type="submit" class="w-full py-3.5 bg-[#0D1829] text-white font-medium rounded-3xl hover:opacity-90 transition">
-            Confirm
+        <button type="submit" class="w-full py-4 bg-black text-white font-bold rounded-full hover:bg-gray-700 transition shadow-sm">
+          Confirm
         </button>
       </div>
     </form>
