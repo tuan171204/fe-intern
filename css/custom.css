@@ -5,3 +5,9 @@
   color: #0D1829;
   -webkit-font-smoothing: antialiased;
 }
+
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
