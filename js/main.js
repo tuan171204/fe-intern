@@ -42,6 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    window.loadComponent("header-container", "components/header.html", initMobileMenu);
-    window.loadComponent("footer-container", "components/footer.html");
+    window.loadComponent("header-container", "components/common/header.html", initMobileMenu);
+    window.loadComponent("footer-container", "components/common/footer.html");
 });
