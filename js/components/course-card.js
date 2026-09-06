@@ -1,6 +1,5 @@
-// js/components/course-card.js
 export function renderCourseCard(course) {
-    return `
+  return `
     <article class="flex flex-col w-full mb-16 lg:mb-28">
       <!-- Image Box -->
       <div class="relative w-full aspect-square bg-[rgb(13,17,40)] mb-10 overflow-hidden shadow-md group">
