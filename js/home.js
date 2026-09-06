@@ -2,6 +2,7 @@ import { initAllCourseSection } from './home/all-course.js';
 import { initComingSoonSwiper } from './home/coming-soon.js';
 import { initTeamSection } from './home/team.js';
 import { initSpecialValueSection } from './home/special-value.js';
+import { initEvaluationsSection } from './home/evaluations.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (typeof window.loadComponent === "function") {
@@ -23,5 +24,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Section 5: Sepcial value
         await window.loadComponent("special-value-container", "components/home/special-value.html");
         initSpecialValueSection();
+
+        // Section 6: Evaluations
+        await window.loadComponent("evaluations-container", "components/home/evaluations.html");
+        initEvaluationsSection();
     }
 });
