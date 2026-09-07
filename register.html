@@ -23,9 +23,11 @@
           <label class="block font-extrabold text-sm text-txt-primary mb-4">Name <span class="text-red-500">*</span></label>
           <input type="text" id="name" placeholder="Enter name" 
             class="w-full text-xs px-4 py-3.5 border border-bg-secondary rounded-lg text-txt-primary focus:outline-none focus:border-primary-main transition" />
-          
+            
+            <p class="error-msg text-red-500 text-xs mt-1 hidden"></p>
+
             <!-- Validate name field -->
-            <div id="name-requirements" class="mt-2 space-y-1 text-xs text-txt-tertiary">
+            <div id="name-requirements" class="mt-2 space-y-1 text-xs text-txt-tertiary hidden">
                 <p id="rule-length" class="flex items-center gap-1.5 transition-colors">
                     <span>•</span> Minimum 6 characters
                 </p>
