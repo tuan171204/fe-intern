@@ -3,6 +3,7 @@ import { initComingSoonSwiper } from './home/coming-soon.js';
 import { initTeamSection } from './home/team.js';
 import { initSpecialValueSection } from './home/special-value.js';
 import { initEvaluationsSection } from './home/evaluations.js';
+import { initFaqSection } from './home/faq.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (typeof window.loadComponent === "function") {
@@ -28,5 +29,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Section 6: Evaluations
         await window.loadComponent("evaluations-container", "components/home/evaluations.html");
         initEvaluationsSection();
+
+        // Section 7: Frequently Asked Questions - Appscyclone Team
+        await window.loadComponent("faq-team-container", "components/home/faq-team.html");
+        initFaqSection();
     }
 });
