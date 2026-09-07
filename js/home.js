@@ -33,5 +33,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Section 7: Frequently Asked Questions - Appscyclone Team
         await window.loadComponent("faq-team-container", "components/home/faq-team.html");
         initFaqSection();
+
+        // Section 8: Become a Part of Appscyclone
+        await window.loadComponent("cta-section-container", "components/home/cta-section.html");
     }
 });
