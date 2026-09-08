@@ -1,4 +1,5 @@
 import { renderCourseCard } from './components/course-card.js';
+import { coursesData } from '../js/config/mock-data.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Load Header và Footer 
@@ -8,73 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Mock Data (Dữ liệu mẫu)
-    const allCoursesData = [
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "ReactJS", category: "Frontend", badge: "Offline", image: "../assets/images/course/react-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "NodeJS", category: "Backend", badge: "Offline", image: "../assets/images/course/nodejs-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "PHP", category: "Backend", badge: "Offline", image: "../assets/images/course/php-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Flutter", category: "Mobile", badge: "Offline", image: "../assets/images/course/flutter-course-offline.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "QC Tester", category: "QC", badge: "Offline", image: "../assets/images/course/qc-course.png", instructorAvatar: "../assets/images/avatar2.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Unity 3D", category: "Game", badge: "Offline", image: "../assets/images/course/unity-course-offline.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "Smart Contract", category: "Blockchain", badge: "Offline", image: "../assets/images/course/blockchain-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-        { title: "UI/UX Advanced", category: "Design", badge: "Offline", image: "../assets/images/course/design-course.png", instructorAvatar: "../assets/images/avatar3.png", instructorName: "Jane Cooper", price: "4.500.000đ" },
-
-    ];
+    const allCoursesData = coursesData;
 
     const categories = ["All", "Frontend", "Design", "Backend", "Mobile", "QC", "Game", "Blockchain"];
 
