@@ -1,6 +1,6 @@
 export function renderCourseCard(course) {
   return `
-    <article class="flex flex-col w-full mb-4 md:mb-8 lg:mb-16">
+    <article class="flex flex-col w-full mb-4 md:mb-8 lg:mb-12 bg-gray-100">
       <!-- Image Box -->
       <div class="relative w-full aspect-square bg-[rgb(13,17,40)] mb-6 lg:mb-10 overflow-hidden shadow-md group">
         <img 
@@ -15,7 +15,7 @@ export function renderCourseCard(course) {
       </div>
 
       <!-- Content -->
-      <div class="flex flex-col px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col px-4 sm:px-6 lg:px-8 pb-4 lg:pb-8">
         <span class="text-xs text-gray-500 uppercase mb-2 lg:mb-3">
           ${course.category}
         </span>
