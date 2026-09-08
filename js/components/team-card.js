@@ -1,5 +1,5 @@
 export function renderTeamCard(member) {
-    return `
+  return `
     <article class="relative w-full aspect-[3/4] flex flex-col justify-end group">
       
       <!-- Layer 1: Nền xám  -->
@@ -13,9 +13,9 @@ export function renderTeamCard(member) {
       >
 
       <!-- Layer 3: Block chứa tên -->
-      <div class="absolute bottom-10 left-1/3 -translate-x-[42%] w-[80%] bg-white pl-7 pr-4 py-2 shadow-sm z-20 border-l border-gray-100">
-        <h4 class="text-xl tracking-normal font-extrabold text-slate-900">${member.name}</h4>
-        <span class="block text-xs text-gray-800 uppercase font-medium mt-2 tracking-normal">${member.role}</span>
+      <div class="absolute bottom-3 sm:bottom-6 lg:bottom-10 left-1/2 lg:left-1/3 -translate-x-1/2 lg:-translate-x-[42%] w-[90%] lg:w-[80%] bg-white pl-2 sm:pl-4 lg:pl-7 pr-2 lg:pr-4 py-1.5 lg:py-2 shadow-sm z-20 border-l-2 lg:border-l border-gray-200 text-center lg:text-left">
+        <h4 class="text-xs sm:text-base lg:text-xl tracking-normal font-extrabold text-slate-900 truncate">${member.name}</h4>
+        <span class="block text-[9px] sm:text-[10px] lg:text-xs text-gray-800 uppercase font-medium mt-0.5 lg:mt-2 tracking-normal truncate">${member.role}</span>
       </div>
       
     </article>

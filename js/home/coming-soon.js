@@ -5,10 +5,15 @@ export function initComingSoonSwiper() {
 
     const swiper = new Swiper('.course-swiper', {
         slidesPerView: 1,
-        spaceBetween: 328,
+        spaceBetween: 20,
         speed: 800,
         observer: true,
         observeParents: true,
+        breakpoints: {
+            1024: {
+                spaceBetween: 328
+            }
+        },
         navigation: {
             nextEl: '.course-next-btn',
             prevEl: '.course-prev-btn',
