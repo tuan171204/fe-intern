@@ -7,14 +7,6 @@
     alt="Background pattern" 
     class="absolute top-16 sm:top-20 md:top-28 lg:top-32 w-[160px] sm:w-[220px] md:w-[280px] lg:w-[400px] -z-10 pointer-events-none"
   >
-  <!-- Ảnh phải -->
-  <img 
-    src="../../assets/images/faq-logo-right.png" 
-    alt="Background pattern" 
-    class="absolute right-0 bottom-60 md:bottom-80 lg:bottom-[32%] w-[70px] sm:w-[90px] md:w-[130px] lg:w-[200px] -z-10 pointer-events-none"
-  >
-
-  
   <div class="container mx-auto px-6 sm:px-12 md:px-16 lg:px-20 max-w-[1280px]">
     <!-- PHẦN 1: FREQUENTLY ASKED QUESTIONS -->
     <div class="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-8 md:gap-10 lg:gap-12 relative z-20">
@@ -35,17 +27,23 @@
 
         </div>
       </div>
+    </div>
 
       <!-- PHẦN 2: APPSCYCLONE IS A TEAM -->
-    <div class="flex flex-col items-center text-center relative z-20 mt-14 sm:mt-16 md:mt-28 lg:mt-60">
+    <div class="flex flex-col items-center text-center relative z-20 mb-8 lg:mb-0 mt-14 sm:mt-12 md:mt-20 lg:mt-40">
       
-      <!-- Tile và Subtitle -->
-      <div class="mb-10 lg:mb-14">
+      <!-- Title và Subtitle -->
+      <div class="mb-8 lg:mb-10 w-full text-left">
         <h2 class="text-2xl lg:text-3xl font-extrabold text-slate-900 leading-loose">
             Recommended Courses
           </h2>
       </div>
+
+      <!-- Danh sách Khóa học (Grid) -->
+      <div id="courses-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <!-- JS sẽ render card vào đây -->
+      </div>
     </div>
       
-    </div>
+    
 </section>

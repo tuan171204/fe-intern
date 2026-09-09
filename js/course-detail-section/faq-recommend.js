@@ -1,4 +1,6 @@
 import { renderFaqItem } from '../components/faq-item.js';
+import { renderCourseCard } from '../components/course-card.js';
+import { coursesData } from '../config/mock-data.js';
 
 export function initFaqSection() {
     const faqContainer = document.querySelector("#faq-list");
@@ -61,4 +63,22 @@ export function initFaqSection() {
             }
         });
     });
+
+
+    // Mock Data
+    const allCoursesData = coursesData;
+
+    const coursesGrid = document.getElementById("courses-grid");
+
+    // Render Khóa học 
+    const renderCourses = () => {
+        const currentData = allCoursesData.slice(0, 3);
+
+        // Render Cards 
+        coursesGrid.innerHTML = currentData.length > 0
+            ? currentData.map(renderCourseCard).join("")
+            : `<div class="col-span-full text-center py-10 text-gray-500">No courses found in this category.</div>`;
+    };
+
+    renderCourses();
 }

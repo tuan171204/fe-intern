@@ -16,7 +16,7 @@ export function renderCourseCard(course) {
         </div>
 
         <!-- Content -->
-        <div class="flex flex-col px-4 sm:px-6 lg:px-8 pb-4 lg:pb-8">
+        <div class="flex flex-col px-4 sm:px-6 lg:px-8 pb-4 lg:pb-8 text-left">
           <span class="text-xs text-gray-500 uppercase mb-2 lg:mb-3">
             ${course.category}
           </span>
