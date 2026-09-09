@@ -1,3 +1,5 @@
+// js/config/mock-data.js
+
 export const coursesData = [
     {
         id: 1,
@@ -10,7 +12,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "28/02/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "This FRONTEND MASTER PROGRAMMING course is suitable for those of you who are IT students or those who want to become a comprehensive Front-end Dev to work in companies. After the course, you will have completed 5 projects like working and have full knowledge from basic to advanced of a Front-end Dev.",
+            phaseTitle: "The Frontend Master course is divided into 3 main phases:",
+            phases: [
+                "- <strong>Frontend Newbie:</strong> 6 week duration (2 sessions/week). Class time 18h45 - 21h45 Tuesday and Saturday",
+                "- <strong>Web Responsive:</strong> Duration 5 weeks (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "- <strong>ReactJs Master:</strong> 6 weeks duration (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 2,
@@ -23,7 +35,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "05/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "The NODEJS BACKEND DEVELOPMENT course provides full-stack backend skills, focusing on building high-performance RESTful APIs, microservices, and database optimization using Express.js and MongoDB.",
+            phaseTitle: "The Backend NodeJS course consists of 3 intensive phases:",
+            phases: [
+                "- <strong>NodeJS Fundamentals:</strong> 4 weeks duration (2 sessions/week). Async programming and Core modules",
+                "- <strong>Express & REST API:</strong> 5 weeks duration (3 sessions/week). Building secure authentication & DB integration",
+                "- <strong>Microservices & Deployment:</strong> 5 weeks duration. Docker, CI/CD, and AWS cloud setup",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 3,
@@ -36,7 +58,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "10/03/2023",
         timeline: "35 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master modern PHP development and Laravel framework from scratch. Learn object-oriented programming (OOP), MVC architectural patterns, and database migration techniques.",
+            phaseTitle: "The PHP & Laravel course roadmap:",
+            phases: [
+                "- <strong>PHP Basic & OOP:</strong> 4 weeks duration. Master OOP concepts and MySQL database design",
+                "- <strong>Laravel Framework:</strong> 6 weeks duration. Building real-world e-commerce application",
+                "- <strong>Security & Optimization:</strong> 2 weeks duration. Performance tuning and web security",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 4,
@@ -49,7 +81,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "12/03/2023",
         timeline: "50 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Build beautiful, natively compiled cross-platform applications for iOS and Android from a single codebase using Dart and Flutter SDK.",
+            phaseTitle: "The Flutter Mobile course roadmap:",
+            phases: [
+                "- <strong>Dart & UI Layouts:</strong> 5 weeks duration. Widget tree, custom layouts, and responsive UI",
+                "- <strong>State Management:</strong> 5 weeks duration. Provider, BLoC pattern, and API integration",
+                "- <strong>App Publishing:</strong> 3 weeks duration. Releasing apps to App Store & Google Play",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 5,
@@ -62,7 +104,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "18/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Equip yourself with manual and automated testing knowledge. Learn test cases creation, bug tracking workflow, API testing, and Selenium framework.",
+            phaseTitle: "The Software Testing course roadmap:",
+            phases: [
+                "- <strong>Manual Testing:</strong> 4 weeks duration. Requirement analysis, test plan, and Jira",
+                "- <strong>API & SQL Testing:</strong> 3 weeks duration. Postman API testing and database validation",
+                "- <strong>Automation Testing:</strong> 4 weeks duration. Selenium Webdriver with Java/Python",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 6,
@@ -75,7 +127,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "22/03/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Become a professional game developer by creating 2D and 3D games with Unity Engine and C#. Master game physics, animation systems, and UI implementation.",
+            phaseTitle: "The Unity Game Development roadmap:",
+            phases: [
+                "- <strong>C# & 2D Games:</strong> 5 weeks duration. Programming foundations and 2D mechanics",
+                "- <strong>3D World & Physics:</strong> 6 weeks duration. Lighting, shaders, particle systems, and AI",
+                "- <strong>Monetization & Release:</strong> 2 weeks duration. Ads integration, IAP, and mobile export",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 7,
@@ -88,7 +150,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "25/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Explore Web3, Ethereum, and smart contract development using Solidity, Hardhat, and Ethers.js. Build decentralized applications (dApps) from scratch.",
+            phaseTitle: "The Blockchain & Smart Contract roadmap:",
+            phases: [
+                "- <strong>Blockchain Core & Solidity:</strong> 4 weeks duration. Syntax, security patterns, EVM",
+                "- <strong>DApp Development:</strong> 5 weeks duration. Connecting Frontend with Web3.js / Ethers.js",
+                "- <strong>Audit & Deployment:</strong> 3 weeks duration. Smart contract auditing and Testnet deployment",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 8,
@@ -101,7 +173,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "30/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master Figma, Design Systems, Design Thinking, and User Research to create high-converting digital products for Web and Mobile platforms.",
+            phaseTitle: "The UI/UX Master course roadmap:",
+            phases: [
+                "- <strong>UX Research & Wireframing:</strong> 3 weeks duration. User persona, journey mapping, low-fi wireframes",
+                "- <strong>UI Design System:</strong> 4 weeks duration. Auto layout, components, tokens, high-fi UI",
+                "- <strong>Prototyping & Handoff:</strong> 3 weeks duration. Interactive prototypes and developer handoff",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 1,
@@ -114,7 +196,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "28/02/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "This FRONTEND MASTER PROGRAMMING course is suitable for those of you who are IT students or those who want to become a comprehensive Front-end Dev to work in companies. After the course, you will have completed 5 projects like working and have full knowledge from basic to advanced of a Front-end Dev.",
+            phaseTitle: "The Frontend Master course is divided into 3 main phases:",
+            phases: [
+                "- <strong>Frontend Newbie:</strong> 6 week duration (2 sessions/week). Class time 18h45 - 21h45 Tuesday and Saturday",
+                "- <strong>Web Responsive:</strong> Duration 5 weeks (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "- <strong>ReactJs Master:</strong> 6 weeks duration (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 2,
@@ -127,7 +219,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "05/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "The NODEJS BACKEND DEVELOPMENT course provides full-stack backend skills, focusing on building high-performance RESTful APIs, microservices, and database optimization using Express.js and MongoDB.",
+            phaseTitle: "The Backend NodeJS course consists of 3 intensive phases:",
+            phases: [
+                "- <strong>NodeJS Fundamentals:</strong> 4 weeks duration (2 sessions/week). Async programming and Core modules",
+                "- <strong>Express & REST API:</strong> 5 weeks duration (3 sessions/week). Building secure authentication & DB integration",
+                "- <strong>Microservices & Deployment:</strong> 5 weeks duration. Docker, CI/CD, and AWS cloud setup",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 3,
@@ -140,7 +242,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "10/03/2023",
         timeline: "35 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master modern PHP development and Laravel framework from scratch. Learn object-oriented programming (OOP), MVC architectural patterns, and database migration techniques.",
+            phaseTitle: "The PHP & Laravel course roadmap:",
+            phases: [
+                "- <strong>PHP Basic & OOP:</strong> 4 weeks duration. Master OOP concepts and MySQL database design",
+                "- <strong>Laravel Framework:</strong> 6 weeks duration. Building real-world e-commerce application",
+                "- <strong>Security & Optimization:</strong> 2 weeks duration. Performance tuning and web security",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 4,
@@ -153,7 +265,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "12/03/2023",
         timeline: "50 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Build beautiful, natively compiled cross-platform applications for iOS and Android from a single codebase using Dart and Flutter SDK.",
+            phaseTitle: "The Flutter Mobile course roadmap:",
+            phases: [
+                "- <strong>Dart & UI Layouts:</strong> 5 weeks duration. Widget tree, custom layouts, and responsive UI",
+                "- <strong>State Management:</strong> 5 weeks duration. Provider, BLoC pattern, and API integration",
+                "- <strong>App Publishing:</strong> 3 weeks duration. Releasing apps to App Store & Google Play",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 5,
@@ -166,7 +288,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "18/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Equip yourself with manual and automated testing knowledge. Learn test cases creation, bug tracking workflow, API testing, and Selenium framework.",
+            phaseTitle: "The Software Testing course roadmap:",
+            phases: [
+                "- <strong>Manual Testing:</strong> 4 weeks duration. Requirement analysis, test plan, and Jira",
+                "- <strong>API & SQL Testing:</strong> 3 weeks duration. Postman API testing and database validation",
+                "- <strong>Automation Testing:</strong> 4 weeks duration. Selenium Webdriver with Java/Python",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 6,
@@ -179,7 +311,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "22/03/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Become a professional game developer by creating 2D and 3D games with Unity Engine and C#. Master game physics, animation systems, and UI implementation.",
+            phaseTitle: "The Unity Game Development roadmap:",
+            phases: [
+                "- <strong>C# & 2D Games:</strong> 5 weeks duration. Programming foundations and 2D mechanics",
+                "- <strong>3D World & Physics:</strong> 6 weeks duration. Lighting, shaders, particle systems, and AI",
+                "- <strong>Monetization & Release:</strong> 2 weeks duration. Ads integration, IAP, and mobile export",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 7,
@@ -192,7 +334,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "25/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Explore Web3, Ethereum, and smart contract development using Solidity, Hardhat, and Ethers.js. Build decentralized applications (dApps) from scratch.",
+            phaseTitle: "The Blockchain & Smart Contract roadmap:",
+            phases: [
+                "- <strong>Blockchain Core & Solidity:</strong> 4 weeks duration. Syntax, security patterns, EVM",
+                "- <strong>DApp Development:</strong> 5 weeks duration. Connecting Frontend with Web3.js / Ethers.js",
+                "- <strong>Audit & Deployment:</strong> 3 weeks duration. Smart contract auditing and Testnet deployment",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 8,
@@ -205,7 +357,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "30/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master Figma, Design Systems, Design Thinking, and User Research to create high-converting digital products for Web and Mobile platforms.",
+            phaseTitle: "The UI/UX Master course roadmap:",
+            phases: [
+                "- <strong>UX Research & Wireframing:</strong> 3 weeks duration. User persona, journey mapping, low-fi wireframes",
+                "- <strong>UI Design System:</strong> 4 weeks duration. Auto layout, components, tokens, high-fi UI",
+                "- <strong>Prototyping & Handoff:</strong> 3 weeks duration. Interactive prototypes and developer handoff",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 1,
@@ -218,7 +380,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "28/02/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "This FRONTEND MASTER PROGRAMMING course is suitable for those of you who are IT students or those who want to become a comprehensive Front-end Dev to work in companies. After the course, you will have completed 5 projects like working and have full knowledge from basic to advanced of a Front-end Dev.",
+            phaseTitle: "The Frontend Master course is divided into 3 main phases:",
+            phases: [
+                "- <strong>Frontend Newbie:</strong> 6 week duration (2 sessions/week). Class time 18h45 - 21h45 Tuesday and Saturday",
+                "- <strong>Web Responsive:</strong> Duration 5 weeks (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "- <strong>ReactJs Master:</strong> 6 weeks duration (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 2,
@@ -231,7 +403,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "05/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "The NODEJS BACKEND DEVELOPMENT course provides full-stack backend skills, focusing on building high-performance RESTful APIs, microservices, and database optimization using Express.js and MongoDB.",
+            phaseTitle: "The Backend NodeJS course consists of 3 intensive phases:",
+            phases: [
+                "- <strong>NodeJS Fundamentals:</strong> 4 weeks duration (2 sessions/week). Async programming and Core modules",
+                "- <strong>Express & REST API:</strong> 5 weeks duration (3 sessions/week). Building secure authentication & DB integration",
+                "- <strong>Microservices & Deployment:</strong> 5 weeks duration. Docker, CI/CD, and AWS cloud setup",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 3,
@@ -244,7 +426,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "10/03/2023",
         timeline: "35 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master modern PHP development and Laravel framework from scratch. Learn object-oriented programming (OOP), MVC architectural patterns, and database migration techniques.",
+            phaseTitle: "The PHP & Laravel course roadmap:",
+            phases: [
+                "- <strong>PHP Basic & OOP:</strong> 4 weeks duration. Master OOP concepts and MySQL database design",
+                "- <strong>Laravel Framework:</strong> 6 weeks duration. Building real-world e-commerce application",
+                "- <strong>Security & Optimization:</strong> 2 weeks duration. Performance tuning and web security",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 4,
@@ -257,7 +449,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "12/03/2023",
         timeline: "50 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Build beautiful, natively compiled cross-platform applications for iOS and Android from a single codebase using Dart and Flutter SDK.",
+            phaseTitle: "The Flutter Mobile course roadmap:",
+            phases: [
+                "- <strong>Dart & UI Layouts:</strong> 5 weeks duration. Widget tree, custom layouts, and responsive UI",
+                "- <strong>State Management:</strong> 5 weeks duration. Provider, BLoC pattern, and API integration",
+                "- <strong>App Publishing:</strong> 3 weeks duration. Releasing apps to App Store & Google Play",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 5,
@@ -270,7 +472,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "18/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Equip yourself with manual and automated testing knowledge. Learn test cases creation, bug tracking workflow, API testing, and Selenium framework.",
+            phaseTitle: "The Software Testing course roadmap:",
+            phases: [
+                "- <strong>Manual Testing:</strong> 4 weeks duration. Requirement analysis, test plan, and Jira",
+                "- <strong>API & SQL Testing:</strong> 3 weeks duration. Postman API testing and database validation",
+                "- <strong>Automation Testing:</strong> 4 weeks duration. Selenium Webdriver with Java/Python",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 6,
@@ -283,7 +495,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "22/03/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Become a professional game developer by creating 2D and 3D games with Unity Engine and C#. Master game physics, animation systems, and UI implementation.",
+            phaseTitle: "The Unity Game Development roadmap:",
+            phases: [
+                "- <strong>C# & 2D Games:</strong> 5 weeks duration. Programming foundations and 2D mechanics",
+                "- <strong>3D World & Physics:</strong> 6 weeks duration. Lighting, shaders, particle systems, and AI",
+                "- <strong>Monetization & Release:</strong> 2 weeks duration. Ads integration, IAP, and mobile export",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 7,
@@ -296,7 +518,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "25/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Explore Web3, Ethereum, and smart contract development using Solidity, Hardhat, and Ethers.js. Build decentralized applications (dApps) from scratch.",
+            phaseTitle: "The Blockchain & Smart Contract roadmap:",
+            phases: [
+                "- <strong>Blockchain Core & Solidity:</strong> 4 weeks duration. Syntax, security patterns, EVM",
+                "- <strong>DApp Development:</strong> 5 weeks duration. Connecting Frontend with Web3.js / Ethers.js",
+                "- <strong>Audit & Deployment:</strong> 3 weeks duration. Smart contract auditing and Testnet deployment",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 8,
@@ -309,7 +541,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "30/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master Figma, Design Systems, Design Thinking, and User Research to create high-converting digital products for Web and Mobile platforms.",
+            phaseTitle: "The UI/UX Master course roadmap:",
+            phases: [
+                "- <strong>UX Research & Wireframing:</strong> 3 weeks duration. User persona, journey mapping, low-fi wireframes",
+                "- <strong>UI Design System:</strong> 4 weeks duration. Auto layout, components, tokens, high-fi UI",
+                "- <strong>Prototyping & Handoff:</strong> 3 weeks duration. Interactive prototypes and developer handoff",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 1,
@@ -322,7 +564,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "28/02/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "This FRONTEND MASTER PROGRAMMING course is suitable for those of you who are IT students or those who want to become a comprehensive Front-end Dev to work in companies. After the course, you will have completed 5 projects like working and have full knowledge from basic to advanced of a Front-end Dev.",
+            phaseTitle: "The Frontend Master course is divided into 3 main phases:",
+            phases: [
+                "- <strong>Frontend Newbie:</strong> 6 week duration (2 sessions/week). Class time 18h45 - 21h45 Tuesday and Saturday",
+                "- <strong>Web Responsive:</strong> Duration 5 weeks (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "- <strong>ReactJs Master:</strong> 6 weeks duration (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 2,
@@ -335,7 +587,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "05/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "The NODEJS BACKEND DEVELOPMENT course provides full-stack backend skills, focusing on building high-performance RESTful APIs, microservices, and database optimization using Express.js and MongoDB.",
+            phaseTitle: "The Backend NodeJS course consists of 3 intensive phases:",
+            phases: [
+                "- <strong>NodeJS Fundamentals:</strong> 4 weeks duration (2 sessions/week). Async programming and Core modules",
+                "- <strong>Express & REST API:</strong> 5 weeks duration (3 sessions/week). Building secure authentication & DB integration",
+                "- <strong>Microservices & Deployment:</strong> 5 weeks duration. Docker, CI/CD, and AWS cloud setup",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 3,
@@ -348,7 +610,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "10/03/2023",
         timeline: "35 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master modern PHP development and Laravel framework from scratch. Learn object-oriented programming (OOP), MVC architectural patterns, and database migration techniques.",
+            phaseTitle: "The PHP & Laravel course roadmap:",
+            phases: [
+                "- <strong>PHP Basic & OOP:</strong> 4 weeks duration. Master OOP concepts and MySQL database design",
+                "- <strong>Laravel Framework:</strong> 6 weeks duration. Building real-world e-commerce application",
+                "- <strong>Security & Optimization:</strong> 2 weeks duration. Performance tuning and web security",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 4,
@@ -361,7 +633,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "12/03/2023",
         timeline: "50 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Build beautiful, natively compiled cross-platform applications for iOS and Android from a single codebase using Dart and Flutter SDK.",
+            phaseTitle: "The Flutter Mobile course roadmap:",
+            phases: [
+                "- <strong>Dart & UI Layouts:</strong> 5 weeks duration. Widget tree, custom layouts, and responsive UI",
+                "- <strong>State Management:</strong> 5 weeks duration. Provider, BLoC pattern, and API integration",
+                "- <strong>App Publishing:</strong> 3 weeks duration. Releasing apps to App Store & Google Play",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 5,
@@ -374,7 +656,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "18/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Equip yourself with manual and automated testing knowledge. Learn test cases creation, bug tracking workflow, API testing, and Selenium framework.",
+            phaseTitle: "The Software Testing course roadmap:",
+            phases: [
+                "- <strong>Manual Testing:</strong> 4 weeks duration. Requirement analysis, test plan, and Jira",
+                "- <strong>API & SQL Testing:</strong> 3 weeks duration. Postman API testing and database validation",
+                "- <strong>Automation Testing:</strong> 4 weeks duration. Selenium Webdriver with Java/Python",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 6,
@@ -387,7 +679,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "22/03/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Become a professional game developer by creating 2D and 3D games with Unity Engine and C#. Master game physics, animation systems, and UI implementation.",
+            phaseTitle: "The Unity Game Development roadmap:",
+            phases: [
+                "- <strong>C# & 2D Games:</strong> 5 weeks duration. Programming foundations and 2D mechanics",
+                "- <strong>3D World & Physics:</strong> 6 weeks duration. Lighting, shaders, particle systems, and AI",
+                "- <strong>Monetization & Release:</strong> 2 weeks duration. Ads integration, IAP, and mobile export",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 7,
@@ -400,7 +702,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "25/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Explore Web3, Ethereum, and smart contract development using Solidity, Hardhat, and Ethers.js. Build decentralized applications (dApps) from scratch.",
+            phaseTitle: "The Blockchain & Smart Contract roadmap:",
+            phases: [
+                "- <strong>Blockchain Core & Solidity:</strong> 4 weeks duration. Syntax, security patterns, EVM",
+                "- <strong>DApp Development:</strong> 5 weeks duration. Connecting Frontend with Web3.js / Ethers.js",
+                "- <strong>Audit & Deployment:</strong> 3 weeks duration. Smart contract auditing and Testnet deployment",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 8,
@@ -413,7 +725,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "30/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master Figma, Design Systems, Design Thinking, and User Research to create high-converting digital products for Web and Mobile platforms.",
+            phaseTitle: "The UI/UX Master course roadmap:",
+            phases: [
+                "- <strong>UX Research & Wireframing:</strong> 3 weeks duration. User persona, journey mapping, low-fi wireframes",
+                "- <strong>UI Design System:</strong> 4 weeks duration. Auto layout, components, tokens, high-fi UI",
+                "- <strong>Prototyping & Handoff:</strong> 3 weeks duration. Interactive prototypes and developer handoff",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 1,
@@ -426,7 +748,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "28/02/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "This FRONTEND MASTER PROGRAMMING course is suitable for those of you who are IT students or those who want to become a comprehensive Front-end Dev to work in companies. After the course, you will have completed 5 projects like working and have full knowledge from basic to advanced of a Front-end Dev.",
+            phaseTitle: "The Frontend Master course is divided into 3 main phases:",
+            phases: [
+                "- <strong>Frontend Newbie:</strong> 6 week duration (2 sessions/week). Class time 18h45 - 21h45 Tuesday and Saturday",
+                "- <strong>Web Responsive:</strong> Duration 5 weeks (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "- <strong>ReactJs Master:</strong> 6 weeks duration (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 2,
@@ -439,7 +771,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "05/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "The NODEJS BACKEND DEVELOPMENT course provides full-stack backend skills, focusing on building high-performance RESTful APIs, microservices, and database optimization using Express.js and MongoDB.",
+            phaseTitle: "The Backend NodeJS course consists of 3 intensive phases:",
+            phases: [
+                "- <strong>NodeJS Fundamentals:</strong> 4 weeks duration (2 sessions/week). Async programming and Core modules",
+                "- <strong>Express & REST API:</strong> 5 weeks duration (3 sessions/week). Building secure authentication & DB integration",
+                "- <strong>Microservices & Deployment:</strong> 5 weeks duration. Docker, CI/CD, and AWS cloud setup",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
     },
     {
         id: 3,
@@ -452,7 +794,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "10/03/2023",
         timeline: "35 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master modern PHP development and Laravel framework from scratch. Learn object-oriented programming (OOP), MVC architectural patterns, and database migration techniques.",
+            phaseTitle: "The PHP & Laravel course roadmap:",
+            phases: [
+                "- <strong>PHP Basic & OOP:</strong> 4 weeks duration. Master OOP concepts and MySQL database design",
+                "- <strong>Laravel Framework:</strong> 6 weeks duration. Building real-world e-commerce application",
+                "- <strong>Security & Optimization:</strong> 2 weeks duration. Performance tuning and web security",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 4,
@@ -465,7 +817,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "12/03/2023",
         timeline: "50 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Build beautiful, natively compiled cross-platform applications for iOS and Android from a single codebase using Dart and Flutter SDK.",
+            phaseTitle: "The Flutter Mobile course roadmap:",
+            phases: [
+                "- <strong>Dart & UI Layouts:</strong> 5 weeks duration. Widget tree, custom layouts, and responsive UI",
+                "- <strong>State Management:</strong> 5 weeks duration. Provider, BLoC pattern, and API integration",
+                "- <strong>App Publishing:</strong> 3 weeks duration. Releasing apps to App Store & Google Play",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 5,
@@ -478,7 +840,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "18/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Equip yourself with manual and automated testing knowledge. Learn test cases creation, bug tracking workflow, API testing, and Selenium framework.",
+            phaseTitle: "The Software Testing course roadmap:",
+            phases: [
+                "- <strong>Manual Testing:</strong> 4 weeks duration. Requirement analysis, test plan, and Jira",
+                "- <strong>API & SQL Testing:</strong> 3 weeks duration. Postman API testing and database validation",
+                "- <strong>Automation Testing:</strong> 4 weeks duration. Selenium Webdriver with Java/Python",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 6,
@@ -491,7 +863,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "22/03/2023",
         timeline: "45 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Become a professional game developer by creating 2D and 3D games with Unity Engine and C#. Master game physics, animation systems, and UI implementation.",
+            phaseTitle: "The Unity Game Development roadmap:",
+            phases: [
+                "- <strong>C# & 2D Games:</strong> 5 weeks duration. Programming foundations and 2D mechanics",
+                "- <strong>3D World & Physics:</strong> 6 weeks duration. Lighting, shaders, particle systems, and AI",
+                "- <strong>Monetization & Release:</strong> 2 weeks duration. Ads integration, IAP, and mobile export",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
     {
         id: 7,
@@ -504,7 +886,17 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "25/03/2023",
         timeline: "40 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Explore Web3, Ethereum, and smart contract development using Solidity, Hardhat, and Ethers.js. Build decentralized applications (dApps) from scratch.",
+            phaseTitle: "The Blockchain & Smart Contract roadmap:",
+            phases: [
+                "- <strong>Blockchain Core & Solidity:</strong> 4 weeks duration. Syntax, security patterns, EVM",
+                "- <strong>DApp Development:</strong> 5 weeks duration. Connecting Frontend with Web3.js / Ethers.js",
+                "- <strong>Audit & Deployment:</strong> 3 weeks duration. Smart contract auditing and Testnet deployment",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
     },
     {
         id: 8,
@@ -517,7 +909,200 @@ export const coursesData = [
         price: "4.500.000đ",
         date: "30/03/2023",
         timeline: "30 spells",
-        form: "Offline"
+        form: "Offline",
+        introduce: {
+            description: "Master Figma, Design Systems, Design Thinking, and User Research to create high-converting digital products for Web and Mobile platforms.",
+            phaseTitle: "The UI/UX Master course roadmap:",
+            phases: [
+                "- <strong>UX Research & Wireframing:</strong> 3 weeks duration. User persona, journey mapping, low-fi wireframes",
+                "- <strong>UI Design System:</strong> 4 weeks duration. Auto layout, components, tokens, high-fi UI",
+                "- <strong>Prototyping & Handoff:</strong> 3 weeks duration. Interactive prototypes and developer handoff",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
     },
-
+    {
+        id: 1,
+        title: "ReactJS",
+        category: "FRONTEND",
+        badge: "Offline",
+        image: "../assets/images/course/react-course-offline.png",
+        instructorAvatar: "../assets/images/avatar2.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "28/02/2023",
+        timeline: "45 spells",
+        form: "Offline",
+        introduce: {
+            description: "This FRONTEND MASTER PROGRAMMING course is suitable for those of you who are IT students or those who want to become a comprehensive Front-end Dev to work in companies. After the course, you will have completed 5 projects like working and have full knowledge from basic to advanced of a Front-end Dev.",
+            phaseTitle: "The Frontend Master course is divided into 3 main phases:",
+            phases: [
+                "- <strong>Frontend Newbie:</strong> 6 week duration (2 sessions/week). Class time 18h45 - 21h45 Tuesday and Saturday",
+                "- <strong>Web Responsive:</strong> Duration 5 weeks (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "- <strong>ReactJs Master:</strong> 6 weeks duration (3 sessions/week). Study time 18h45 - 21h45 on Mondays, Wednesdays and Fridays",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
+    },
+    {
+        id: 2,
+        title: "NodeJS",
+        category: "BACKEND",
+        badge: "Offline",
+        image: "../assets/images/course/nodejs-course-offline.png",
+        instructorAvatar: "../assets/images/avatar2.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "05/03/2023",
+        timeline: "40 spells",
+        form: "Offline",
+        introduce: {
+            description: "The NODEJS BACKEND DEVELOPMENT course provides full-stack backend skills, focusing on building high-performance RESTful APIs, microservices, and database optimization using Express.js and MongoDB.",
+            phaseTitle: "The Backend NodeJS course consists of 3 intensive phases:",
+            phases: [
+                "- <strong>NodeJS Fundamentals:</strong> 4 weeks duration (2 sessions/week). Async programming and Core modules",
+                "- <strong>Express & REST API:</strong> 5 weeks duration (3 sessions/week). Building secure authentication & DB integration",
+                "- <strong>Microservices & Deployment:</strong> 5 weeks duration. Docker, CI/CD, and AWS cloud setup",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET WITH OFFLINE CLASS"
+            ]
+        }
+    },
+    {
+        id: 3,
+        title: "PHP",
+        category: "BACKEND",
+        badge: "Offline",
+        image: "../assets/images/course/php-course.png",
+        instructorAvatar: "../assets/images/avatar2.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "10/03/2023",
+        timeline: "35 spells",
+        form: "Offline",
+        introduce: {
+            description: "Master modern PHP development and Laravel framework from scratch. Learn object-oriented programming (OOP), MVC architectural patterns, and database migration techniques.",
+            phaseTitle: "The PHP & Laravel course roadmap:",
+            phases: [
+                "- <strong>PHP Basic & OOP:</strong> 4 weeks duration. Master OOP concepts and MySQL database design",
+                "- <strong>Laravel Framework:</strong> 6 weeks duration. Building real-world e-commerce application",
+                "- <strong>Security & Optimization:</strong> 2 weeks duration. Performance tuning and web security",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
+    },
+    {
+        id: 4,
+        title: "Flutter",
+        category: "MOBILE",
+        badge: "Offline",
+        image: "../assets/images/course/flutter-course-offline.png",
+        instructorAvatar: "../assets/images/avatar2.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "12/03/2023",
+        timeline: "50 spells",
+        form: "Offline",
+        introduce: {
+            description: "Build beautiful, natively compiled cross-platform applications for iOS and Android from a single codebase using Dart and Flutter SDK.",
+            phaseTitle: "The Flutter Mobile course roadmap:",
+            phases: [
+                "- <strong>Dart & UI Layouts:</strong> 5 weeks duration. Widget tree, custom layouts, and responsive UI",
+                "- <strong>State Management:</strong> 5 weeks duration. Provider, BLoC pattern, and API integration",
+                "- <strong>App Publishing:</strong> 3 weeks duration. Releasing apps to App Store & Google Play",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
+    },
+    {
+        id: 5,
+        title: "QC Tester",
+        category: "QC",
+        badge: "Offline",
+        image: "../assets/images/course/qc-course.png",
+        instructorAvatar: "../assets/images/avatar2.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "18/03/2023",
+        timeline: "30 spells",
+        form: "Offline",
+        introduce: {
+            description: "Equip yourself with manual and automated testing knowledge. Learn test cases creation, bug tracking workflow, API testing, and Selenium framework.",
+            phaseTitle: "The Software Testing course roadmap:",
+            phases: [
+                "- <strong>Manual Testing:</strong> 4 weeks duration. Requirement analysis, test plan, and Jira",
+                "- <strong>API & SQL Testing:</strong> 3 weeks duration. Postman API testing and database validation",
+                "- <strong>Automation Testing:</strong> 4 weeks duration. Selenium Webdriver with Java/Python",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
+    },
+    {
+        id: 6,
+        title: "Unity 3D",
+        category: "GAME",
+        badge: "Offline",
+        image: "../assets/images/course/unity-course-offline.png",
+        instructorAvatar: "../assets/images/avatar3.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "22/03/2023",
+        timeline: "45 spells",
+        form: "Offline",
+        introduce: {
+            description: "Become a professional game developer by creating 2D and 3D games with Unity Engine and C#. Master game physics, animation systems, and UI implementation.",
+            phaseTitle: "The Unity Game Development roadmap:",
+            phases: [
+                "- <strong>C# & 2D Games:</strong> 5 weeks duration. Programming foundations and 2D mechanics",
+                "- <strong>3D World & Physics:</strong> 6 weeks duration. Lighting, shaders, particle systems, and AI",
+                "- <strong>Monetization & Release:</strong> 2 weeks duration. Ads integration, IAP, and mobile export",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
+    },
+    {
+        id: 7,
+        title: "Smart Contract",
+        category: "BLOCKCHAIN",
+        badge: "Offline",
+        image: "../assets/images/course/blockchain-course.png",
+        instructorAvatar: "../assets/images/avatar3.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "25/03/2023",
+        timeline: "40 spells",
+        form: "Offline",
+        introduce: {
+            description: "Explore Web3, Ethereum, and smart contract development using Solidity, Hardhat, and Ethers.js. Build decentralized applications (dApps) from scratch.",
+            phaseTitle: "The Blockchain & Smart Contract roadmap:",
+            phases: [
+                "- <strong>Blockchain Core & Solidity:</strong> 4 weeks duration. Syntax, security patterns, EVM",
+                "- <strong>DApp Development:</strong> 5 weeks duration. Connecting Frontend with Web3.js / Ethers.js",
+                "- <strong>Audit & Deployment:</strong> 3 weeks duration. Smart contract auditing and Testnet deployment",
+                "<br><strong>FORM:</strong> OFFLINE OR ONLINE GOOGLE MEET"
+            ]
+        }
+    },
+    {
+        id: 8,
+        title: "UI/UX Advanced",
+        category: "DESIGN",
+        badge: "Offline",
+        image: "../assets/images/course/design-course.png",
+        instructorAvatar: "../assets/images/avatar3.png",
+        instructorName: "Jane Cooper",
+        price: "4.500.000đ",
+        date: "30/03/2023",
+        timeline: "30 spells",
+        form: "Offline",
+        introduce: {
+            description: "Master Figma, Design Systems, Design Thinking, and User Research to create high-converting digital products for Web and Mobile platforms.",
+            phaseTitle: "The UI/UX Master course roadmap:",
+            phases: [
+                "- <strong>UX Research & Wireframing:</strong> 3 weeks duration. User persona, journey mapping, low-fi wireframes",
+                "- <strong>UI Design System:</strong> 4 weeks duration. Auto layout, components, tokens, high-fi UI",
+                "- <strong>Prototyping & Handoff:</strong> 3 weeks duration. Interactive prototypes and developer handoff",
+                "<br><strong>FORM:</strong> OFFLINE CLASS AT CENTER"
+            ]
+        }
+    }
 ];

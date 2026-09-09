@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await window.loadComponent("footer-container", "components/footer.html");
     }
 
-    // Mock Data (Dữ liệu mẫu)
+    // Mock Data
     const allCoursesData = coursesData;
 
     const categories = ["All", "Frontend", "Design", "Backend", "Mobile", "QC", "Game", "Blockchain"];

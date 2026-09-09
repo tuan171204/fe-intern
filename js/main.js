@@ -2,31 +2,32 @@
 window.loadComponent = async function (containerId, componentPath) {
     try {
         const response = await fetch(componentPath);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const htmlText = await response.text();
+
         const container = document.getElementById(containerId);
-        if (!container) return;
+
+        if (!container) {
+            throw new Error(
+                `Không tìm thấy container #${containerId}`
+            );
+        }
 
         container.innerHTML = htmlText;
 
-        // Tìm và thực thi các thẻ <script> bên trong component vừa nạp
-        const scripts = container.querySelectorAll("script");
-        scripts.forEach((script) => {
-            const newScript = document.createElement("script");
-            if (script.src) {
-                newScript.src = script.src;
-            } else {
-                newScript.textContent = script.textContent;
-            }
-            document.body.appendChild(newScript);
-            document.body.removeChild(newScript);
-        });
     } catch (error) {
-        console.error(`Không thể nạp component từ ${componentPath}:`, error);
+        console.error(
+            `Không thể nạp component từ ${componentPath}:`,
+            error
+        );
+
+        throw error;
     }
 };
-
 
 document.addEventListener("DOMContentLoaded", () => {
     // Gắn sự kiện Toggle cho Mobile Menu của Header
