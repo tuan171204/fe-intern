@@ -54,6 +54,72 @@ export const coursesData = [
             "Learned about the frontend learning route and basic knowledge of HTML and CSS is an advantage",
             "Appscyclone members must have a high sense of responsibility and initiative in learning, as well as self-study and part-time work at home"
         ],
+        lecturers: [
+            {
+                name: "Jane Cooper",
+                role: "CEO & Founder",
+                badge: "Teacher",
+                image: "../assets/images/lecturers/lecturer1.png",
+                bio: "For more than 7 years of experience in the profession, I always create high quality, innovative, sophisticated and suitable products for domestic and foreign customers.",
+                link: "https://janecooper.info/"
+            },
+            {
+                name: "Esther Howard",
+                role: "Frontend Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer2.png",
+                bio: "I always create high quality, innovative, sophisticated and suitable products for domestic and foreign customers.",
+                link: "https://estherhoward.info/"
+            },
+            {
+                name: "Courtney Henry",
+                role: "UI/UX Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer3.png",
+                bio: "For more than 7 years of experience in the profession, I always create high quality, innovative, sophisticated and suitable products.",
+                link: "https://courtneyhenry.info/"
+            },
+            {
+                name: "Robert Fox",
+                role: "Backend Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer4.png",
+                bio: "For more than 7 years of experience in the profession, I always create high quality, innovative, sophisticated and suitable products for domestic and foreign customers.",
+                link: "https://robertfox.info/"
+            },
+            {
+                name: "Wade Warren",
+                role: "DevOps Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer4.png",
+                bio: "I always create high quality, innovative, sophisticated and suitable products for domestic and foreign customers.",
+                link: "https://wadewarren.info/"
+            },
+            {
+                name: "Kristin Watson",
+                role: "QA Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer3.png",
+                bio: "For more than 7 years of experience in the profession, I always create high quality, innovative, sophisticated and suitable products.",
+                link: "https://kristinwatson.info/"
+            },
+            {
+                name: "Devon Lane",
+                role: "Mobile Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer2.png",
+                bio: "For more than 7 years of experience in the profession, I always create high quality, innovative, sophisticated and suitable products for domestic and foreign customers.",
+                link: "https://devonlane.info/"
+            },
+            {
+                name: "Cody Fisher",
+                role: "Career Mentor",
+                badge: "Mentor",
+                image: "../assets/images/lecturers/lecturer1.png",
+                bio: "I always create high quality, innovative, sophisticated and suitable products for domestic and foreign customers.",
+                link: "https://codyfisher.info/"
+            }
+        ],
     },
     {
         id: 2,
