@@ -1,22 +1,34 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Hàm nạp header & footer chung
-    const loadComponent = (containerId, filePath, callback) => {
+// Hàm nạp component dùng chung
+window.loadComponent = async function (containerId, componentPath) {
+    try {
+        const response = await fetch(componentPath);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const htmlText = await response.text();
         const container = document.getElementById(containerId);
-        if (container) {
-            fetch(filePath)
-                .then((res) => {
-                    if (!res.ok) throw new Error(`Không thể tải ${filePath}`);
-                    return res.text();
-                })
-                .then((data) => {
-                    container.innerHTML = data;
-                    if (callback) callback();
-                })
-                .catch((err) => console.error(err));
-        }
-    };
+        if (!container) return;
+
+        container.innerHTML = htmlText;
+
+        // Tìm và thực thi các thẻ <script> bên trong component vừa nạp
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach((script) => {
+            const newScript = document.createElement("script");
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
+            document.body.removeChild(newScript);
+        });
+    } catch (error) {
+        console.error(`Không thể nạp component từ ${componentPath}:`, error);
+    }
+};
 
 
+document.addEventListener("DOMContentLoaded", () => {
     // Gắn sự kiện Toggle cho Mobile Menu của Header
     const initMobileMenu = () => {
         const toggleBtn = document.getElementById("menu-toggle");
@@ -30,6 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    loadComponent("header-container", "components/header.html", initMobileMenu);
-    loadComponent("footer-container", "components/footer.html");
+    window.loadComponent("header-container", "components/common/header.html", initMobileMenu);
+    window.loadComponent("footer-container", "components/common/footer.html");
 });

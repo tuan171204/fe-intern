@@ -1,0 +1,54 @@
+<section id="hero" class="relative w-full min-h-[calc(100vh-80px)] flex items-center overflow-hidden bg-white">
+  <!-- Layer 0: Shape ở rìa phải -->
+  <div class="absolute inset-0 pointer-events-none z-0">
+    <img 
+      src="./assets/images/hero-right.png" 
+      alt="" 
+      class="absolute top-0 right-0 max-w-[60%] sm:max-w-[45%] md:max-w-[35%] object-contain opacity-30 md:opacity-100"
+    />
+  </div>
+
+  <!-- Layer 1: Grid Layout -->
+  <div class="w-full relative z-10 sm:py-4 md:py-8 lg:py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-8 lg:gap-8 items-center min-h-[calc(100vh-80px)]">
+      
+      <!-- Cột Trái: Hình -->
+      <div class="lg:col-span-6 flex justify-center lg:justify-start items-end h-full order-2 lg:order-1 px-4 lg:pl-0 mt-6 sm:mt-0">
+        <div class="relative w-full max-w-xs sm:max-w-md lg:max-w-none flex justify-center lg:justify-start">
+          <img 
+            src="./assets/images/hero-left.png" 
+            alt="Frontend Dev Training Student" 
+            class="w-auto h-auto object-contain max-h-[50vh] sm:max-h-[60vh] md:max-h-[70vh] lg:max-h-[85vh] drop-shadow-sm block"
+          />
+        </div>
+      </div>
+
+      <!-- Cột Phải -->
+      <div class="lg:col-span-6 flex flex-col justify-center items-center sm:items-start text-center sm:text-left space-y-5 sm:space-y-6 px-6 sm:px-8 md:px-10 lg:px-12 order-1 lg:order-2">
+        
+        <!-- Title -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 flex flex-col space-y-2 sm:space-y-4">
+          <span>Frontend Dev</span>
+          <span class="text-[#00A8A4]">Training Center</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-sm sm:text-base md:text-lg text-gray-500 max-w-xs sm:max-w-sm font-medium sm:font-bold leading-relaxed">
+          Teach from experience, learn from reality to create products of high value
+        </p>
+
+        <!-- CTA Button -->
+        <div class="pt-2 sm:pt-6 w-full sm:w-auto">
+          <a 
+            href="#courses" 
+            class="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-3 w-full sm:w-auto rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          >
+            Start learning
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
