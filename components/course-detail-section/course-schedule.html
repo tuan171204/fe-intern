@@ -1,0 +1,47 @@
+<section class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <div class="flex flex-col items-start">
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-6 sm:mb-8">
+      Schedule
+    </h2>
+
+    <!-- Schedule Container -->
+    <div class="w-full border border-gray-200 grid grid-cols-1 lg:grid-cols-5 bg-white">
+      
+      <!-- Nửa Trái -->
+      <div class="col-span-1 lg:col-span-2 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-200">
+        <!-- Hàng trên: Opening day & Time -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 border-b border-gray-200">
+          <div class="p-5 sm:p-6 lg:p-8 border-b sm:border-b-0 sm:border-r border-gray-200 flex flex-col justify-start">
+            <p class="text-xs text-gray-400 mb-2">Opening day</p>
+            <p id="schedule-date" class="text-base font-bold text-slate-900">
+              <!-- JS Render -->
+            </p>
+          </div>
+          <div class="p-5 sm:p-6 lg:p-8 flex flex-col justify-center">
+            <p class="text-xs text-gray-400 mb-2">Time</p>
+            <p id="schedule-time" class="text-base font-bold text-slate-900">
+              <!-- JS Render -->
+            </p>
+          </div>
+        </div>
+        
+        <!-- Hàng dưới: Address -->
+        <div class="p-5 sm:p-6 lg:p-8 flex flex-col justify-center h-full">
+          <p class="text-xs text-gray-400 mb-2">Address</p>
+          <p id="schedule-address" class="text-base font-bold text-slate-900 leading-relaxed pr-4 sm:pb-8 lg:pb-8">
+            <!-- JS Render -->
+          </p>
+        </div>
+      </div>
+
+      <!-- Nửa Phải: School day -->
+      <div class="col-span-1 lg:col-span-3 p-5 sm:p-6 lg:p-8 flex flex-col justify-start">
+        <p class="text-xs text-gray-400 mb-2">School day</p>
+        <div id="schedule-days" class="text-base font-bold text-slate-900 space-y-1.5">
+          <!-- JS Render -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

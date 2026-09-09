@@ -11,3 +11,11 @@ body {
     padding: 0 !important;
     box-sizing: border-box !important;
 }
+
+.course-swiper .swiper-slide {
+    visibility: hidden;
+}
+
+.course-swiper .swiper-slide-active {
+    visibility: visible;
+}

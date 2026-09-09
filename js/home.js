@@ -1,9 +1,9 @@
 import { initAllCourseSection } from './home-section/all-course.js';
-import { initComingSoonSwiper } from './home-section/coming-soon.js';
 import { initTeamSection } from './home-section/team.js';
 import { initSpecialValueSection } from './home-section/special-value.js';
 import { initEvaluationsSection } from './home-section/evaluations.js';
 import { initFaqSection } from './home-section/faq.js';
+import { initComingSoonSwiper } from './home-section/coming-soon.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (typeof window.loadComponent === "function") {

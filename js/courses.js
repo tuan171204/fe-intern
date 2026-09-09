@@ -2,12 +2,6 @@ import { renderCourseCard } from './components/course-card.js';
 import { coursesData } from '../js/config/mock-data.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Load Header và Footer 
-    if (typeof window.loadComponent === "function") {
-        await window.loadComponent("header-container", "components/header.html");
-        await window.loadComponent("footer-container", "components/footer.html");
-    }
-
     // Mock Data
     const allCoursesData = coursesData;
 
