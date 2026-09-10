@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Courses - AppCyclone</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Nhớ thay đổi đường dẫn file config cho đúng với project của bạn -->
+  <script src="./js/config/tailwind.config.js"></script> 
+  <link rel="stylesheet" href="./css/custom.css" />
+</head>
+<body class="bg-white pb-16">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="py-10 md:py-16 min-h-screen">
+      <div class="container mx-auto px-4 sm:px-6 md:px-12 lg:px-16 max-w-[1280px]">
+        
+        <!-- Tiêu đề -->
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8 md:mb-12">
+          All Courses
+        </h1>
+
+        <!-- Danh sách Filter -->
+        <div id="filter-container" class="flex overflow-x-auto hide-scrollbar mb-10 pb-2">
+          <!-- JS sẽ render các nút filter vào đây -->
+        </div>
+
+        <!-- Danh sách Khóa học (Grid) -->
+        <div id="courses-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <!-- JS sẽ render card vào đây -->
+        </div>
+
+        <!-- Phân trang (Pagination) -->
+        <div class="flex flex-col sm:flex-row items-center justify-end gap-4 border-gray-100">
+          <span id="total-items" class="text-xs text-gray-500 font-medium">Total 0 items</span>
+          <div id="pagination-controls" class="flex items-center space-x-1 sm:space-x-2">
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script src="./js/main.js"></script>
+    <script type="module" src="./js/courses.js"></script>
+</body>
+</html>
