@@ -1,0 +1,89 @@
+{
+    "app": {
+        "title": "Ứng Dụng Todo",
+        "subtitle": "Quản lý công việc hiệu quả",
+        "addTask": "Thêm công việc",
+        "backToList": "Quay lại danh sách",
+        "notFound": "Trang không tồn tại",
+        "notFoundDesc": "Xin lỗi, trang bạn yêu cầu không tồn tại hoặc đã bị xóa."
+    },
+    "nav": {
+        "home": "Trang chủ",
+        "language": "Ngôn ngữ"
+    },
+    "task": {
+        "title": "Tiêu đề",
+        "description": "Mô tả",
+        "status": "Trạng thái",
+        "priority": "Độ ưu tiên",
+        "dueDate": "Ngày hết hạn",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Cập nhật lần cuối",
+        "actions": "Hành động",
+        "view": "Xem chi tiết",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "markDone": "Đánh dấu hoàn thành",
+        "markInProgress": "Đánh dấu đang làm",
+        "markTodo": "Đánh dấu cần làm",
+        "overdue": "Quá hạn",
+        "noTasks": "Không có công việc nào",
+        "noTasksDesc": "Hãy bắt đầu bằng cách thêm một công việc mới.",
+        "total": "Tổng cộng",
+        "create": "Tạo công việc",
+        "update": "Cập nhật công việc",
+        "created": "Tạo công việc thành công!",
+        "updated": "Cập nhật công việc thành công!",
+        "deleted": "Xóa công việc thành công!",
+        "confirmDeleteTitle": "Xác nhận xóa",
+        "confirmDeleteDesc": "Bạn có chắc chắn muốn xóa công việc này? Hành động này không thể hoàn tác.",
+        "detail": "Chi tiết công việc",
+        "loading": "Đang tải...",
+        "error": "Đã xảy ra lỗi"
+    },
+    "status": {
+        "TODO": "Cần làm",
+        "IN_PROGRESS": "Đang làm",
+        "DONE": "Hoàn thành",
+        "ALL": "Tất cả"
+    },
+    "priority": {
+        "LOW": "Thấp",
+        "MEDIUM": "Trung bình",
+        "HIGH": "Cao",
+        "ALL": "Tất cả"
+    },
+    "filter": {
+        "search": "Tìm kiếm theo tiêu đề hoặc mô tả...",
+        "status": "Trạng thái",
+        "priority": "Độ ưu tiên",
+        "sortBy": "Sắp xếp theo",
+        "sortOrder": "Thứ tự",
+        "asc": "Tăng dần",
+        "desc": "Giảm dần",
+        "reset": "Đặt lại bộ lọc"
+    },
+    "sort": {
+        "createdAt": "Ngày tạo",
+        "dueDate": "Ngày hết hạn",
+        "priority": "Độ ưu tiên"
+    },
+    "validation": {
+        "required": "Trường này là bắt buộc",
+        "titleMin": "Tiêu đề phải có ít nhất {{min}} ký tự",
+        "titleMax": "Tiêu đề không được vượt quá {{max}} ký tự",
+        "descMax": "Mô tả không được vượt quá {{max}} ký tự",
+        "invalidDate": "Ngày không hợp lệ"
+    },
+    "button": {
+        "save": "Lưu",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận",
+        "create": "Tạo mới",
+        "update": "Cập nhật",
+        "close": "Đóng"
+    },
+    "footer": {
+        "copyright": "© 2026 Todo Application - Thực tập sinh Week 02"
+    }
+}

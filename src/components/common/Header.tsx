@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { ListTodo, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { TaskFormModal } from "@/components/task/TaskFormModal";
 
 export function Header() {
     const { t } = useTranslation();
@@ -23,7 +25,13 @@ export function Header() {
                     </div>
                 </Link>
                 <div className="flex items-center gap-2">
+                    <LanguageSwitcher />
+                    <Button onClick={() => setCreateOpen(true)}>
+                        <Plus className="h-4 w-4" />
+                        <span className="hidden sm:inline">{t("app.addTask")}</span>
+                    </Button>
                 </div>
+                <TaskFormModal open={createOpen} onOpenChange={setCreateOpen} />
             </div>
         </header>
     );

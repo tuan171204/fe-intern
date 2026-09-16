@@ -1,0 +1,89 @@
+{
+    "app": {
+        "title": "Todo Application",
+        "subtitle": "Manage your tasks effectively",
+        "addTask": "Add Task",
+        "backToList": "Back to list",
+        "notFound": "Page Not Found",
+        "notFoundDesc": "Sorry, the page you are looking for does not exist or has been removed."
+    },
+    "nav": {
+        "home": "Home",
+        "language": "Language"
+    },
+    "task": {
+        "title": "Title",
+        "description": "Description",
+        "status": "Status",
+        "priority": "Priority",
+        "dueDate": "Due Date",
+        "createdAt": "Created At",
+        "updatedAt": "Last Updated",
+        "actions": "Actions",
+        "view": "View Details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "markDone": "Mark as Done",
+        "markInProgress": "Mark as In Progress",
+        "markTodo": "Mark as Todo",
+        "overdue": "Overdue",
+        "noTasks": "No tasks found",
+        "noTasksDesc": "Get started by adding a new task.",
+        "total": "Total",
+        "create": "Create Task",
+        "update": "Update Task",
+        "created": "Task created successfully!",
+        "updated": "Task updated successfully!",
+        "deleted": "Task deleted successfully!",
+        "confirmDeleteTitle": "Confirm Delete",
+        "confirmDeleteDesc": "Are you sure you want to delete this task? This action cannot be undone.",
+        "detail": "Task Detail",
+        "loading": "Loading...",
+        "error": "An error occurred"
+    },
+    "status": {
+        "TODO": "Todo",
+        "IN_PROGRESS": "In Progress",
+        "DONE": "Done",
+        "ALL": "All"
+    },
+    "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "ALL": "All"
+    },
+    "filter": {
+        "search": "Search by title or description...",
+        "status": "Status",
+        "priority": "Priority",
+        "sortBy": "Sort by",
+        "sortOrder": "Sort order",
+        "asc": "Ascending",
+        "desc": "Descending",
+        "reset": "Reset Filters"
+    },
+    "sort": {
+        "createdAt": "Created Date",
+        "dueDate": "Due Date",
+        "priority": "Priority"
+    },
+    "validation": {
+        "required": "This field is required",
+        "titleMin": "Title must be at least {{min}} characters",
+        "titleMax": "Title must not exceed {{max}} characters",
+        "descMax": "Description must not exceed {{max}} characters",
+        "invalidDate": "Invalid date"
+    },
+    "button": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "create": "Create",
+        "update": "Update",
+        "close": "Close"
+    },
+    "footer": {
+        "copyright": "© 2026 Todo Application - Week 02 Internship"
+    }
+}
