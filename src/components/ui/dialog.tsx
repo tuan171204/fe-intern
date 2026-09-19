@@ -40,7 +40,7 @@ const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) =>
       <div
         aria-hidden="true"
         onClick={onClose}
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in-0 duration-200"
+        className="absolute inset-0 bg-black/30 animate-in fade-in-0 duration-200"
       />
 
       <div
@@ -48,7 +48,7 @@ const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) =>
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         className={cn(
-          "relative w-full max-w-md rounded-xl bg-background p-6 text-foreground shadow-xl",
+          "relative w-full max-w-lg rounded-xl bg-background p-6 text-foreground shadow-xl",
           "animate-in fade-in-0 zoom-in-95 duration-200",
           className
         )}
@@ -59,11 +59,11 @@ const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) =>
           aria-label="Close"
           className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
-          <X className="size-4" />
+          <X className="size-6" />
         </button>
 
         {title && (
-          <h2 id={titleId} className="mb-4 px-6 text-center text-sm font-semibold">
+          <h2 id={titleId} className="mb-6 px-6 text-center text-xl font-semibold">
             {title}
           </h2>
         )}

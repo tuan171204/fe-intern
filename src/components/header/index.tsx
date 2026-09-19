@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
 
-import ConnectModal from "../common/ConnectModal"
+import AuthModal from "../auth/AuthModal"
 import { Avatar } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { CopyAddress } from "../ui/copy-address"
@@ -43,7 +43,7 @@ const Header = ({ isConnected = false, address = DEMO_ADDRESS, balance = "200 ZK
                 )}
             </div>
 
-            <ConnectModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+            <AuthModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
         </header>
     )
 }

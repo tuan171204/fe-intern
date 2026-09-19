@@ -19,7 +19,6 @@ const LINKS = [
     { label: "Contact Us", to: "/contact" },
 ]
 
-// href là placeholder, thay bằng link thật của ACW3
 const ICONS = [
     { label: "Twitter / X", href: "https://x.com", Icon: XIcon },
     { label: "Telegram", href: "https://t.me", Icon: TelegramIcon },
