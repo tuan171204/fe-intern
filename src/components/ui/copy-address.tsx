@@ -11,10 +11,13 @@ export interface CopyAddressProps extends React.HTMLAttributes<HTMLSpanElement> 
   address: string
   /** Rút gọn địa chỉ (mặc định: true) */
   short?: boolean
+  /** Số ký tự đầu/cuối giữ lại khi rút gọn */
+  head?: number
+  tail?: number
 }
 
 /** Hiển thị địa chỉ ví/contract kèm icon copy (Token List, NFT List, Leaderboard) */
-const CopyAddress = ({ address, short = true, className, ...props }: CopyAddressProps) => {
+const CopyAddress = ({ address, short = true, head, tail, className, ...props }: CopyAddressProps) => {
   const [copied, setCopied] = React.useState(false)
 
   const handleCopy = async () => {
@@ -29,7 +32,7 @@ const CopyAddress = ({ address, short = true, className, ...props }: CopyAddress
 
   return (
     <span className={cn("inline-flex items-center gap-1 text-[10px] text-muted-foreground", className)} {...props}>
-      <span title={address}>{short ? shortenAddress(address) : address}</span>
+      <span title={address}>{short ? shortenAddress(address, head, tail) : address}</span>
       <button
         type="button"
         onClick={handleCopy}
