@@ -2,7 +2,10 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom"
 
 import Footer from "./components/footer"
 import Header from "./components/header"
+import DashboardLayout from "./components/layout/DashboardLayout"
 import Home from "./pages/home"
+import Leaderboard from "./pages/leaderboard"
+import TokenCreator from "./pages/token-creator"
 
 const Layout = () => (
   <div className="flex min-h-svh flex-col bg-background text-foreground">
@@ -23,6 +26,12 @@ const App = () => (
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
+      </Route>
+
+      {/* Trạng thái đã đăng nhập (giả lập): header mới + sidebar thay footer */}
+      <Route element={<DashboardLayout />}>
+        <Route path="token/create" element={<TokenCreator />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<ComingSoon />} />
       </Route>
     </Routes>
