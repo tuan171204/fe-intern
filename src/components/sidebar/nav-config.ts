@@ -3,6 +3,7 @@ import { Coins, Hexagon, Home, type LucideIcon } from "lucide-react"
 export interface NavChild {
     label: string
     to: string
+    title?: string
 }
 
 export interface NavItem {
@@ -26,7 +27,7 @@ export const NAV_ITEMS: NavItem[] = [
         label: "NFT",
         icon: Hexagon,
         children: [
-            { label: "NFT Creator", to: "/nft/create" },
+            { label: "NFT Collection", to: "/nft/create", title: "NFT Creator" },
             { label: "NFT List", to: "/nft/list" },
         ],
     },
@@ -42,7 +43,7 @@ export const getPageTitle = (pathname: string) => {
     for (const item of NAV_ITEMS) {
         if (item.to === pathname) return item.label
         const child = item.children?.find((c) => c.to === pathname)
-        if (child) return child.label
+        if (child) return child.title ?? child.label
     }
     return EXTRA_TITLES[pathname] ?? "ACW3"
 }

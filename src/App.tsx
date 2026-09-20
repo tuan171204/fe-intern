@@ -6,6 +6,8 @@ import DashboardLayout from "./components/layout/DashboardLayout"
 import Home from "./pages/home"
 import Leaderboard from "./pages/leaderboard"
 import TokenCreator from "./pages/token-creator"
+import TokenList from "./pages/token-list"
+import NftCreator from "./pages/nft-creator"
 
 const Layout = () => (
   <div className="flex min-h-svh flex-col bg-background text-foreground">
@@ -31,6 +33,8 @@ const App = () => (
       {/* Trạng thái đã đăng nhập (giả lập): header mới + sidebar thay footer */}
       <Route element={<DashboardLayout />}>
         <Route path="token/create" element={<TokenCreator />} />
+        <Route path="token/list" element={<TokenList />} />
+        <Route path="nft/create" element={<NftCreator />} />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<ComingSoon />} />
       </Route>
