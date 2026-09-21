@@ -9,6 +9,7 @@ import TokenCreator from "./pages/token-creator"
 import TokenList from "./pages/token-list"
 import NftCreator from "./pages/nft-creator"
 import NftList from "./pages/nft-list"
+import Profile from "./pages/profile"
 
 const Layout = () => (
   <div className="flex min-h-svh flex-col bg-background text-foreground">
@@ -37,6 +38,7 @@ const App = () => (
         <Route path="token/list" element={<TokenList />} />
         <Route path="nft/create" element={<NftCreator />} />
         <Route path="nft/list" element={<NftList />} />
+        <Route path="profile" element={<Profile />} />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<ComingSoon />} />
       </Route>
