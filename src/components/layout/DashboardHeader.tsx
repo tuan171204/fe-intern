@@ -3,7 +3,7 @@ import { ChevronDown, LogOut, Menu, User } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 
 import cn from "../../utils/cn"
-import { getPageTitle } from "../sidebar/nav-config"
+import { getPageTitle } from "../left-menu/nav-config"
 import { shortenAddress } from "../ui/copy-address"
 
 export interface DashboardHeaderProps {
@@ -15,8 +15,11 @@ export interface DashboardHeaderProps {
 // Dữ liệu tĩnh mẫu -> "0x4aq...gfr6j5lda"
 const DEMO_ADDRESS = "0x4aq1234567890abcdefgfr6j5lda"
 
-const menuItemClass =
-    "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+const menuItemClass = (active: boolean) =>
+    cn(
+        "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors focus-visible:bg-accent focus-visible:outline-none",
+        active ? "bg-teal-50 font-medium text-teal-600" : "hover:bg-accent"
+    )
 
 const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 ZKN" }: DashboardHeaderProps) => {
     const { pathname } = useLocation()
@@ -60,7 +63,10 @@ const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 Z
                     aria-haspopup="menu"
                     aria-expanded={menuOpen}
                     aria-label="Account menu"
-                    className="flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className={cn(
+                        "flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                        menuOpen && "bg-accent"
+                    )}
                 >
                     <span aria-hidden="true" className="size-8 shrink-0 rounded-full bg-teal-600" />
                     {/* Ẩn địa chỉ + số dư ở mobile, chỉ giữ avatar */}
@@ -82,14 +88,20 @@ const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 Z
                         className="absolute right-0 top-full z-40 mt-2 w-44 rounded-lg border border-border bg-background p-1 shadow-lg animate-in fade-in-0 zoom-in-95 duration-150"
                     >
                         <li role="none">
-                            <Link role="menuitem" to="/profile" onClick={() => setMenuOpen(false)} className={menuItemClass}>
+                            <Link
+                                role="menuitem"
+                                to="/profile"
+                                aria-current={pathname === "/profile" ? "page" : undefined}
+                                onClick={() => setMenuOpen(false)}
+                                className={menuItemClass(pathname === "/profile")}
+                            >
                                 <User className="size-4" aria-hidden="true" />
                                 Profile
                             </Link>
                         </li>
                         <li role="none">
                             {/* Giả lập đăng xuất: quay về trang chủ chưa đăng nhập */}
-                            <Link role="menuitem" to="/" onClick={() => setMenuOpen(false)} className={menuItemClass}>
+                            <Link role="menuitem" to="/" onClick={() => setMenuOpen(false)} className={menuItemClass(false)}>
                                 <LogOut className="size-4" aria-hidden="true" />
                                 Log out
                             </Link>
@@ -97,7 +109,7 @@ const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 Z
                     </ul>
                 )}
             </div>
-        </header>
+        </header >
     )
 }
 

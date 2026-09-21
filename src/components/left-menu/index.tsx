@@ -35,6 +35,9 @@ const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void
         if (hasActiveChild) setOpen(true)
     }, [hasActiveChild])
 
+    /* Thu gọn nhóm đang chứa trang hiện tại -> cha thay child mang trạng thái active */
+    const parentActive = hasActiveChild && !open
+
     return (
         <div>
             <button
@@ -42,15 +45,20 @@ const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void
                 onClick={() => setOpen((v) => !v)}
                 aria-expanded={open}
                 className={cn(
-                    "flex w-full items-center gap-2 rounded-full px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent",
-                    focusRing
+                    "flex w-full items-center gap-2 rounded-full px-3 py-2 text-sm transition-colors",
+                    focusRing,
+                    parentActive ? "bg-teal-600 font-medium text-white" : "text-foreground hover:bg-accent"
                 )}
             >
                 <Icon className="size-4" aria-hidden="true" />
                 {item.label}
                 <ChevronDown
                     aria-hidden="true"
-                    className={cn("ml-auto size-3.5 text-muted-foreground transition-transform", open && "rotate-180")}
+                    className={cn(
+                        "ml-auto size-3.5 transition-transform",
+                        parentActive ? "text-white/80" : "text-muted-foreground",
+                        open && "rotate-180"
+                    )}
                 />
             </button>
 
