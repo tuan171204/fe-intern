@@ -3,6 +3,7 @@ import * as React from "react"
 import { Button } from "../../../components/ui/button"
 import { Dialog } from "../../../components/ui/dialog"
 import { Input } from "../../../components/ui/input"
+import { SubmitButton } from "../../../components/ui/submit-button"
 import { Textarea } from "../../../components/ui/textarea"
 import { SOCIAL_LINKS } from "./social-links"
 
@@ -18,7 +19,6 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
 
     return (
         <Dialog isOpen={isOpen} onClose={onClose} title="Edit Profile" className="max-h-[90svh] overflow-y-auto">
-            {/* [&_label]: Textarea gốc hard-code label cỡ xs, ép về cùng cỡ với label của Input */}
             <form
                 onSubmit={(e) => e.preventDefault()}
                 className="flex flex-col gap-4 [&_label]:text-base [&_label]:font-normal"
@@ -52,12 +52,12 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                     ))}
                 </fieldset>
 
-                <Button
-                    type="submit"
-                    className="mt-2 h-12 w-full rounded-full text-lg bg-teal-600 font-light tracking-wide text-white hover:bg-teal-700 disabled:bg-teal-100 disabled:text-teal-600 disabled:opacity-100"
+                <SubmitButton
+                    disabled={!dirty}
+                    className="text-lg font-light tracking-wide disabled:bg-teal-100 disabled:text-teal-600 disabled:opacity-100"
                 >
                     Save
-                </Button>
+                </SubmitButton>
             </form>
         </Dialog>
     )

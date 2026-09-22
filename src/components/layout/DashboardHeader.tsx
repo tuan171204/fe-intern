@@ -1,10 +1,11 @@
 import * as React from "react"
 import { ChevronDown, LogOut, Menu, User } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 import cn from "../../utils/cn"
 import { getPageTitle } from "../left-menu/nav-config"
 import { shortenAddress } from "../ui/copy-address"
+import { useAuth } from "../../store/AuthContext"
 
 export interface DashboardHeaderProps {
     onMenuClick: () => void
@@ -12,7 +13,6 @@ export interface DashboardHeaderProps {
     balance?: string
 }
 
-// Dữ liệu tĩnh mẫu -> "0x4aq...gfr6j5lda"
 const DEMO_ADDRESS = "0x4aq1234567890abcdefgfr6j5lda"
 
 const menuItemClass = (active: boolean) =>
@@ -21,8 +21,12 @@ const menuItemClass = (active: boolean) =>
         active ? "bg-teal-50 font-medium text-teal-600" : "hover:bg-accent"
     )
 
-const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 ZKN" }: DashboardHeaderProps) => {
+const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN" }: DashboardHeaderProps) => {
     const { pathname } = useLocation()
+    const navigate = useNavigate()
+    const { user, logout } = useAuth()
+    const address = addressProp ?? user?.address ?? DEMO_ADDRESS
+
     const [menuOpen, setMenuOpen] = React.useState(false)
     const menuRef = React.useRef<HTMLDivElement>(null)
 
@@ -41,6 +45,12 @@ const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 Z
             document.removeEventListener("keydown", onKeyDown)
         }
     }, [menuOpen])
+
+    const handleLogout = () => {
+        logout()
+        setMenuOpen(false)
+        navigate("/")
+    }
 
     return (
         <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 sm:px-6">
@@ -69,7 +79,6 @@ const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 Z
                     )}
                 >
                     <span aria-hidden="true" className="size-8 shrink-0 rounded-full bg-teal-600" />
-                    {/* Ẩn địa chỉ + số dư ở mobile, chỉ giữ avatar */}
                     <span className="hidden flex-col text-left leading-tight sm:flex">
                         <span className="text-[11px] text-foreground" title={address}>
                             {shortenAddress(address, 5, 9)}
@@ -100,16 +109,20 @@ const DashboardHeader = ({ onMenuClick, address = DEMO_ADDRESS, balance = "200 Z
                             </Link>
                         </li>
                         <li role="none">
-                            {/* Giả lập đăng xuất: quay về trang chủ chưa đăng nhập */}
-                            <Link role="menuitem" to="/" onClick={() => setMenuOpen(false)} className={menuItemClass(false)}>
+                            <button
+                                type="button"
+                                role="menuitem"
+                                onClick={handleLogout}
+                                className={cn(menuItemClass(false), "w-full text-left")}
+                            >
                                 <LogOut className="size-4" aria-hidden="true" />
                                 Log out
-                            </Link>
+                            </button>
                         </li>
                     </ul>
                 )}
             </div>
-        </header >
+        </header>
     )
 }
 

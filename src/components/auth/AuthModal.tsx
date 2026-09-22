@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useNavigate } from "react-router-dom"
 
 import { Dialog } from "../ui/dialog"
 import RegisterForm from "./RegisterForm"
@@ -9,7 +10,6 @@ export type AuthView = "signIn" | "register"
 export interface AuthModalProps {
     isOpen: boolean
     onClose: () => void
-    /** Form hiển thị khi mở modal (mặc định: signIn) */
     defaultView?: AuthView
 }
 
@@ -20,18 +20,25 @@ const TITLES: Record<AuthView, string> = {
 
 const AuthModal = ({ isOpen, onClose, defaultView = "signIn" }: AuthModalProps) => {
     const [view, setView] = React.useState<AuthView>(defaultView)
+    const navigate = useNavigate()
 
     const handleClose = () => {
         onClose()
-        setView(defaultView) // lần mở sau luôn bắt đầu từ form mặc định
+        setView(defaultView)
+    }
+
+    const handleSuccess = () => {
+        onClose()
+        setView(defaultView)
+        navigate("/dashboard")
     }
 
     return (
         <Dialog isOpen={isOpen} onClose={handleClose} title={TITLES[view]}>
             {view === "signIn" ? (
-                <SignInForm onSwitch={() => setView("register")} />
+                <SignInForm onSwitch={() => setView("register")} onSuccess={handleSuccess} />
             ) : (
-                <RegisterForm onSwitch={() => setView("signIn")} />
+                <RegisterForm onSwitch={() => setView("signIn")} onSuccess={handleSuccess} />
             )}
         </Dialog>
     )
