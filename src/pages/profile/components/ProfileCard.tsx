@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { Button } from "../../../components/ui/button"
 import { shortenAddress } from "../../../components/ui/copy-address"
+import Icon from "../../../components/ui/icon"
 import { PROFILE } from "../../../mocks/profile"
 import EditProfileModal from "./EditProfileModal"
 import { SOCIAL_LINKS } from "./social-links"
@@ -39,10 +40,10 @@ const ProfileCard = () => {
             <div>
                 <h2 className="text-base font-medium">Social Links</h2>
                 <ul className="mt-2 flex items-center gap-3 text-muted-foreground">
-                    {SOCIAL_LINKS.map(({ label, Icon }) => (
-                        <li key={label}>
-                            <Icon className="size-4" aria-hidden="true" />
-                            <span className="sr-only">{label} not connected</span>
+                    {SOCIAL_LINKS.map(({ key, label, icon }) => (
+                        <li key={key}>
+                            <Icon name={icon} size="md" aria-hidden="true" />
+                            <span className="sr-only">{label}</span>
                         </li>
                     ))}
                 </ul>

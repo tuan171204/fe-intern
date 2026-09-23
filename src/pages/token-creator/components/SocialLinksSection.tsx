@@ -1,16 +1,16 @@
 import * as React from "react"
-import { Globe, MessageCircle, Send } from "lucide-react"
 
+import Icon, { type IconName } from "../../../components/ui/icon"
 import { Input } from "../../../components/ui/input"
 import { Switch } from "../../../components/ui/switch"
 import { isValidUrl } from "../../../utils/validators"
 
-const SOCIAL_FIELDS = [
-    { id: "website", label: "Website", placeholder: "https://", Icon: Globe },
-    { id: "telegram", label: "Telegram", placeholder: "https://t.me/", Icon: Send },
-    { id: "discord", label: "Discord", placeholder: "https://discord.com/", Icon: MessageCircle },
-    { id: "twitter", label: "Twitter", placeholder: "https://twitter.com/", Icon: Globe },
-] as const
+const SOCIAL_FIELDS: { id: "website" | "telegram" | "discord" | "twitter"; label: string; placeholder: string; icon: IconName }[] = [
+    { id: "website", label: "Website", placeholder: "https://", icon: "globe" },
+    { id: "telegram", label: "Telegram", placeholder: "https://t.me/", icon: "send" },
+    { id: "discord", label: "Discord", placeholder: "https://discord.com/", icon: "discord" },
+    { id: "twitter", label: "Twitter", placeholder: "https://twitter.com/", icon: "x-twitter" },
+]
 
 type FieldId = (typeof SOCIAL_FIELDS)[number]["id"]
 
@@ -25,7 +25,6 @@ const SocialLinksSection = () => {
     const [touched, setTouched] = React.useState<Partial<Record<FieldId, boolean>>>({})
     const titleId = React.useId()
 
-    /* Social links là optional, chỉ báo lỗi format khi người dùng đã nhập gì đó */
     const errorFor = (id: FieldId) => {
         const value = values[id]
         if (!touched[id] || !value.trim()) return undefined
@@ -45,7 +44,7 @@ const SocialLinksSection = () => {
             </div>
 
             {enabled &&
-                SOCIAL_FIELDS.map(({ id, label, placeholder, Icon }) => (
+                SOCIAL_FIELDS.map(({ id, label, placeholder, icon }) => (
                     <div key={id} className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:gap-3">
                         <label htmlFor={`social-${id}`} className="text-xs font-medium sm:mt-3 sm:w-20 sm:shrink-0">
                             {label}:
@@ -55,7 +54,7 @@ const SocialLinksSection = () => {
                                 id={`social-${id}`}
                                 type="url"
                                 placeholder={placeholder}
-                                startAdornment={<Icon className="size-3.5" aria-hidden="true" />}
+                                startAdornment={<Icon name={icon} size="sm" aria-hidden="true" />}
                                 className="h-10 py-0"
                                 value={values[id]}
                                 onChange={(e) => setValues((prev) => ({ ...prev, [id]: e.target.value }))}
