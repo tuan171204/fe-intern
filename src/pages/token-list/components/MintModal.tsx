@@ -4,6 +4,7 @@ import { Dialog } from "../../../components/ui/dialog"
 import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import type { TokenItem } from "../../../mocks/tokens"
+import { useToast } from "../../../store/ToastContext"
 
 export interface MintModalProps {
     token: TokenItem | null
@@ -17,12 +18,15 @@ const MintModal = ({ token, onClose }: MintModalProps) => {
     const [touched, setTouched] = React.useState(false)
     const [feeWarning, setFeeWarning] = React.useState<string | undefined>(undefined)
     const [amountWarning, setAmountWarning] = React.useState<string | undefined>(undefined)
+    const [submitting, setSubmitting] = React.useState(false)
+    const { success } = useToast()
 
     React.useEffect(() => {
         setQuantity("1")
         setTouched(false)
         setFeeWarning(undefined)
         setAmountWarning(undefined)
+        setSubmitting(false)
     }, [token])
 
     const handleClose = () => {
@@ -38,9 +42,15 @@ const MintModal = ({ token, onClose }: MintModalProps) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setTouched(true)
-        if (!isQuantityValid) return
+        if (!isQuantityValid || !token) return
 
-        handleClose()
+        setSubmitting(true)
+        // Giả lập gọi API mint (chưa nối API thật)
+        window.setTimeout(() => {
+            setSubmitting(false)
+            success(`Minted ${quantityNum} ${token.name} successfully`)
+            handleClose()
+        }, 600)
     }
 
     const totalFee = token && isQuantityValid ? (Number(token.mintFee) * quantityNum).toFixed(3) : token?.mintFee ?? "0"
@@ -81,7 +91,9 @@ const MintModal = ({ token, onClose }: MintModalProps) => {
                         onFocus={() => setFeeWarning("You are not allowed to change the mint fee")}
                         error={feeWarning}
                     />
-                    <SubmitButton className="mt-2">Mint</SubmitButton>
+                    <SubmitButton loading={submitting} disabled={submitting} className="mt-2">
+                        Mint
+                    </SubmitButton>
                 </form>
             )}
         </Dialog>

@@ -1,8 +1,9 @@
-import type { FormEvent } from "react"
+import * as React from "react"
 
 import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import { useFormValidation } from "../../../hooks/useFormValidation"
+import { useToast } from "../../../store/ToastContext"
 
 const NAME_MAX = 32
 const SYMBOL_MAX = 8
@@ -33,13 +34,20 @@ const validate = (values: NftFormValues) => {
 
 const NftCollectionForm = () => {
     const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(INITIAL_VALUES, validate)
+    const [submitting, setSubmitting] = React.useState(false)
+    const { success } = useToast()
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         touchAll()
         if (Object.keys(errors).length > 0) return
 
-        reset()
+        setSubmitting(true)
+        window.setTimeout(() => {
+            setSubmitting(false)
+            success("NFT Collection created successfully")
+            reset()
+        }, 600)
     }
 
     return (
@@ -79,7 +87,9 @@ const NftCollectionForm = () => {
                 error={fieldError("totalSupply")}
             />
 
-            <SubmitButton className="h-11">Create</SubmitButton>
+            <SubmitButton loading={submitting} disabled={submitting} className="h-11">
+                Create
+            </SubmitButton>
         </form>
     )
 }
