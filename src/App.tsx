@@ -46,13 +46,12 @@ const App = () => (
         {/* Đã đăng nhập: header mới + sidebar thay footer. Chưa đăng nhập sẽ bị đẩy về trang chủ */}
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
-            <Route path="dashboard" element={<Navigate to="/token/create" replace />} />
+            <Route path="dashboard" element={<Leaderboard />} />
             <Route path="token/create" element={<TokenCreator />} />
             <Route path="token/list" element={<TokenList />} />
             <Route path="nft/create" element={<NftCreator />} />
             <Route path="nft/list" element={<NftList />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path="*" element={<ComingSoon />} />
           </Route>
         </Route>

@@ -1,9 +1,7 @@
-import { MessageCircle } from "lucide-react"
+import type { IconName } from "../../../components/ui/icon"
 
-import { TelegramIcon, XIcon } from "../../../components/footer"
-
-export const SOCIAL_LINKS = [
-    { label: "X", Icon: XIcon },
-    { label: "Telegram", Icon: TelegramIcon },
-    { label: "Discord", Icon: MessageCircle },
+export const SOCIAL_LINKS: { key: "x" | "telegram" | "discord"; label: string; icon: IconName }[] = [
+    { key: "x", label: "X", icon: "x-twitter" },
+    { key: "telegram", label: "Telegram", icon: "telegram" },
+    { key: "discord", label: "Discord", icon: "discord" },
 ]
