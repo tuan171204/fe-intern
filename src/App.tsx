@@ -5,7 +5,7 @@ import Header from "./components/header"
 import DashboardLayout from "./components/layout/DashboardLayout"
 import GuestRoute from "./components/routing/GuestRoute"
 import ProtectedRoute from "./components/routing/ProtectedRoute"
-import Home from "./pages/home"
+import ConnectPage from "./pages/connect"
 import Leaderboard from "./pages/leaderboard"
 import TokenCreator from "./pages/token-creator"
 import TokenList from "./pages/token-list"
@@ -39,7 +39,7 @@ const App = () => (
         {/* Chưa đăng nhập: trang Connect. Đã đăng nhập sẽ tự động bị đẩy sang /dashboard */}
         <Route element={<GuestRoute />}>
           <Route element={<Layout />}>
-            <Route index element={<Home />} />
+            <Route index element={<ConnectPage />} />
           </Route>
         </Route>
 
