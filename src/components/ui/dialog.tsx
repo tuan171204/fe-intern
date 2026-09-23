@@ -1,7 +1,7 @@
 import * as React from "react"
-import { X } from "lucide-react"
 
 import cn from "../../utils/cn"
+import Icon from "./icon"
 
 export interface DialogProps {
   isOpen: boolean
@@ -14,7 +14,6 @@ export interface DialogProps {
 const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) => {
   const titleId = React.useId()
 
-  // Đóng bằng phím Esc + khoá scroll nền khi modal mở
   React.useEffect(() => {
     if (!isOpen) return
 
@@ -36,7 +35,6 @@ const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay làm mờ nền */}
       <div
         aria-hidden="true"
         onClick={onClose}
@@ -59,7 +57,7 @@ const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) =>
           aria-label="Close"
           className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
-          <X className="size-6" />
+          <Icon name="close" size="xl" />
         </button>
 
         {title && (
