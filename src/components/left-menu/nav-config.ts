@@ -1,4 +1,4 @@
-import { Coins, Hexagon, Home, type LucideIcon } from "lucide-react"
+import type { IconName } from "../ui/icon"
 
 export interface NavChild {
     label: string
@@ -8,16 +8,16 @@ export interface NavChild {
 
 export interface NavItem {
     label: string
-    icon: LucideIcon
+    icon: IconName
     to?: string
     children?: NavChild[]
 }
 
 export const NAV_ITEMS: NavItem[] = [
-    { label: "Dashboard", icon: Home, to: "/dashboard" },
+    { label: "Dashboard", icon: "home", to: "/dashboard" },
     {
         label: "Token",
-        icon: Coins,
+        icon: "coins",
         children: [
             { label: "Token Creator", to: "/token/create" },
             { label: "Token List", to: "/token/list" },
@@ -25,7 +25,7 @@ export const NAV_ITEMS: NavItem[] = [
     },
     {
         label: "NFT",
-        icon: Hexagon,
+        icon: "hexagon",
         children: [
             { label: "NFT Collection", to: "/nft/create", title: "NFT Creator" },
             { label: "NFT List", to: "/nft/list" },
@@ -33,7 +33,6 @@ export const NAV_ITEMS: NavItem[] = [
     },
 ]
 
-// Các trang không nằm trong sidebar nhưng vẫn cần tiêu đề ở header
 const EXTRA_TITLES: Record<string, string> = {
     "/profile": "Profile",
     "/leaderboard": "Leaderboard",

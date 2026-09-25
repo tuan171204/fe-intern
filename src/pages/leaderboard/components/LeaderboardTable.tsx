@@ -1,9 +1,9 @@
 import * as React from "react"
-import { BarChart3 } from "lucide-react"
 
 import { Avatar } from "../../../components/ui/avatar"
 import { Card, CardHeader, CardTitle } from "../../../components/ui/card"
 import { CopyAddress } from "../../../components/ui/copy-address"
+import Icon from "../../../components/ui/icon"
 import {
     Table,
     TableBody,
@@ -41,13 +41,12 @@ const LeaderboardTable = () => {
             <Card className="border-teal-600/60 bg-teal-50/30 shadow-none">
                 <CardHeader className="flex-wrap p-4">
                     <CardTitle id="top-creators-title" className="flex items-center gap-2 font-medium">
-                        <BarChart3 className="size-3.5 text-teal-600" aria-hidden="true" />
+                        <Icon name="bar-chart" size="sm" className="text-teal-600" aria-hidden="true" />
                         Top 50 Creators
                     </CardTitle>
                     <Tabs options={CHAINS} value={chain} onChange={setChain} />
                 </CardHeader>
 
-                {/* Bảng cuộn ngang trên mobile/tablet nhờ wrapper overflow-x-auto của Table */}
                 <div className="px-2 pb-2 sm:px-4 sm:pb-4">
                     <Table className="min-w-[760px]">
                         <TableHeader>

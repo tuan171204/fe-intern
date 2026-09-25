@@ -1,9 +1,8 @@
 import * as React from "react"
-import { ChevronDown, X } from "lucide-react"
 import { Link, NavLink, useLocation } from "react-router-dom"
 
 import cn from "../../utils/cn"
-import { TelegramIcon, XIcon } from "../footer"
+import Icon from "../ui/icon"
 import { NAV_ITEMS, type NavItem } from "./nav-config"
 
 export interface SidebarProps {
@@ -21,21 +20,19 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
     )
 
 const SOCIALS = [
-    { label: "Twitter / X", href: "https://x.com", Icon: XIcon },
-    { label: "Telegram", href: "https://t.me", Icon: TelegramIcon },
+    { label: "Twitter / X", href: "https://x.com", icon: "x-twitter" as const },
+    { label: "Telegram", href: "https://t.me", icon: "telegram" as const },
 ]
 
 const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) => {
     const { pathname } = useLocation()
     const hasActiveChild = !!item.children?.some((child) => child.to === pathname)
     const [open, setOpen] = React.useState(hasActiveChild)
-    const Icon = item.icon
 
     React.useEffect(() => {
         if (hasActiveChild) setOpen(true)
     }, [hasActiveChild])
 
-    /* Thu gọn nhóm đang chứa trang hiện tại -> cha thay child mang trạng thái active */
     const parentActive = hasActiveChild && !open
 
     return (
@@ -50,12 +47,14 @@ const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void
                     parentActive ? "bg-teal-600 font-medium text-white" : "text-foreground hover:bg-accent"
                 )}
             >
-                <Icon className="size-4" aria-hidden="true" />
+                <Icon name={item.icon} size="md" aria-hidden="true" />
                 {item.label}
-                <ChevronDown
+                <Icon
+                    name="chevron-down"
+                    size="sm"
                     aria-hidden="true"
                     className={cn(
-                        "ml-auto size-3.5 transition-transform",
+                        "ml-auto transition-transform",
                         parentActive ? "text-white/80" : "text-muted-foreground",
                         open && "rotate-180"
                     )}
@@ -93,7 +92,7 @@ const SidebarPanel = ({ onNavigate, onClose }: { onNavigate?: () => void; onClos
                         focusRing
                     )}
                 >
-                    <X className="size-5" />
+                    <Icon name="close" size="lg" />
                 </button>
             )}
         </div>
@@ -104,7 +103,7 @@ const SidebarPanel = ({ onNavigate, onClose }: { onNavigate?: () => void; onClos
                     <li key={item.label}>
                         {item.to ? (
                             <NavLink to={item.to} onClick={onNavigate} className={linkClass}>
-                                <item.icon className="size-4" aria-hidden="true" />
+                                <Icon name={item.icon} size="md" aria-hidden="true" />
                                 {item.label}
                             </NavLink>
                         ) : (
@@ -116,7 +115,7 @@ const SidebarPanel = ({ onNavigate, onClose }: { onNavigate?: () => void; onClos
         </nav>
 
         <ul className="flex shrink-0 flex-col gap-1 border-t border-border p-4">
-            {SOCIALS.map(({ label, href, Icon }) => (
+            {SOCIALS.map(({ label, href, icon }) => (
                 <li key={label}>
                     <a
                         href={href}
@@ -127,7 +126,7 @@ const SidebarPanel = ({ onNavigate, onClose }: { onNavigate?: () => void; onClos
                             focusRing
                         )}
                     >
-                        <Icon className="size-4" />
+                        <Icon name={icon} size="md" />
                         {label}
                     </a>
                 </li>
@@ -146,7 +145,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
     return (
         <>
-            {/* Desktop (lg+): cố định bên trái. Mobile/tablet: ẩn, dùng drawer bên dưới */}
             <aside className="hidden w-60 shrink-0 border-r border-border bg-background lg:block">
                 <div className="sticky top-0 h-svh">
                     <SidebarPanel />

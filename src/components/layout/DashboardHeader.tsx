@@ -1,10 +1,10 @@
 import * as React from "react"
-import { ChevronDown, LogOut, Menu, User } from "lucide-react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 
 import cn from "../../utils/cn"
 import { getPageTitle } from "../left-menu/nav-config"
 import { shortenAddress } from "../ui/copy-address"
+import Icon from "../ui/icon"
 import { useAuth } from "../../store/AuthContext"
 
 export interface DashboardHeaderProps {
@@ -61,7 +61,7 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN
                     aria-label="Open menu"
                     className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring lg:hidden"
                 >
-                    <Menu className="size-5" />
+                    <Icon name="menu" size="lg" />
                 </button>
                 <p className="truncate text-lg font-semibold">{getPageTitle(pathname)}</p>
             </div>
@@ -85,9 +85,11 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN
                         </span>
                         <span className="text-[10px] text-muted-foreground">{balance}</span>
                     </span>
-                    <ChevronDown
+                    <Icon
+                        name="chevron-down"
+                        size="md"
                         aria-hidden="true"
-                        className={cn("size-4 text-muted-foreground transition-transform", menuOpen && "rotate-180")}
+                        className={cn("text-muted-foreground transition-transform", menuOpen && "rotate-180")}
                     />
                 </button>
 
@@ -104,7 +106,7 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN
                                 onClick={() => setMenuOpen(false)}
                                 className={menuItemClass(pathname === "/profile")}
                             >
-                                <User className="size-4" aria-hidden="true" />
+                                <Icon name="user" size="md" aria-hidden="true" />
                                 Profile
                             </Link>
                         </li>
@@ -115,7 +117,7 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN
                                 onClick={handleLogout}
                                 className={cn(menuItemClass(false), "w-full text-left")}
                             >
-                                <LogOut className="size-4" aria-hidden="true" />
+                                <Icon name="logout" size="md" aria-hidden="true" />
                                 Log out
                             </button>
                         </li>

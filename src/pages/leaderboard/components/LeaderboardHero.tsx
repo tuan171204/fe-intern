@@ -1,7 +1,6 @@
-import { TrendingDown, X } from "lucide-react"
-
 import { Badge } from "../../../components/ui/badge"
 import { CopyAddress } from "../../../components/ui/copy-address"
+import Icon from "../../../components/ui/icon"
 
 const STATS = [
     { label: "MC", value: "$162.77K" },
@@ -17,7 +16,7 @@ const LeaderboardHero = () => (
         </p>
 
         <Badge variant="outline" className="gap-1 text-[10px]">
-            <X className="size-3" aria-hidden="true" />
+            <Icon name="close" size="xs" aria-hidden="true" />
             Made by ACW3
         </Badge>
 
@@ -31,7 +30,7 @@ const LeaderboardHero = () => (
                 <div key={label} className="flex items-center gap-1">
                     <dt className="font-medium">{label}:</dt>
                     <dd className={negative ? "flex items-center gap-0.5 text-destructive" : undefined}>
-                        {negative && <TrendingDown className="size-3" aria-hidden="true" />}
+                        {negative && <Icon name="trend-down" size="xs" aria-hidden="true" />}
                         {value}
                     </dd>
                 </div>

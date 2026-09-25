@@ -8,7 +8,7 @@ const Home = () => {
 
     return (
         <div className="flex flex-1 flex-col bg-muted/50 p-3 sm:p-4 lg:px-5 lg:py-5">
-            <section className="relative flex min-h-[22rem] flex-1 flex-col overflow-hidden rounded-2xl bg-gray-100 md:min-h-[28rem] lg:min-h-[41.5rem]">
+            <section className="relative flex min-h-[22rem] flex-1 flex-col overflow-hidden rounded-2xl bg-[#6ebed7] md:min-h-[28rem] lg:min-h-[41.7rem]">
                 <img
                     src="/hero-bg.png"
                     alt=""

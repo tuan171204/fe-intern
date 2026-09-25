@@ -1,11 +1,11 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom"
 
 import Footer from "./components/footer"
 import Header from "./components/header"
 import DashboardLayout from "./components/layout/DashboardLayout"
 import GuestRoute from "./components/routing/GuestRoute"
 import ProtectedRoute from "./components/routing/ProtectedRoute"
-import Home from "./pages/home"
+import ConnectPage from "./pages/connect"
 import Leaderboard from "./pages/leaderboard"
 import TokenCreator from "./pages/token-creator"
 import TokenList from "./pages/token-list"
@@ -36,23 +36,20 @@ const App = () => (
   <AuthProvider>
     <BrowserRouter>
       <Routes>
-        {/* Chưa đăng nhập: trang Connect. Đã đăng nhập sẽ tự động bị đẩy sang /dashboard */}
         <Route element={<GuestRoute />}>
           <Route element={<Layout />}>
-            <Route index element={<Home />} />
+            <Route index element={<ConnectPage />} />
           </Route>
         </Route>
 
-        {/* Đã đăng nhập: header mới + sidebar thay footer. Chưa đăng nhập sẽ bị đẩy về trang chủ */}
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
-            <Route path="dashboard" element={<Navigate to="/token/create" replace />} />
+            <Route path="dashboard" element={<Leaderboard />} />
             <Route path="token/create" element={<TokenCreator />} />
             <Route path="token/list" element={<TokenList />} />
             <Route path="nft/create" element={<NftCreator />} />
             <Route path="nft/list" element={<NftList />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path="*" element={<ComingSoon />} />
           </Route>
         </Route>
