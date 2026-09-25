@@ -17,26 +17,26 @@ export function useFormValidation<T extends Record<string, unknown>>(
 
     const errors = validate(values)
 
-    const setField = <K extends keyof T>(field: K, value: T[K]) => {
+    const setField = React.useCallback(<K extends keyof T>(field: K, value: T[K]) => {
         setValues((prev) => ({ ...prev, [field]: value }))
         setTouched((prev) => ({ ...prev, [field]: true }))
-    }
+    }, [])
 
     const fieldError = (field: keyof T) => (touched[field] ? errors[field] : undefined)
 
-    const touchAll = () => {
+    const touchAll = React.useCallback(() => {
         setTouched(
-            Object.keys(values).reduce((acc, key) => {
+            Object.keys(initialValues).reduce((acc, key) => {
                 acc[key as keyof T] = true
                 return acc
             }, {} as FieldTouched<T>)
         )
-    }
+    }, [initialValues])
 
-    const reset = () => {
+    const reset = React.useCallback(() => {
         setValues(initialValues)
         setTouched({})
-    }
+    }, [initialValues])
 
     return { values, setValues, setField, fieldError, errors, touchAll, reset }
 }

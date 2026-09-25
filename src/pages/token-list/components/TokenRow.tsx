@@ -45,11 +45,12 @@ const TokenRow = ({ token, onMint }: { token: TokenItem; onMint: (token: TokenIt
         <div role="cell" className="col-span-2 md:col-span-1 md:flex md:justify-center">
             <Button
                 variant="outline"
-                aria-label={`Mint ${token.name}`}
+                disabled={token.mintProgress >= 100}
+                aria-label={token.mintProgress >= 100 ? `${token.name} is fully minted` : `Mint ${token.name}`}
                 onClick={() => onMint(token)}
                 className="h-9 w-full rounded-full border-teal-600 px-8 text-teal-600 shadow-none hover:bg-teal-50 hover:text-teal-700 md:w-auto"
             >
-                Mint
+                {token.mintProgress >= 100 ? "Minted" : "Mint"}
             </Button>
         </div>
     </div>

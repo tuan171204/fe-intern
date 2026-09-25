@@ -5,29 +5,38 @@ import { Input } from "../../../components/ui/input"
 import { Switch } from "../../../components/ui/switch"
 import { isValidUrl } from "../../../utils/validators"
 
-const SOCIAL_FIELDS: { id: "website" | "telegram" | "discord" | "twitter"; label: string; placeholder: string; icon: IconName }[] = [
+export const SOCIAL_FIELDS: { id: "website" | "telegram" | "discord" | "twitter"; label: string; placeholder: string; icon: IconName }[] = [
     { id: "website", label: "Website", placeholder: "https://", icon: "globe" },
     { id: "telegram", label: "Telegram", placeholder: "https://t.me/", icon: "send" },
     { id: "discord", label: "Discord", placeholder: "https://discord.com/", icon: "discord" },
     { id: "twitter", label: "Twitter", placeholder: "https://twitter.com/", icon: "x-twitter" },
 ]
 
-type FieldId = (typeof SOCIAL_FIELDS)[number]["id"]
+export type SocialFieldId = (typeof SOCIAL_FIELDS)[number]["id"]
+export type SocialLinksValues = Record<SocialFieldId, string>
 
-const SocialLinksSection = () => {
-    const [enabled, setEnabled] = React.useState(true)
-    const [values, setValues] = React.useState<Record<FieldId, string>>({
-        website: "",
-        telegram: "",
-        discord: "",
-        twitter: "",
-    })
-    const [touched, setTouched] = React.useState<Partial<Record<FieldId, boolean>>>({})
+export const EMPTY_SOCIAL_LINKS: SocialLinksValues = { website: "", telegram: "", discord: "", twitter: "" }
+
+/** Link để trống luôn hợp lệ, chỉ báo sai khi có nhập mà không đúng định dạng URL */
+export const validateSocialLinks = (values: SocialLinksValues) =>
+    SOCIAL_FIELDS.every(({ id }) => !values[id].trim() || isValidUrl(values[id]))
+
+export interface SocialLinksSectionProps {
+    enabled: boolean
+    onEnabledChange: (enabled: boolean) => void
+    values: SocialLinksValues
+    onChange: (id: SocialFieldId, value: string) => void
+    /** Form cha đã bấm submit lần nào chưa - dùng để lộ hết lỗi còn thiếu (giống touchAll) */
+    submitted?: boolean
+}
+
+const SocialLinksSection = ({ enabled, onEnabledChange, values, onChange, submitted = false }: SocialLinksSectionProps) => {
+    const [touched, setTouched] = React.useState<Partial<Record<SocialFieldId, boolean>>>({})
     const titleId = React.useId()
 
-    const errorFor = (id: FieldId) => {
+    const errorFor = (id: SocialFieldId) => {
         const value = values[id]
-        if (!touched[id] || !value.trim()) return undefined
+        if ((!touched[id] && !submitted) || !value.trim()) return undefined
         return isValidUrl(value) ? undefined : "Invalid URL (must start with http:// or https://)"
     }
 
@@ -40,7 +49,7 @@ const SocialLinksSection = () => {
                     </h2>
                     <p className="mt-1 text-[10px] text-muted-foreground">Max 32 characters in your name</p>
                 </div>
-                <Switch checked={enabled} onCheckedChange={setEnabled} aria-labelledby={titleId} />
+                <Switch checked={enabled} onCheckedChange={onEnabledChange} aria-labelledby={titleId} />
             </div>
 
             {enabled &&
@@ -57,7 +66,7 @@ const SocialLinksSection = () => {
                                 startAdornment={<Icon name={icon} size="sm" aria-hidden="true" />}
                                 className="h-10 py-0"
                                 value={values[id]}
-                                onChange={(e) => setValues((prev) => ({ ...prev, [id]: e.target.value }))}
+                                onChange={(e) => onChange(id, e.target.value)}
                                 onBlur={() => setTouched((prev) => ({ ...prev, [id]: true }))}
                                 error={errorFor(id)}
                             />

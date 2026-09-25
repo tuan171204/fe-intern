@@ -3,11 +3,16 @@ import * as React from "react"
 import { Button } from "../../../components/ui/button"
 import { shortenAddress } from "../../../components/ui/copy-address"
 import Icon from "../../../components/ui/icon"
-import { PROFILE } from "../../../mocks/profile"
+import type { ProfileData } from "../../../mocks/profile"
 import EditProfileModal from "./EditProfileModal"
 import { SOCIAL_LINKS } from "./social-links"
 
-const ProfileCard = () => {
+export interface ProfileCardProps {
+    profile: ProfileData
+    onSave: (profile: ProfileData) => void
+}
+
+const ProfileCard = ({ profile, onSave }: ProfileCardProps) => {
     const [editing, setEditing] = React.useState(false)
 
     return (
@@ -16,25 +21,25 @@ const ProfileCard = () => {
                 <div className="relative shrink-0">
                     <span aria-hidden="true" className="block size-10 rounded-full bg-teal-600" />
                     <span className="absolute -left-1 -top-1 rounded-full bg-orange-200 px-1 text-[9px] font-medium leading-4">
-                        {PROFILE.level}
+                        {profile.level}
                     </span>
                 </div>
                 <div className="min-w-0">
-                    <p className="text-sm font-medium">{PROFILE.name}</p>
-                    <p className="truncate text-xs text-muted-foreground" title={PROFILE.address}>
-                        {shortenAddress(PROFILE.address, 5, 9)}
+                    <p className="text-sm font-medium">{profile.name}</p>
+                    <p className="truncate text-xs text-muted-foreground" title={profile.address}>
+                        {shortenAddress(profile.address, 5, 9)}
                     </p>
                 </div>
             </div>
 
             <div>
                 <h2 className="text-base font-medium">Balance</h2>
-                <p className="mt-1 text-xs text-muted-foreground">{PROFILE.balance}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{profile.balance}</p>
             </div>
 
             <div>
                 <h2 className="text-base font-medium">Biography</h2>
-                <p className="mt-1 text-xs text-muted-foreground">{PROFILE.biography}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{profile.biography}</p>
             </div>
 
             <div>
@@ -56,7 +61,7 @@ const ProfileCard = () => {
                 Edit Profile
             </Button>
 
-            <EditProfileModal isOpen={editing} onClose={() => setEditing(false)} />
+            <EditProfileModal isOpen={editing} profile={profile} onSave={onSave} onClose={() => setEditing(false)} />
         </section>
     )
 }
