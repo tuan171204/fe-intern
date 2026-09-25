@@ -33,11 +33,12 @@ const NftRow = ({ nft, onMint }: { nft: NftItem; onMint: (nft: NftItem) => void 
         <div role="cell" className="col-span-2 md:col-span-1 md:flex md:justify-center">
             <Button
                 variant="outline"
-                aria-label={`Mint ${nft.name}`}
+                disabled={nft.mintProgress >= 100}
+                aria-label={nft.mintProgress >= 100 ? `${nft.name} is fully minted` : `Mint ${nft.name}`}
                 onClick={() => onMint(nft)}
                 className="h-9 w-full rounded-full border-teal-600 px-8 text-teal-600 shadow-none hover:bg-teal-50 hover:text-teal-700 md:w-auto"
             >
-                Mint
+                {nft.mintProgress >= 100 ? "Minted" : "Mint"}
             </Button>
         </div>
     </div>

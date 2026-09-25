@@ -6,7 +6,11 @@ import { SubmitButton } from "../../../components/ui/submit-button"
 import { Textarea } from "../../../components/ui/textarea"
 import { useFormValidation } from "../../../hooks/useFormValidation"
 import { useToast } from "../../../store/ToastContext"
-import SocialLinksSection from "./SocialLinksSection"
+import SocialLinksSection, {
+    EMPTY_SOCIAL_LINKS,
+    validateSocialLinks,
+    type SocialLinksValues,
+} from "./SocialLinksSection"
 
 const DESCRIPTION_MAX = 500
 const NAME_MAX = 32
@@ -67,6 +71,12 @@ const TokenForm = () => {
     const [submitting, setSubmitting] = React.useState(false)
     const { success } = useToast()
 
+    /* Social links được nâng lên đây để lỗi validate của chúng thực sự chặn được submit
+       (trước đây SocialLinksSection tự quản lý state nội bộ, lỗi hiển thị chỉ mang tính hình thức) */
+    const [socialEnabled, setSocialEnabled] = React.useState(true)
+    const [socialValues, setSocialValues] = React.useState<SocialLinksValues>(EMPTY_SOCIAL_LINKS)
+    const [submitAttempted, setSubmitAttempted] = React.useState(false)
+
     React.useEffect(() => {
         if (!image) {
             setPreviewUrl(undefined)
@@ -78,6 +88,7 @@ const TokenForm = () => {
     }, [image])
 
     const imageError = imageTouched && !image ? "Please select an image" : undefined
+    const socialLinksValid = !socialEnabled || validateSocialLinks(socialValues)
 
     const handleImageSelected = ([file]: File[]) => {
         setImage(file)
@@ -94,8 +105,9 @@ const TokenForm = () => {
         e.preventDefault()
         touchAll()
         setImageTouched(true)
+        setSubmitAttempted(true)
 
-        if (Object.keys(errors).length > 0 || !image) return
+        if (Object.keys(errors).length > 0 || !image || !socialLinksValid) return
 
         setSubmitting(true)
         // Giả lập gọi API tạo token (chưa nối API thật)
@@ -105,6 +117,9 @@ const TokenForm = () => {
             reset()
             setImage(null)
             setImageTouched(false)
+            setSocialEnabled(true)
+            setSocialValues(EMPTY_SOCIAL_LINKS)
+            setSubmitAttempted(false)
         }, 600)
     }
 
@@ -136,6 +151,8 @@ const TokenForm = () => {
                     required
                     type="number"
                     inputMode="numeric"
+                    min={0}
+                    max={18}
                     placeholder="6"
                     hint="Most token use 6 decimals"
                     value={values.decimal}
@@ -192,7 +209,13 @@ const TokenForm = () => {
                 />
             </div>
 
-            <SocialLinksSection />
+            <SocialLinksSection
+                enabled={socialEnabled}
+                onEnabledChange={setSocialEnabled}
+                values={socialValues}
+                onChange={(id, value) => setSocialValues((prev) => ({ ...prev, [id]: value }))}
+                submitted={submitAttempted}
+            />
 
             <SubmitButton loading={submitting} disabled={submitting} className="h-11">
                 Create

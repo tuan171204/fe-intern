@@ -22,7 +22,7 @@ const validate = (values: RegisterValues) => {
     const errors: Partial<Record<keyof RegisterValues, string>> = {}
 
     if (!values.address.trim()) errors.address = "Wallet address is required"
-    else if (!isValidWalletAddress(values.address)) errors.address = "Invalid wallet address (format: 0x + 40 hex characters)"
+    else if (!isValidWalletAddress(values.address)) errors.address = "Invalid address format (must start with 0x and contain 40 characters: 0-9, a-f)"
 
     if (!values.password) errors.password = "Password is required"
     else if (getPasswordStrength(values.password).level !== "strong")

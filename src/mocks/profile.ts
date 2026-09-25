@@ -8,6 +8,8 @@ export const PROFILE = {
     totalNfts: 0,
 }
 
+export type ProfileData = typeof PROFILE
+
 export interface ProfileToken {
     id: string
     name: string

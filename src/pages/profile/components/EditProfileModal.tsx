@@ -6,13 +6,15 @@ import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import { Textarea } from "../../../components/ui/textarea"
 import { useFormValidation } from "../../../hooks/useFormValidation"
-import { PROFILE } from "../../../mocks/profile"
+import type { ProfileData } from "../../../mocks/profile"
 import { useToast } from "../../../store/ToastContext"
 import { isValidUrl } from "../../../utils/validators"
 import { SOCIAL_LINKS } from "./social-links"
 
 export interface EditProfileModalProps {
     isOpen: boolean
+    profile: ProfileData
+    onSave: (profile: ProfileData) => void
     onClose: () => void
 }
 
@@ -25,14 +27,6 @@ type EditProfileValues = {
     x: string
     telegram: string
     discord: string
-}
-
-const INITIAL_VALUES: EditProfileValues = {
-    name: PROFILE.name,
-    biography: PROFILE.biography === "None" ? "" : PROFILE.biography,
-    x: "",
-    telegram: "",
-    discord: "",
 }
 
 const validate = (values: EditProfileValues) => {
@@ -53,8 +47,21 @@ const validate = (values: EditProfileValues) => {
     return errors
 }
 
-const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
-    const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(INITIAL_VALUES, validate)
+const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModalProps) => {
+    /* Dialog trả về null khi đóng nên form này unmount/mount lại mỗi lần mở -
+       initialValues luôn lấy đúng profile mới nhất đã lưu */
+    const initialValues = React.useMemo<EditProfileValues>(
+        () => ({
+            name: profile.name,
+            biography: profile.biography === "None" ? "" : profile.biography,
+            x: "",
+            telegram: "",
+            discord: "",
+        }),
+        [profile]
+    )
+
+    const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(initialValues, validate)
     const [submitting, setSubmitting] = React.useState(false)
     const { success } = useToast()
 
@@ -73,6 +80,11 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
         // Giả lập gọi API cập nhật hồ sơ (chưa nối API thật)
         window.setTimeout(() => {
             setSubmitting(false)
+            onSave({
+                ...profile,
+                name: values.name.trim(),
+                biography: values.biography.trim() || "None",
+            })
             success("Profile updated successfully")
             onClose()
         }, 600)
