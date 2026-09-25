@@ -14,7 +14,7 @@ import {
 } from "../../../components/ui/table"
 import { Tabs, type TabOption } from "../../../components/ui/tabs"
 import cn from "../../../utils/cn"
-import { LEADERBOARD_ROWS } from "../../../mocks/leaderboard"
+import { LEADERBOARD_ROWS, type LeaderboardRow } from "../../../mocks/leaderboard"
 
 type Chain = "bnb" | "base"
 
@@ -33,6 +33,61 @@ const COLUMNS = [
     { label: "Token Price", align: "right" },
 ] as const
 
+/* Thay thế cho 1 dòng bảng trên Mobile/Tablet - tránh phải cuộn ngang bảng 7 cột */
+const LeaderboardRowCard = ({ row }: { row: LeaderboardRow }) => (
+    <div
+        className={cn(
+            "flex flex-col gap-3 rounded-xl border border-teal-600/20 bg-background p-3.5",
+            row.isCurrentUser && "border-transparent bg-teal-600 text-white"
+        )}
+    >
+        <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+                <span
+                    className={cn(
+                        "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                        row.isCurrentUser ? "bg-white/20 text-white" : "bg-teal-50 text-teal-600"
+                    )}
+                >
+                    #{row.rank}
+                </span>
+                <Avatar fallback={row.name} alt={row.name} size="md" />
+                <div className="flex min-w-0 flex-col leading-tight">
+                    <span className="truncate text-sm font-medium">{row.name}</span>
+                    <CopyAddress
+                        address={row.symbol}
+                        short={false}
+                        className={cn("text-[10px]", row.isCurrentUser && "text-white/80")}
+                    />
+                </div>
+            </div>
+
+            <span className={cn("shrink-0 text-sm font-semibold", row.isCurrentUser ? "text-white" : "text-teal-600")}>
+                {row.change}
+            </span>
+        </div>
+
+        <dl className="grid grid-cols-3 gap-2 text-center">
+            {[
+                { label: "Market Cap", value: row.marketCap },
+                { label: "Volume 24h", value: row.volume },
+                { label: "Price", value: row.price },
+            ].map(({ label, value }) => (
+                <div key={label} className={cn("rounded-lg p-2", row.isCurrentUser ? "bg-white/10" : "bg-muted/60")}>
+                    <dt className={cn("truncate text-[9px]", row.isCurrentUser ? "text-white/70" : "text-muted-foreground")}>
+                        {label}
+                    </dt>
+                    <dd className="mt-0.5 truncate text-xs font-semibold">{value}</dd>
+                </div>
+            ))}
+        </dl>
+
+        <p className={cn("truncate text-[11px]", row.isCurrentUser ? "text-white/70" : "text-muted-foreground")}>
+            Creator: <span className={row.isCurrentUser ? "text-white" : "text-foreground"}>{row.creator}</span>
+        </p>
+    </div>
+)
+
 const LeaderboardTable = () => {
     const [chain, setChain] = React.useState<Chain>("bnb")
 
@@ -47,7 +102,14 @@ const LeaderboardTable = () => {
                     <Tabs options={CHAINS} value={chain} onChange={setChain} />
                 </CardHeader>
 
-                <div className="px-2 pb-2 sm:px-4 sm:pb-4">
+                {/* < lg: Card, xếp 1 cột Mobile / 2 cột Tablet. >= lg: bảng đầy đủ 7 cột */}
+                <div className="grid grid-cols-1 gap-2.5 p-3 sm:grid-cols-2 lg:hidden">
+                    {LEADERBOARD_ROWS.map((row) => (
+                        <LeaderboardRowCard key={row.rank} row={row} />
+                    ))}
+                </div>
+
+                <div className="hidden px-2 pb-2 lg:block lg:px-4 lg:pb-4">
                     <Table className="min-w-[760px]">
                         <TableHeader>
                             <TableRow className="border-0 bg-teal-50 hover:bg-teal-50">
