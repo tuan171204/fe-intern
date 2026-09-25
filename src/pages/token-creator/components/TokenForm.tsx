@@ -5,6 +5,7 @@ import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import { Textarea } from "../../../components/ui/textarea"
 import { useFormValidation } from "../../../hooks/useFormValidation"
+import { useToast } from "../../../store/ToastContext"
 import SocialLinksSection from "./SocialLinksSection"
 
 const DESCRIPTION_MAX = 500
@@ -61,23 +62,50 @@ const validate = (values: TokenFormValues) => {
 const TokenForm = () => {
     const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(INITIAL_VALUES, validate)
     const [image, setImage] = React.useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined)
     const [imageTouched, setImageTouched] = React.useState(false)
-    const [submitted, setSubmitted] = React.useState(false)
+    const [submitting, setSubmitting] = React.useState(false)
+    const { success } = useToast()
+
+    React.useEffect(() => {
+        if (!image) {
+            setPreviewUrl(undefined)
+            return
+        }
+        const url = URL.createObjectURL(image)
+        setPreviewUrl(url)
+        return () => URL.revokeObjectURL(url)
+    }, [image])
 
     const imageError = imageTouched && !image ? "Please select an image" : undefined
+
+    const handleImageSelected = ([file]: File[]) => {
+        setImage(file)
+        setImageTouched(true)
+        success("Token image uploaded successfully")
+    }
+
+    const handleRemoveImage = () => {
+        setImage(null)
+        setImageTouched(true)
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         touchAll()
         setImageTouched(true)
-        setSubmitted(false)
 
         if (Object.keys(errors).length > 0 || !image) return
 
-        setSubmitted(true)
-        reset()
-        setImage(null)
-        setImageTouched(false)
+        setSubmitting(true)
+        // Giả lập gọi API tạo token (chưa nối API thật)
+        window.setTimeout(() => {
+            setSubmitting(false)
+            success("Token created successfully")
+            reset()
+            setImage(null)
+            setImageTouched(false)
+        }, 600)
     }
 
     return (
@@ -144,11 +172,9 @@ const TokenForm = () => {
                         <span className="mr-0.5 text-destructive">*</span>Image
                     </span>
                     <Dropzone
-                        onFilesSelected={([file]) => {
-                            setImage(file)
-                            setImageTouched(true)
-                        }}
-                        label={image?.name}
+                        onFilesSelected={handleImageSelected}
+                        previewUrl={previewUrl}
+                        onRemove={previewUrl ? handleRemoveImage : undefined}
                         error={imageError}
                         className="min-h-28"
                     />
@@ -168,13 +194,9 @@ const TokenForm = () => {
 
             <SocialLinksSection />
 
-            {submitted && (
-                <p role="status" className="text-center text-xs font-medium text-teal-600">
-                    Token created successfully (mock)!
-                </p>
-            )}
-
-            <SubmitButton className="h-11">Create</SubmitButton>
+            <SubmitButton loading={submitting} disabled={submitting} className="h-11">
+                Create
+            </SubmitButton>
         </form>
     )
 }

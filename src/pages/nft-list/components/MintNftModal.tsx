@@ -5,6 +5,7 @@ import { Dropzone } from "../../../components/ui/dropzone"
 import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import type { NftItem } from "../../../mocks/nfts"
+import { useToast } from "../../../store/ToastContext"
 
 export interface MintNftModalProps {
     nft: NftItem | null
@@ -15,11 +16,14 @@ const MintNftModal = ({ nft, onClose }: MintNftModalProps) => {
     const [file, setFile] = React.useState<File | null>(null)
     const [touched, setTouched] = React.useState(false)
     const [feeWarning, setFeeWarning] = React.useState<string | undefined>(undefined)
+    const [submitting, setSubmitting] = React.useState(false)
+    const { success } = useToast()
 
     const handleClose = () => {
         setFile(null)
         setTouched(false)
         setFeeWarning(undefined)
+        setSubmitting(false)
         onClose()
     }
 
@@ -28,9 +32,15 @@ const MintNftModal = ({ nft, onClose }: MintNftModalProps) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setTouched(true)
-        if (!file) return
+        if (!file || !nft) return
 
-        handleClose()
+        setSubmitting(true)
+        // Giả lập gọi API mint (chưa nối API thật)
+        window.setTimeout(() => {
+            setSubmitting(false)
+            success(`Minted ${nft.name} successfully`)
+            handleClose()
+        }, 600)
     }
 
     return (
@@ -58,7 +68,9 @@ const MintNftModal = ({ nft, onClose }: MintNftModalProps) => {
                         onFocus={() => setFeeWarning("You are not allowed to change the mint fee")}
                         error={feeWarning}
                     />
-                    <SubmitButton className="mt-2">Mint</SubmitButton>
+                    <SubmitButton loading={submitting} disabled={submitting} className="mt-2">
+                        Mint
+                    </SubmitButton>
                 </form>
             )}
         </Dialog>
