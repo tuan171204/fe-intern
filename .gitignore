@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 .vite/
+.env.development
+.env
 
 node_modules
 dist
