@@ -1,4 +1,3 @@
-// File: src/pages/token-list/components/MintModal.tsx
 import * as React from "react"
 
 import { Dialog } from "../../../components/ui/dialog"

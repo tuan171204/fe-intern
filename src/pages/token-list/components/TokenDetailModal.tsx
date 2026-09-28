@@ -1,4 +1,3 @@
-// File: src/pages/token-list/components/TokenDetailModal.tsx
 import * as React from "react"
 
 import { getTokenById } from "../../../api/token"

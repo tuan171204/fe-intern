@@ -1,4 +1,3 @@
-// File: src/pages/token-list/index.tsx
 import * as React from "react"
 
 import { getTokens } from "../../api/token"

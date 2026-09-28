@@ -1,4 +1,3 @@
-// File: src/pages/token-list/components/TokenRow.tsx
 import { Avatar } from "../../../components/ui/avatar"
 import { Button } from "../../../components/ui/button"
 import { CopyAddress } from "../../../components/ui/copy-address"
