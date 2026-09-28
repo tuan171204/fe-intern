@@ -31,3 +31,43 @@ PRODUCTION: yarn install -> yarn build:production
 ```
 
 - After running `yarn build:staging/uat/production`, React.js will produce an `dist` folder which contains the HTML/CSS/JS assets for your application.
+
+```
+fe-thai-tuan
+├─ components.json
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.js
+├─ public
+│  └─ vite.svg
+├─ README.md
+├─ src
+│  ├─ App.tsx
+│  ├─ components
+│  │  ├─ footer
+│  │  │  └─ index.tsx
+│  │  ├─ header
+│  │  │  └─ index.tsx
+│  │  └─ ui
+│  │     └─ button.tsx
+│  ├─ index.css
+│  ├─ main.tsx
+│  ├─ pages
+│  │  ├─ about
+│  │  │  └─ index.tsx
+│  │  └─ home
+│  │     └─ index.tsx
+│  ├─ utils
+│  │  ├─ api.ts
+│  │  └─ cn.ts
+│  └─ vite-env.d.ts
+├─ tailwind.config.js
+├─ tsconfig.app.json
+├─ tsconfig.json
+├─ tsconfig.node.json
+├─ vite.config.ts
+└─ yarn.lock
+
+```
