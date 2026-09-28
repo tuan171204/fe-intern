@@ -1,13 +1,15 @@
+// File: src/pages/token-list/components/MintModal.tsx
 import * as React from "react"
 
 import { Dialog } from "../../../components/ui/dialog"
 import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
-import type { TokenItem } from "../../../mocks/tokens"
 import { useToast } from "../../../store/ToastContext"
+import type { Token } from "../../../types/tokens"
+import { AMOUNT_PER_MINT, MINT_FEE } from "./mint-config"
 
 export interface MintModalProps {
-    token: TokenItem | null
+    token: Token | null
     onClose: () => void
 }
 
@@ -45,7 +47,7 @@ const MintModal = ({ token, onClose }: MintModalProps) => {
         if (!isQuantityValid || !token) return
 
         setSubmitting(true)
-        // Giả lập gọi API mint (chưa nối API thật)
+        // Giả lập gọi API mint (backend chưa có endpoint mint)
         window.setTimeout(() => {
             setSubmitting(false)
             success(`Minted ${quantityNum} ${token.name} successfully`)
@@ -53,7 +55,7 @@ const MintModal = ({ token, onClose }: MintModalProps) => {
         }, 600)
     }
 
-    const totalFee = token && isQuantityValid ? (Number(token.mintFee) * quantityNum).toFixed(3) : token?.mintFee ?? "0"
+    const totalFee = isQuantityValid ? (Number(MINT_FEE) * quantityNum).toFixed(3) : MINT_FEE
 
     return (
         <Dialog isOpen={!!token} onClose={handleClose} title={token ? `${token.name} Token` : undefined}>
@@ -75,7 +77,7 @@ const MintModal = ({ token, onClose }: MintModalProps) => {
                     <Input
                         label="Amount Per Mint"
                         readOnly
-                        value={token.amountPerMint}
+                        value={AMOUNT_PER_MINT}
                         className={readOnlyField}
                         onClick={() => setAmountWarning("You are not allowed to change the amount per mint")}
                         onFocus={() => setAmountWarning("You are not allowed to change the amount per mint")}
