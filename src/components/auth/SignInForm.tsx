@@ -1,10 +1,13 @@
+// File: src/components/auth/SignInForm.tsx
 import * as React from "react"
 
 import { Input } from "../ui/input"
 import { PasswordInput } from "../ui/password-input"
 import { SubmitButton } from "../ui/submit-button"
+import { signIn } from "../../api/auth"
 import { useAuth } from "../../store/AuthContext"
-import { validateCredentials } from "../../mocks/auth"
+import { useToast } from "../../store/ToastContext"
+import { getErrorMessage } from "../../utils/api"
 
 export interface AuthFormProps {
     /** Chuyển sang form còn lại (Sign In <-> Register) */
@@ -15,28 +18,32 @@ export interface AuthFormProps {
 
 const SignInForm = ({ onSwitch, onSuccess }: AuthFormProps) => {
     const { login } = useAuth()
+    const { success, error } = useToast()
     const [address, setAddress] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [touched, setTouched] = React.useState(false)
-    const [notFound, setNotFound] = React.useState(false)
+    const [submitting, setSubmitting] = React.useState(false)
 
     const addressError = touched && !address.trim() ? "Wallet address is required" : undefined
     const passwordError = touched && !password ? "Password is required" : undefined
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setTouched(true)
-        setNotFound(false)
 
-        if (!address.trim() || !password) return
+        if (!address.trim() || !password || submitting) return
 
-        if (!validateCredentials(address.trim(), password)) {
-            setNotFound(true)
-            return
+        setSubmitting(true)
+        try {
+            const { data: token } = await signIn({ walletAddress: address.trim(), password })
+            login(token)
+            success("Signed in successfully")
+            onSuccess()
+        } catch (err) {
+            error(getErrorMessage(err, "Sign in failed"))
+        } finally {
+            setSubmitting(false)
         }
-
-        login(address.trim())
-        onSuccess()
     }
 
     return (
@@ -47,10 +54,7 @@ const SignInForm = ({ onSwitch, onSuccess }: AuthFormProps) => {
                 autoComplete="off"
                 className="h-11"
                 value={address}
-                onChange={(e) => {
-                    setAddress(e.target.value)
-                    setNotFound(false)
-                }}
+                onChange={(e) => setAddress(e.target.value)}
                 error={addressError}
             />
             <PasswordInput
@@ -58,20 +62,13 @@ const SignInForm = ({ onSwitch, onSuccess }: AuthFormProps) => {
                 autoComplete="current-password"
                 className="h-11"
                 value={password}
-                onChange={(e) => {
-                    setPassword(e.target.value)
-                    setNotFound(false)
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 error={passwordError}
             />
 
-            <SubmitButton className="mt-2 tracking-widest">Sign</SubmitButton>
-
-            {notFound && (
-                <p role="alert" className="-mt-2 text-center text-xs text-destructive">
-                    Account not found. Please check your wallet address or password.
-                </p>
-            )}
+            <SubmitButton loading={submitting} disabled={submitting} className="mt-2 tracking-widest">
+                Sign
+            </SubmitButton>
 
             <button
                 type="button"
