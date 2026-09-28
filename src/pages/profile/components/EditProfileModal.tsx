@@ -1,20 +1,23 @@
+// File: src/pages/profile/components/EditProfileModal.tsx
 import * as React from "react"
 
+import { updateProfile } from "../../../api/profile"
 import { Dialog } from "../../../components/ui/dialog"
 import Icon from "../../../components/ui/icon"
 import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import { Textarea } from "../../../components/ui/textarea"
 import { useFormValidation } from "../../../hooks/useFormValidation"
-import type { ProfileData } from "../../../mocks/profile"
 import { useToast } from "../../../store/ToastContext"
+import type { UserProfile } from "../../../types/profile"
+import { getErrorMessage } from "../../../utils/api"
 import { isValidUrl } from "../../../utils/validators"
 import { SOCIAL_LINKS } from "./social-links"
 
 export interface EditProfileModalProps {
     isOpen: boolean
-    profile: ProfileData
-    onSave: (profile: ProfileData) => void
+    profile: UserProfile
+    onSave: (profile: UserProfile) => void
     onClose: () => void
 }
 
@@ -24,9 +27,9 @@ const BIO_MAX = 280
 type EditProfileValues = {
     name: string
     biography: string
-    x: string
-    telegram: string
-    discord: string
+    xUrl: string
+    telegramUrl: string
+    githubUrl: string
 }
 
 const validate = (values: EditProfileValues) => {
@@ -48,22 +51,25 @@ const validate = (values: EditProfileValues) => {
 }
 
 const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModalProps) => {
-    /* Dialog trả về null khi đóng nên form này unmount/mount lại mỗi lần mở -
-       initialValues luôn lấy đúng profile mới nhất đã lưu */
     const initialValues = React.useMemo<EditProfileValues>(
         () => ({
-            name: profile.name,
-            biography: profile.biography === "None" ? "" : profile.biography,
-            x: "",
-            telegram: "",
-            discord: "",
+            name: profile.username ?? "",
+            biography: profile.bio ?? "",
+            xUrl: profile.xUrl ?? "",
+            telegramUrl: profile.telegramUrl ?? "",
+            githubUrl: profile.githubUrl ?? "",
         }),
         [profile]
     )
 
     const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(initialValues, validate)
     const [submitting, setSubmitting] = React.useState(false)
-    const { success } = useToast()
+    const { success, error } = useToast()
+
+    /* Mỗi lần mở modal, nạp lại form theo profile mới nhất đã lưu */
+    React.useEffect(() => {
+        if (isOpen) reset()
+    }, [isOpen, reset])
 
     const handleClose = () => {
         if (submitting) return
@@ -71,23 +77,29 @@ const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModal
         onClose()
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         touchAll()
-        if (Object.keys(errors).length > 0) return
+        if (Object.keys(errors).length > 0 || submitting) return
 
         setSubmitting(true)
-        // Giả lập gọi API cập nhật hồ sơ (chưa nối API thật)
-        window.setTimeout(() => {
-            setSubmitting(false)
-            onSave({
-                ...profile,
-                name: values.name.trim(),
-                biography: values.biography.trim() || "None",
+        try {
+            /* Gửi đủ 5 field; chuỗi rỗng = xoá giá trị */
+            const updated = await updateProfile({
+                username: values.name.trim(),
+                bio: values.biography.trim(),
+                telegramUrl: values.telegramUrl.trim(),
+                xUrl: values.xUrl.trim(),
+                githubUrl: values.githubUrl.trim(),
             })
+            onSave(updated)
             success("Profile updated successfully")
             onClose()
-        }, 600)
+        } catch (err) {
+            error(getErrorMessage(err, "Failed to update profile"))
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     return (
