@@ -16,7 +16,7 @@ export interface ToastViewportProps {
 
 const VARIANT_STYLES: Record<ToastVariant, string> = {
     success: "border-teal-600/30 bg-teal-50 text-teal-700",
-    error: "border-destructive/30 bg-destructive/10 text-destructive",
+    error: "border-transparent bg-red-600 text-white",
 }
 
 /** Danh sách toast nổi góc dưới bên phải (mobile: full-width sát cạnh dưới) */

@@ -1,3 +1,4 @@
+// File: src/components/auth/RegisterForm.tsx
 import * as React from "react"
 
 import { Input } from "../ui/input"
@@ -5,8 +6,9 @@ import { PasswordInput } from "../ui/password-input"
 import { PasswordStrengthMeter } from "../ui/password-strength"
 import { SubmitButton } from "../ui/submit-button"
 import { useFormValidation } from "../../hooks/useFormValidation"
-import { useAuth } from "../../store/AuthContext"
-import { registerUser } from "../../mocks/auth"
+import { useToast } from "../../store/ToastContext"
+import { signUp } from "../../api/auth"
+import { getErrorMessage } from "../../utils/api"
 import { getPasswordStrength, isValidWalletAddress } from "../../utils/validators"
 import type { AuthFormProps } from "./SignInForm"
 
@@ -22,7 +24,8 @@ const validate = (values: RegisterValues) => {
     const errors: Partial<Record<keyof RegisterValues, string>> = {}
 
     if (!values.address.trim()) errors.address = "Wallet address is required"
-    else if (!isValidWalletAddress(values.address)) errors.address = "Invalid address format (must start with 0x and contain 40 characters: 0-9, a-f)"
+    else if (!isValidWalletAddress(values.address))
+        errors.address = "Invalid wallet address format (must start with 0x and contain 40 characters: 0-9, a-f)"
 
     if (!values.password) errors.password = "Password is required"
     else if (getPasswordStrength(values.password).level !== "strong")
@@ -34,26 +37,27 @@ const validate = (values: RegisterValues) => {
     return errors
 }
 
-const RegisterForm = ({ onSwitch, onSuccess }: AuthFormProps) => {
-    const { login } = useAuth()
+const RegisterForm = ({ onSwitch }: AuthFormProps) => {
     const { values, setField, fieldError, errors, touchAll } = useFormValidation(INITIAL_VALUES, validate)
-    const [submitError, setSubmitError] = React.useState("")
+    const [submitting, setSubmitting] = React.useState(false)
+    const { success, error } = useToast()
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         touchAll()
-        setSubmitError("")
 
-        if (Object.keys(errors).length > 0) return
+        if (Object.keys(errors).length > 0 || submitting) return
 
-        const result = registerUser(values.address.trim(), values.password)
-        if (!result.success) {
-            setSubmitError(result.error ?? "Registration failed")
-            return
+        setSubmitting(true)
+        try {
+            await signUp({ walletAddress: values.address.trim(), password: values.password })
+            success("Registered successfully. Please sign in.")
+            onSwitch()
+        } catch (err) {
+            error(getErrorMessage(err, "Registration failed"))
+        } finally {
+            setSubmitting(false)
         }
-
-        login(values.address.trim())
-        onSuccess()
     }
 
     return (
@@ -89,13 +93,9 @@ const RegisterForm = ({ onSwitch, onSuccess }: AuthFormProps) => {
                 error={fieldError("confirmPassword")}
             />
 
-            {submitError && (
-                <p role="alert" className="text-center text-xs text-destructive">
-                    {submitError}
-                </p>
-            )}
-
-            <SubmitButton className="mt-2 tracking-widest">Register</SubmitButton>
+            <SubmitButton loading={submitting} disabled={submitting} className="mt-2 tracking-widest">
+                Register
+            </SubmitButton>
 
             <button
                 type="button"
