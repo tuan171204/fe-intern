@@ -1,24 +1,80 @@
 import * as React from "react"
 
-import { TOKEN_LIST, type TokenItem } from "../../mocks/tokens"
+import { getTokens } from "../../api/token"
+import { Button } from "../../components/ui/button"
+import Pagination from "../../components/ui/pagination"
+import { usePaginatedTokens } from "../../hooks/usePaginatedTokens"
+import type { Token } from "../../types/tokens"
 import MintModal from "./components/MintModal"
+import TokenDetailModal from "./components/TokenDetailModal"
 import TokenListHeader from "./components/TokenListHeader"
 import TokenRow from "./components/TokenRow"
+import TokenRowSkeleton from "./components/TokenRowSkeleton"
+
+const TOKENS_PER_PAGE = 10
+const SKELETON_ROWS = 5
 
 const TokenList = () => {
-    const [mintingToken, setMintingToken] = React.useState<TokenItem | null>(null)
+    const [page, setPage] = React.useState(1)
+    const [detailTokenId, setDetailTokenId] = React.useState<string | null>(null)
+    const [mintingToken, setMintingToken] = React.useState<Token | null>(null)
+    const { items, pagination, loading, error, reload } = usePaginatedTokens(getTokens, page, TOKENS_PER_PAGE)
+
+    const handlePageChange = (nextPage: number) => {
+        setPage(nextPage)
+        window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+
+    const renderRows = () => {
+        if (loading) {
+            return Array.from({ length: SKELETON_ROWS }, (_, i) => <TokenRowSkeleton key={i} />)
+        }
+
+        if (error) {
+            return (
+                <div role="row" className="flex flex-col items-center gap-3 p-8 text-center">
+                    <p role="cell" className="text-sm text-destructive">
+                        {error}
+                    </p>
+                    <Button variant="outline" size="sm" onClick={reload}>
+                        Retry
+                    </Button>
+                </div>
+            )
+        }
+
+        if (items.length === 0) {
+            return (
+                <div role="row" className="p-8 text-center text-sm text-muted-foreground">
+                    <span role="cell">No tokens have been created yet.</span>
+                </div>
+            )
+        }
+
+        return items.map((token) => (
+            <TokenRow key={token._id} token={token} onSelect={setDetailTokenId} onMint={setMintingToken} />
+        ))
+    }
 
     return (
         <>
             <div role="table" aria-label="Tokens" className="flex w-full flex-col gap-2.5">
                 <TokenListHeader />
                 <div role="rowgroup" className="divide-y divide-border/60 overflow-hidden rounded-lg bg-background">
-                    {TOKEN_LIST.map((token) => (
-                        <TokenRow key={token.id} token={token} onMint={setMintingToken} />
-                    ))}
+                    {renderRows()}
                 </div>
             </div>
 
+            <Pagination
+                page={page}
+                limit={pagination.limit}
+                total={pagination.total}
+                onPageChange={handlePageChange}
+                disabled={loading}
+                className="mt-4"
+            />
+
+            <TokenDetailModal tokenId={detailTokenId} onClose={() => setDetailTokenId(null)} />
             <MintModal token={mintingToken} onClose={() => setMintingToken(null)} />
         </>
     )
