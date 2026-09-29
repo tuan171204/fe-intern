@@ -40,7 +40,7 @@ const ToastViewport = ({ items, onDismiss }: ToastViewportProps) => {
                         VARIANT_STYLES[item.variant]
                     )}
                 >
-                    <Icon name={item.variant === "success" ? "check" : "close"} size="sm" className="mt-0.5 shrink-0" />
+                    {/* <Icon name={item.variant === "success" ? "check" : "close"} size="sm" className="mt-0.5 shrink-0" /> */}
                     <p className="flex-1">{item.message}</p>
                     <button
                         type="button"
@@ -48,7 +48,7 @@ const ToastViewport = ({ items, onDismiss }: ToastViewportProps) => {
                         aria-label="Dismiss notification"
                         className="shrink-0 rounded p-0.5 text-current/70 transition-colors hover:text-current"
                     >
-                        <Icon name="close" size="xs" />
+                        <Icon name="close" size="md" />
                     </button>
                 </div>
             ))}

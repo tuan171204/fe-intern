@@ -1,11 +1,16 @@
+// File: src/pages/token-creator/components/TokenForm.tsx
 import * as React from "react"
+import { useNavigate } from "react-router-dom"
 
+import { createToken } from "../../../api/token"
 import { Dropzone } from "../../../components/ui/dropzone"
 import { Input } from "../../../components/ui/input"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import { Textarea } from "../../../components/ui/textarea"
 import { useFormValidation } from "../../../hooks/useFormValidation"
 import { useToast } from "../../../store/ToastContext"
+import { getErrorMessage } from "../../../utils/api"
+import { IMAGE_ACCEPT, IMAGE_MAX_SIZE_MB, validateImageFile } from "../../../utils/validators"
 import SocialLinksSection, {
     EMPTY_SOCIAL_LINKS,
     validateSocialLinks,
@@ -15,6 +20,8 @@ import SocialLinksSection, {
 const DESCRIPTION_MAX = 500
 const NAME_MAX = 32
 const SYMBOL_MAX = 8
+const DECIMAL_MIN = 1
+const DECIMAL_MAX = 18
 
 type TokenFormValues = {
     name: string
@@ -45,12 +52,14 @@ const validate = (values: TokenFormValues) => {
 
     const decimalNum = Number(values.decimal)
     if (!values.decimal.trim()) errors.decimal = "Decimal is required"
-    else if (!Number.isInteger(decimalNum) || decimalNum < 0 || decimalNum > 18)
-        errors.decimal = "Decimal must be an integer between 0 and 18"
+    else if (!Number.isInteger(decimalNum) || decimalNum < DECIMAL_MIN || decimalNum > DECIMAL_MAX)
+        /* Backend: decimals phải nằm trong khoảng 1 - 18 */
+        errors.decimal = `Decimal must be an integer between ${DECIMAL_MIN} and ${DECIMAL_MAX}`
 
     const supplyNum = Number(values.supply)
     if (!values.supply.trim()) errors.supply = "Supply is required"
     else if (!(supplyNum > 0)) errors.supply = "Supply must be a positive number"
+    else if (supplyNum > Number.MAX_SAFE_INTEGER) errors.supply = "Supply is too large"
 
     const amountNum = Number(values.amountPerMint)
     if (!values.amountPerMint.trim()) errors.amountPerMint = "Amount per mint is required"
@@ -64,15 +73,15 @@ const validate = (values: TokenFormValues) => {
 }
 
 const TokenForm = () => {
-    const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(INITIAL_VALUES, validate)
+    const { values, setField, fieldError, errors, touchAll } = useFormValidation(INITIAL_VALUES, validate)
     const [image, setImage] = React.useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined)
     const [imageTouched, setImageTouched] = React.useState(false)
+    const [imageFileError, setImageFileError] = React.useState<string | undefined>(undefined)
     const [submitting, setSubmitting] = React.useState(false)
-    const { success } = useToast()
+    const { success, error: toastError } = useToast()
+    const navigate = useNavigate()
 
-    /* Social links được nâng lên đây để lỗi validate của chúng thực sự chặn được submit
-       (trước đây SocialLinksSection tự quản lý state nội bộ, lỗi hiển thị chỉ mang tính hình thức) */
     const [socialEnabled, setSocialEnabled] = React.useState(true)
     const [socialValues, setSocialValues] = React.useState<SocialLinksValues>(EMPTY_SOCIAL_LINKS)
     const [submitAttempted, setSubmitAttempted] = React.useState(false)
@@ -87,40 +96,61 @@ const TokenForm = () => {
         return () => URL.revokeObjectURL(url)
     }, [image])
 
-    const imageError = imageTouched && !image ? "Please select an image" : undefined
+    const imageError = imageFileError ?? (imageTouched && !image ? "Please select an image" : undefined)
     const socialLinksValid = !socialEnabled || validateSocialLinks(socialValues)
 
     const handleImageSelected = ([file]: File[]) => {
-        setImage(file)
         setImageTouched(true)
+
+        /* Drag-drop có thể bypass thuộc tính accept nên phải validate */
+        const fileError = validateImageFile(file)
+        if (fileError) {
+            setImageFileError(fileError)
+            toastError(fileError)
+            return
+        }
+
+        setImageFileError(undefined)
+        setImage(file)
         success("Token image uploaded successfully")
     }
 
     const handleRemoveImage = () => {
         setImage(null)
+        setImageFileError(undefined)
         setImageTouched(true)
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         touchAll()
         setImageTouched(true)
         setSubmitAttempted(true)
 
+        if (submitting) return
         if (Object.keys(errors).length > 0 || !image || !socialLinksValid) return
 
         setSubmitting(true)
-        // Giả lập gọi API tạo token (chưa nối API thật)
-        window.setTimeout(() => {
-            setSubmitting(false)
+        try {
+            await createToken({
+                image,
+                name: values.name.trim(),
+                symbol: values.symbol.trim(),
+                decimals: values.decimal.trim(),
+                supply: values.supply.trim(),
+                description: values.description.trim(),
+                websiteUrl: socialEnabled ? socialValues.website : undefined,
+                telegramUrl: socialEnabled ? socialValues.telegram : undefined,
+                discordUrl: socialEnabled ? socialValues.discord : undefined,
+                xUrl: socialEnabled ? socialValues.twitter : undefined,
+            })
             success("Token created successfully")
-            reset()
-            setImage(null)
-            setImageTouched(false)
-            setSocialEnabled(true)
-            setSocialValues(EMPTY_SOCIAL_LINKS)
-            setSubmitAttempted(false)
-        }, 600)
+            navigate("/profile")
+        } catch (err) {
+            toastError(getErrorMessage(err, "Failed to create token"))
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     return (
@@ -151,8 +181,8 @@ const TokenForm = () => {
                     required
                     type="number"
                     inputMode="numeric"
-                    min={0}
-                    max={18}
+                    min={DECIMAL_MIN}
+                    max={DECIMAL_MAX}
                     placeholder="6"
                     hint="Most token use 6 decimals"
                     value={values.decimal}
@@ -189,6 +219,8 @@ const TokenForm = () => {
                         <span className="mr-0.5 text-destructive">*</span>Image
                     </span>
                     <Dropzone
+                        accept={IMAGE_ACCEPT}
+                        hint={`png, .jpg, .svg, max ${IMAGE_MAX_SIZE_MB}MB`}
                         onFilesSelected={handleImageSelected}
                         previewUrl={previewUrl}
                         onRemove={previewUrl ? handleRemoveImage : undefined}

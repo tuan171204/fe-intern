@@ -35,3 +35,21 @@ export interface TokenDetailResponse {
     message: string
     data: Token
 }
+
+export interface CreateTokenPayload {
+    image: File
+    name: string
+    symbol: string
+    decimals: string | number
+    supply: string | number
+    description: string
+    websiteUrl?: string
+    telegramUrl?: string
+    discordUrl?: string
+    xUrl?: string
+}
+
+export interface CreateTokenResponse {
+    message: string
+    data: Token
+}
