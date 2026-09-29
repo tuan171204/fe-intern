@@ -1,4 +1,3 @@
-// File: src/api/auth.ts
 import api from "../utils/api"
 import type { SignInPayload, SignInResponse, SignUpPayload, SignUpResponse } from "../types/auth"
 

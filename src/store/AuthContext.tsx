@@ -1,7 +1,8 @@
-// File: src/store/AuthContext.tsx
 import * as React from "react"
 
-import { UNAUTHORIZED_EVENT, clearToken, getToken, setToken } from "../utils/api"
+import { getProfile } from "../api/profile"
+import type { UserProfile } from "../types/profile"
+import { UNAUTHORIZED_EVENT, clearToken, getErrorMessage, getToken, setToken } from "../utils/api"
 import { useToast } from "./ToastContext"
 
 export interface AuthUser {
@@ -14,6 +15,12 @@ interface AuthContextValue {
     /** Nhận JWT từ API sign-in, lưu vào localStorage và cập nhật state */
     login: (token: string) => void
     logout: () => void
+    profile: UserProfile | null
+    profileLoading: boolean
+    profileError: string | null
+    fetchProfile: () => Promise<void>
+    /** Cập nhật profile trong context (vd: sau khi Edit Profile thành công) */
+    setProfile: (profile: UserProfile) => void
 }
 
 interface JwtPayload {
@@ -52,6 +59,9 @@ const readSession = (): AuthUser | null => {
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = React.useState<AuthUser | null>(() => readSession())
+    const [profile, setProfile] = React.useState<UserProfile | null>(null)
+    const [profileLoading, setProfileLoading] = React.useState(false)
+    const [profileError, setProfileError] = React.useState<string | null>(null)
     const { error } = useToast()
 
     const login = React.useCallback((token: string) => {
@@ -66,6 +76,31 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null)
     }, [])
 
+    const fetchProfile = React.useCallback(async () => {
+        const requestToken = getToken()
+        setProfileLoading(true)
+        setProfileError(null)
+        try {
+            const data = await getProfile()
+            if (getToken() === requestToken) setProfile(data)
+        } catch (err) {
+            if (getToken() === requestToken) setProfileError(getErrorMessage(err, "Failed to load profile"))
+        } finally {
+            setProfileLoading(false)
+        }
+    }, [])
+
+    /* Có phiên đăng nhập (khởi chạy app / vừa login) -> tải profile; đăng xuất -> xoá profile */
+    const isLogged = !!user
+    React.useEffect(() => {
+        if (isLogged) {
+            void fetchProfile()
+        } else {
+            setProfile(null)
+            setProfileError(null)
+        }
+    }, [isLogged, fetchProfile])
+
     /* Token bị server từ chối (hết hạn/không hợp lệ): interceptor đã xoá token, ở đây reset state */
     React.useEffect(() => {
         const onUnauthorized = () => {
@@ -77,8 +112,18 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [error])
 
     const value = React.useMemo<AuthContextValue>(
-        () => ({ isLogged: !!user, user, login, logout }),
-        [user, login, logout]
+        () => ({
+            isLogged,
+            user,
+            login,
+            logout,
+            profile,
+            profileLoading,
+            profileError,
+            fetchProfile,
+            setProfile,
+        }),
+        [isLogged, user, login, logout, profile, profileLoading, profileError, fetchProfile]
     )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

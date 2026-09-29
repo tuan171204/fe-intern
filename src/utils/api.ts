@@ -2,6 +2,7 @@
 import axios, { isAxiosError } from "axios"
 
 export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5035/v1"
+export const ASSET_BASE_URL: string = import.meta.env.VITE_ASSET_BASE_URL ?? "http://localhost:5035"
 
 export const AUTH_TOKEN_KEY = "auth_token"
 export const UNAUTHORIZED_EVENT = "auth:unauthorized"
@@ -47,6 +48,13 @@ export const getErrorMessage = (error: unknown, fallback = "Something went wrong
         return error.response.data?.message ?? fallback
     }
     return fallback
+}
+
+/** Ghép đường dẫn ảnh backend trả về ("/uploads/171...png") với server */
+export const getImageUrl = (path?: string | null): string | undefined => {
+    if (!path) return undefined
+    if (/^https?:\/\//i.test(path)) return path
+    return `${ASSET_BASE_URL}/${path.replace(/^\/+/, "")}`
 }
 
 export default api

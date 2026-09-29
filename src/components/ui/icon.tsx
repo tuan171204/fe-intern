@@ -3,11 +3,14 @@ import {
     BarChart3,
     Check,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     Coins,
     Copy,
     Eye,
     EyeOff,
     FileText,
+    Github,
     Globe,
     Hexagon,
     Home,
@@ -61,6 +64,9 @@ const ICONS = {
     hexagon: Hexagon,
     "x-twitter": XTwitterGlyph,
     telegram: TelegramGlyph,
+    "chevron-left": ChevronLeft,
+    "chevron-right": ChevronRight,
+    github: Github,
 } as const
 
 export type IconName = keyof typeof ICONS
