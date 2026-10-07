@@ -1,5 +1,3 @@
-// components/ui/Field.tsx
-// Label + input + hint/lỗi. `children` là render-prop nhận `id` để label gắn đúng với input.
 import { useId, type ReactNode } from 'react'
 
 interface FieldProps {

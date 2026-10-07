@@ -1,22 +1,28 @@
-// components/AccountMenu.tsx
-// Xử lý trường hợp MetaMask kết nối NHIỀU tài khoản:
-//  - wagmi trả `addresses` (tất cả account đã cấp quyền) và `address` (account đang active).
-//  - App chỉ dùng account active; khi đổi account trong MetaMask, wagmi tự cập nhật `address`.
-//  - Menu này liệt kê các account, đánh dấu account đang dùng, và cho mở lại hộp chọn account.
+// Menu chọn account trong số các account MetaMask đã cấp quyền cho app:
+//  - `accounts`: tất cả account đã cấp quyền; `address`: account đang dùng trong app.
+//  - Bấm một account để dùng nó (MetaMask không cho dApp tự đổi account của ví, nên app tự giữ lựa chọn).
+//  - Account chưa có trong danh sách: bấm "Chọn lại tài khoản kết nối" để mở hộp chọn của MetaMask.
 import { useEffect, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
-import type { EIP1193Provider } from 'viem'
+import type { Address, EIP1193Provider } from 'viem'
 import { shortenAddress } from '../lib/format'
 import { Avatar } from './ui/Avatar'
 import { Button } from './ui/Button'
 import { Icon } from './ui/Icon'
 
-export function AccountMenu() {
-  const { address, addresses, connector } = useAccount()
+interface AccountMenuProps {
+  /** Account đang dùng trong app */
+  address: Address | undefined
+  /** Các account đã cấp quyền */
+  accounts: readonly Address[]
+  onSelect: (address: Address) => void
+}
+
+export function AccountMenu({ address, accounts, onSelect }: AccountMenuProps) {
+  const { connector } = useAccount()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
-  // Đóng menu khi bấm ra ngoài hoặc nhấn Escape.
   useEffect(() => {
     if (!open) return
     const onMouseDown = (e: MouseEvent) => {
@@ -34,10 +40,8 @@ export function AccountMenu() {
   }, [open])
 
   if (!address) return null
-  const accounts = addresses ?? [address]
 
   // Mở hộp chọn account của MetaMask (wallet_requestPermissions) để thêm/bớt account được kết nối.
-  // Sau khi người dùng chọn xong, MetaMask phát accountsChanged và wagmi tự cập nhật.
   const manageAccounts = async () => {
     if (!connector) return
     try {
@@ -81,29 +85,38 @@ export function AccountMenu() {
           </p>
 
           <ul className="space-y-0.5">
-            {accounts.map((acc) => (
-              <li
-                key={acc}
-                className={`flex items-center gap-2.5 rounded-xl px-2 py-2 ${
-                  acc === address ? 'bg-indigo-50' : ''
-                }`}
-              >
-                <Avatar address={acc} size="sm" />
-                <span title={acc} className="flex-1 font-mono text-sm text-slate-800">
-                  {shortenAddress(acc)}
-                </span>
-                {acc === address && (
-                  <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold text-white">
-                    Đang dùng
-                  </span>
-                )}
-              </li>
-            ))}
+            {accounts.map((acc) => {
+              const isActive = acc === address
+              return (
+                <li key={acc}>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      onSelect(acc)
+                      setOpen(false)
+                    }}
+                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${isActive ? 'bg-indigo-50' : ''
+                      }`}
+                  >
+                    <Avatar address={acc} size="sm" />
+                    <span title={acc} className="flex-1 font-mono text-sm text-slate-800">
+                      {shortenAddress(acc)}
+                    </span>
+                    {isActive && (
+                      <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+                        Đang dùng
+                      </span>
+                    )}
+                  </button>
+                </li>
+              )
+            })}
           </ul>
 
           <p className="px-2 py-2 text-xs leading-relaxed text-slate-500">
-            Ứng dụng luôn dùng tài khoản đang được chọn trong MetaMask. Để đổi, hãy chọn tài khoản khác
-            ngay trong MetaMask.
+            Chọn tài khoản để dùng trong ứng dụng. Muốn dùng tài khoản chưa có trong danh sách, bấm
+            “Chọn lại tài khoản kết nối”.
           </p>
 
           <Button variant="secondary" size="sm" fullWidth onClick={manageAccounts}>

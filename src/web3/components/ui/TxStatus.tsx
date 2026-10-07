@@ -1,4 +1,3 @@
-// components/ui/TxStatus.tsx
 // Hiển thị trạng thái giao dịch: Loading / Success / Revert / Timeout / Error (kèm link Etherscan).
 import { EXPLORER_URL } from '../../constants/network'
 import { getErrorMessage, shortenAddress } from '../../lib/format'

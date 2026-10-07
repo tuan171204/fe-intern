@@ -1,4 +1,3 @@
-// components/ui/Notice.tsx
 import type { ReactNode } from 'react'
 import { Icon, type IconName } from './Icon'
 import { Spinner } from './Spinner'

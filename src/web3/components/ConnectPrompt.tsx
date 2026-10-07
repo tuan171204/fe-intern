@@ -1,14 +1,10 @@
-// components/ConnectPrompt.tsx
-// Tính năng 2: màn hình khi chưa kết nối ví.
 import { useAccount, useConnect } from 'wagmi'
 import { getErrorMessage } from '../lib/format'
 import { Button } from './ui/Button'
 import { Icon } from './ui/Icon'
 
 export function ConnectPrompt() {
-  // useConnect: hàm connect + danh sách connector khai báo trong config.ts
   const { connect, connectors, isPending, error } = useConnect()
-  // isReconnecting: wagmi đang tự nối lại phiên cũ khi tải trang.
   const { isConnecting, isReconnecting } = useAccount()
 
   const busy = isPending || isConnecting || isReconnecting

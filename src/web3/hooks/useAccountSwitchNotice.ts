@@ -1,12 +1,9 @@
-// hooks/useAccountSwitchNotice.ts
-// Khi người dùng đổi tài khoản trong MetaMask (sự kiện accountsChanged), wagmi tự cập nhật
-// `address`. Hook này phát hiện việc đổi từ tài khoản A sang B để hiện thông báo ngắn.
+// Khi account đang dùng đổi từ A sang B (do chọn trong app hoặc đổi trong MetaMask),
+// hook này phát hiện và trả về địa chỉ mới trong vài giây để hiện thông báo ngắn.
 import { useEffect, useRef, useState } from 'react'
-import { useAccount } from 'wagmi'
 import type { Address } from 'viem'
 
-export function useAccountSwitchNotice(visibleMs = 5000): Address | null {
-  const { address } = useAccount()
+export function useAccountSwitchNotice(address: Address | undefined, visibleMs = 5000): Address | null {
   const previous = useRef<Address | undefined>(undefined)
   const [switchedTo, setSwitchedTo] = useState<Address | null>(null)
 

@@ -8,18 +8,25 @@ import { NetworkBanner } from './components/NetworkBanner'
 import { WalletCard } from './components/WalletCard'
 import { Notice } from './components/ui/Notice'
 import { useAccountSwitchNotice } from './hooks/useAccountSwitchNotice'
+import { useActiveAccount } from './hooks/useActiveAccount'
 import { useNetworkGuard } from './hooks/useNetworkGuard'
 import { shortenAddress } from './lib/format'
 
 export default function DAppDashboard() {
-  const { address, isConnected, isWrongNetwork, canTransact } = useNetworkGuard()
-  // Có giá trị (địa chỉ mới) trong vài giây sau khi đổi account trong MetaMask.
-  const switchedTo = useAccountSwitchNotice()
+  const { isConnected, isWrongNetwork, canTransact } = useNetworkGuard()
+  const { address, accounts, selectAccount } = useActiveAccount()
+  const switchedTo = useAccountSwitchNotice(address)
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 antialiased">
       <div className="mx-auto max-w-4xl space-y-5 px-4 py-6 sm:px-6 lg:py-10">
-        <Header isConnected={isConnected} isWrongNetwork={isWrongNetwork} />
+        <Header
+          isConnected={isConnected}
+          isWrongNetwork={isWrongNetwork}
+          address={address}
+          accounts={accounts}
+          onSelectAccount={selectAccount}
+        />
 
         {switchedTo && (
           <Notice tone="info">

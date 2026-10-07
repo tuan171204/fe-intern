@@ -1,5 +1,3 @@
-// components/ui/Avatar.tsx
-// Avatar tạo từ địa chỉ ví: mỗi tài khoản có một cặp màu riêng nên dễ nhận ra khi đổi account.
 const sizes = { sm: 'h-6 w-6', md: 'h-9 w-9', lg: 'h-12 w-12' } as const
 
 export function Avatar({ address, size = 'md' }: { address: string; size?: keyof typeof sizes }) {

@@ -1,4 +1,3 @@
-// components/WalletCard.tsx
 // Thẻ tổng quan: tài khoản đang dùng, nút Copy và số dư Sepolia ETH.
 import { useAccount, useBalance } from 'wagmi'
 import type { Address } from 'viem'
@@ -11,7 +10,6 @@ import { Icon } from './ui/Icon'
 
 export function WalletCard({ address }: { address: Address }) {
   const { addresses } = useAccount()
-  // Cùng query key với useEthTransfer => react-query dùng chung cache, không gọi RPC thêm.
   const { data: balance, isLoading } = useBalance({ address, chainId: SEPOLIA_CHAIN_ID })
   const { copied, copy } = useCopy()
   const accountCount = addresses?.length ?? 1

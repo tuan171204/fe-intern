@@ -1,11 +1,13 @@
-// hooks/useEthTransfer.ts
-// Tính năng 3: số dư Sepolia ETH + form chuyển ETH (state, validate, gửi giao dịch).
 import { useEffect, useState } from 'react'
 import { useBalance, useBytecode, useEstimateGas, useSendTransaction } from 'wagmi'
 import { isAddress, zeroAddress, type Address } from 'viem'
 import { SEPOLIA_CHAIN_ID } from '../constants/network'
 import { getErrorMessage, parseAmount } from '../lib/format'
 import { useTxReceipt } from './useTxReceipt'
+
+// Gas limit khi người nhận có code (smart contract / smart account EIP-7702).
+// Gas thừa được hoàn lại (phí chỉ tính theo gas thực dùng) nên đặt dư không tốn thêm.
+const GAS_LIMIT_CONTRACT_RECIPIENT = 400_000n
 
 export function useEthTransfer(address: Address, canTransact: boolean) {
   // useBalance: số dư ETH native của ví trên Sepolia (tự cache + refetch).
@@ -36,7 +38,6 @@ export function useEthTransfer(address: Address, canTransact: boolean) {
     if (isFinished) void refetch()
   }, [isFinished, refetch])
 
-  // ---- Validate (tính trực tiếp trong render, không cần state phụ) ----
   const validTo = isAddress(toAddress) ? toAddress : undefined
   const value = parseAmount(amount, 18)
 
@@ -77,7 +78,7 @@ export function useEthTransfer(address: Address, canTransact: boolean) {
     warnings.push('Địa chỉ nhận trùng với ví đang gửi.')
   if (recipientHasCode)
     warnings.push(
-      'Địa chỉ nhận có mã chạy trên chain (smart contract hoặc ví smart account). Nó có thể từ chối ETH hoặc cần nhiều gas hơn 21.000; khi đó giao dịch bị revert và bạn vẫn mất phí gas.',
+      'Địa chỉ nhận có mã chạy trên chain (smart contract hoặc ví smart account). Việc nhận ETH có thể tốn nhiều hơn 21.000 gas; ứng dụng sẽ tự đặt gas limit cao hơn, nhưng contract vẫn có thể từ chối ETH và khi đó giao dịch bị revert.',
     )
   if (estimateError)
     warnings.push(
@@ -91,9 +92,18 @@ export function useEthTransfer(address: Address, canTransact: boolean) {
   const send = () => {
     if (!validTo || value === null) return
     reset() // xoá trạng thái của giao dịch trước
-    // KHÔNG tự đặt gas/nonce: MetaMask ước tính gas limit và quản lý nonce.
-    // chainId giúp wagmi từ chối gửi nếu ví đang ở chain khác (ChainMismatchError).
-    sendTransaction({ to: validTo, value, chainId: SEPOLIA_CHAIN_ID })
+    // - account: gửi đúng từ account đang chọn trong app (có thể khác account đầu tiên của MetaMask).
+    // - gas: wagmi/viem không tự ước tính gas với MetaMask, và MetaMask có thể chọn 21.000 cho giao dịch
+    //   từ dApp => với người nhận có code phải đặt gas limit tường minh, nếu không sẽ hết gas và revert.
+    //   Người nhận là ví thường: để undefined cho MetaMask tự quyết.
+    // - chainId giúp wagmi từ chối gửi nếu ví đang ở chain khác (ChainMismatchError).
+    sendTransaction({
+      to: validTo,
+      value,
+      chainId: SEPOLIA_CHAIN_ID,
+      account: address,
+      gas: recipientHasCode ? GAS_LIMIT_CONTRACT_RECIPIENT : 21_000n,
+    })
   }
 
   return {

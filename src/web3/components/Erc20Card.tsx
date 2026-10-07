@@ -1,5 +1,3 @@
-// components/Erc20Card.tsx
-// Tính năng 4: nhập địa chỉ token -> hiển thị symbol/decimals/số dư -> form chuyển token.
 // Đọc dữ liệu: useErc20Info. Gửi giao dịch: useErc20Transfer.
 import { useState } from 'react'
 import { formatUnits, type Address } from 'viem'

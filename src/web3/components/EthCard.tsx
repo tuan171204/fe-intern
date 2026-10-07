@@ -1,5 +1,3 @@
-// components/EthCard.tsx
-// Tính năng 3: form chuyển Sepolia ETH (logic nằm trong useEthTransfer).
 import type { Address } from 'viem'
 import { useEthTransfer } from '../hooks/useEthTransfer'
 import { formatDisplay } from '../lib/format'

@@ -1,5 +1,6 @@
 // components/Header.tsx
 import { useDisconnect } from 'wagmi'
+import type { Address } from 'viem'
 import { AccountMenu } from './AccountMenu'
 import { NetworkPill } from './NetworkPill'
 import { Button } from './ui/Button'
@@ -7,9 +8,14 @@ import { Button } from './ui/Button'
 interface HeaderProps {
   isConnected: boolean
   isWrongNetwork: boolean
+  /** Account đang dùng trong app */
+  address: Address | undefined
+  /** Các account MetaMask đã cấp quyền */
+  accounts: readonly Address[]
+  onSelectAccount: (address: Address) => void
 }
 
-export function Header({ isConnected, isWrongNetwork }: HeaderProps) {
+export function Header({ isConnected, isWrongNetwork, address, accounts, onSelectAccount }: HeaderProps) {
   const { disconnect } = useDisconnect()
 
   return (
@@ -23,7 +29,7 @@ export function Header({ isConnected, isWrongNetwork }: HeaderProps) {
         <NetworkPill isConnected={isConnected} isWrongNetwork={isWrongNetwork} />
         {isConnected && (
           <>
-            <AccountMenu />
+            <AccountMenu address={address} accounts={accounts} onSelect={onSelectAccount} />
             <Button variant="secondary" size="sm" onClick={() => disconnect()}>
               Disconnect
             </Button>

@@ -1,12 +1,3 @@
-// hooks/useTxReceipt.ts
-// Theo dõi một giao dịch SAU khi đã có hash. Dùng chung cho ETH và ERC-20.
-//
-// Vì sao không dùng thẳng useWaitForTransactionReceipt như trước?
-//  1. wagmi để timeout mặc định = 0  => poll vô hạn, UI "load mãi" nếu RPC không trả receipt.
-//  2. Nếu giao dịch bị REVERT, wagmi NÉM LỖI; React Query lại tự retry 3 lần (có backoff),
-//     mỗi lần lại chờ + mô phỏng lại => trông như đang load dù MetaMask đã báo fail.
-//  => đặt timeout, tắt retry, và khi lỗi thì đọc receipt trực tiếp để biết chính xác
-//     giao dịch revert hay chỉ là lỗi mạng.
 import { useTransactionReceipt, useWaitForTransactionReceipt } from 'wagmi'
 import type { Hash } from 'viem'
 import { SEPOLIA_CHAIN_ID } from '../constants/network'

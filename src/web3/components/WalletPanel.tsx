@@ -22,7 +22,7 @@ export function WalletPanel() {
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1500)
     } catch {
-      // Clipboard có thể bị chặn (http, quyền trình duyệt) -> bỏ qua êm.
+      // Clipboard có thể bị chặn (http, quyền trình duyệt)
     }
   }
 

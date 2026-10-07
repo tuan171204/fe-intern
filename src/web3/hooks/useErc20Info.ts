@@ -1,5 +1,3 @@
-// hooks/useErc20Info.ts
-// Tính năng 4 (phần đọc): symbol, decimals, balanceOf của một token ERC-20.
 import { useReadContracts } from 'wagmi'
 import { isAddress, zeroAddress, type Address } from 'viem'
 import { erc20Abi } from '../constants/erc20Abi'
@@ -8,11 +6,9 @@ import { SEPOLIA_CHAIN_ID } from '../constants/network'
 export function useErc20Info(tokenAddress: string, owner: Address) {
   // isAddress là type guard => validToken có kiểu Address (hoặc undefined).
   const validToken = isAddress(tokenAddress) ? tokenAddress : undefined
-  const target = validToken ?? zeroAddress // chỉ là giá trị tạm khi query bị tắt
+  const target = validToken ?? zeroAddress
 
   // useReadContracts: gộp 3 lời gọi đọc thành 1 request (multicall).
-  // allowFailure: false -> nếu 1 lời gọi lỗi (vd. địa chỉ không phải ERC-20) cả hook báo lỗi,
-  // và kết quả là tuple đã có kiểu: [string, number, bigint].
   const { data, isLoading, isError, refetch } = useReadContracts({
     allowFailure: false,
     contracts: [

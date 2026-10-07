@@ -1,7 +1,5 @@
-// constants/erc20Abi.ts
 // ABI tối giản của ERC-20: symbol, decimals, balanceOf, transfer.
-// `as const` giúp TypeScript suy ra chính xác tên hàm, kiểu tham số và kiểu trả về
-// => useReadContracts / useWriteContract được kiểm tra kiểu chặt chẽ.
+
 export const erc20Abi = [
     {
         type: 'function',

@@ -1,5 +1,3 @@
-// components/ui/Button.tsx
-// Một component Button duy nhất cho toàn app: có variant, size và trạng thái loading.
 import type { ButtonHTMLAttributes } from 'react'
 import { Spinner } from './Spinner'
 

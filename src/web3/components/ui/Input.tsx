@@ -1,4 +1,3 @@
-// components/ui/Input.tsx
 import type { InputHTMLAttributes, ReactNode } from 'react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

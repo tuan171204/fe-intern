@@ -1,5 +1,3 @@
-// hooks/useErc20Transfer.ts
-// Tính năng 4 (phần ghi): form chuyển token ERC-20 qua hàm transfer(to, amount).
 import { useEffect, useState } from 'react'
 import { useSimulateContract, useWriteContract } from 'wagmi'
 import { isAddress, zeroAddress, type Address } from 'viem'
@@ -9,7 +7,7 @@ import { getErrorMessage, parseAmount } from '../lib/format'
 import { useTxReceipt } from './useTxReceipt'
 
 interface Params {
-  /** Ví đang gửi (account active) */
+  /** Ví đang gửi (account đang chọn trong app) */
   owner: Address
   token: Address | undefined
   decimals: number | undefined
@@ -89,6 +87,7 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
     if (!token || !validTo || value === null) return
     reset()
     // Gọi transfer(address to, uint256 amount) — args được kiểm tra kiểu theo ABI.
+    // account: gửi đúng từ account đang chọn trong app.
     // Không tự đặt gas/nonce: để MetaMask xử lý.
     writeContract({
       address: token,
@@ -96,6 +95,7 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
       functionName: 'transfer',
       args: [validTo, value],
       chainId: SEPOLIA_CHAIN_ID,
+      account: owner,
     })
   }
 

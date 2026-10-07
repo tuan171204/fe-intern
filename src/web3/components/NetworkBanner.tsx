@@ -1,5 +1,3 @@
-// components/NetworkBanner.tsx
-// Tính năng 1: banner cảnh báo sai mạng + nút "Switch to Sepolia Network".
 import { useSwitchChain } from 'wagmi'
 import { SEPOLIA_CHAIN_ID } from '../constants/network'
 import { getErrorMessage } from '../lib/format'

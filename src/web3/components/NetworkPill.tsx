@@ -1,5 +1,4 @@
-// components/NetworkPill.tsx
-// Viên thuốc nhỏ ở header cho biết trạng thái mạng hiện tại.
+// Badge nhỏ ở header cho biết trạng thái mạng hiện tại.
 interface NetworkPillProps {
   isConnected: boolean
   isWrongNetwork: boolean
