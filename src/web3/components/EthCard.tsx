@@ -16,6 +16,8 @@ interface EthCardProps {
 export function EthCard({ address, canTransact }: EthCardProps) {
   const eth = useEthTransfer(address, canTransact)
   const { balance } = eth
+  // Khóa form khi đang xử lý giao dịch hoặc sai mạng.
+  const locked = eth.isBusy || !canTransact
 
   return (
     <Card title="Chuyển ETH" subtitle="Gửi Sepolia ETH tới một địa chỉ ví khác.">
@@ -26,6 +28,7 @@ export function EthCard({ address, canTransact }: EthCardProps) {
             placeholder="0x…"
             value={eth.toAddress}
             invalid={Boolean(eth.addressError)}
+            disabled={locked}
             onChange={(e) => eth.setToAddress(e.target.value.trim())}
             spellCheck={false}
             autoComplete="off"
@@ -45,11 +48,18 @@ export function EthCard({ address, canTransact }: EthCardProps) {
             inputMode="decimal"
             value={eth.amount}
             invalid={Boolean(eth.amountError)}
+            disabled={locked}
             onChange={(e) => eth.setAmount(e.target.value)}
             suffix={<span className="text-xs font-semibold text-slate-400">ETH</span>}
           />
         )}
       </Field>
+
+      {eth.isCheckingRecipient && (
+        <Notice tone="info" loading>
+          Đang kiểm tra loại địa chỉ nhận (ví thường hay smart contract)…
+        </Notice>
+      )}
 
       {eth.warnings.map((w) => (
         <Notice key={w} tone="warning">
@@ -57,8 +67,10 @@ export function EthCard({ address, canTransact }: EthCardProps) {
         </Notice>
       ))}
 
+      {eth.preflightError && <Notice tone="error">{eth.preflightError}</Notice>}
+
       <Button fullWidth loading={eth.isBusy} disabled={!eth.canSubmit} onClick={eth.send}>
-        {eth.isBusy ? 'Đang xử lý…' : 'Send ETH'}
+        {eth.isPreparing ? 'Đang kiểm tra…' : eth.isBusy ? 'Đang xử lý…' : 'Send ETH'}
       </Button>
 
       <TxStatus tx={eth.tx} />

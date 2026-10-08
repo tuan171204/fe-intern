@@ -1,4 +1,3 @@
-// Đọc dữ liệu: useErc20Info. Gửi giao dịch: useErc20Transfer.
 import { useState } from 'react'
 import { formatUnits, type Address } from 'viem'
 import { useErc20Info } from '../hooks/useErc20Info'
@@ -31,6 +30,8 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
 
   const { symbol, decimals, balance } = info
   const isTokenLoaded = symbol !== undefined && decimals !== undefined && balance !== undefined
+  // Khóa form khi đang xử lý giao dịch hoặc sai mạng.
+  const locked = transfer.isBusy || !canTransact
 
   return (
     <Card title="Chuyển ERC-20" subtitle="Nhập địa chỉ contract để xem số dư và chuyển token.">
@@ -45,7 +46,12 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
             placeholder="0x…"
             value={tokenAddress}
             invalid={Boolean(info.tokenError)}
-            onChange={(e) => setTokenAddress(e.target.value.trim())}
+            disabled={transfer.isBusy}
+            onChange={(e) => {
+              setTokenAddress(e.target.value.trim())
+              // Đổi token -> xoá số lượng + kết quả giao dịch của token cũ.
+              transfer.clear()
+            }}
             spellCheck={false}
             autoComplete="off"
           />
@@ -79,6 +85,7 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
                 placeholder="0x…"
                 value={transfer.toAddress}
                 invalid={Boolean(transfer.toError)}
+                disabled={locked}
                 onChange={(e) => transfer.setToAddress(e.target.value.trim())}
                 spellCheck={false}
                 autoComplete="off"
@@ -94,15 +101,16 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
                 inputMode="decimal"
                 value={transfer.amount}
                 invalid={Boolean(transfer.amountError)}
+                disabled={locked}
                 onChange={(e) => transfer.setAmount(e.target.value)}
                 suffix={
                   <>
                     <span className="text-xs font-semibold text-slate-400">{symbol}</span>
-                    {/* Max: điền toàn bộ số dư token (phí gas trả bằng ETH nên không ảnh hưởng) */}
                     <button
                       type="button"
+                      disabled={locked}
                       onClick={() => transfer.setAmount(formatUnits(balance, decimals))}
-                      className="cursor-pointer rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-100"
+                      className="cursor-pointer rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Max
                     </button>
@@ -117,6 +125,8 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
               {w}
             </Notice>
           ))}
+
+          {transfer.preflightError && <Notice tone="error">{transfer.preflightError}</Notice>}
 
           <Button fullWidth loading={transfer.isBusy} disabled={!transfer.canSubmit} onClick={transfer.transfer}>
             {transfer.isBusy ? 'Đang xử lý…' : 'Transfer Token'}
