@@ -21,7 +21,11 @@ export function EthCard({ address, canTransact }: EthCardProps) {
 
   return (
     <Card title="Chuyển ETH" subtitle="Gửi Sepolia ETH tới một địa chỉ ví khác.">
-      <Field label="Địa chỉ ví nhận" error={eth.addressError}>
+      <Field
+        label="Địa chỉ ví nhận"
+        error={eth.addressError}
+        hint={eth.recipientHasCode ? 'Smart contract' : undefined}
+      >
         {(id) => (
           <Input
             id={id}
@@ -55,18 +59,13 @@ export function EthCard({ address, canTransact }: EthCardProps) {
         )}
       </Field>
 
-      {eth.isCheckingRecipient && (
+      {/* Tại mỗi thời điểm chỉ hiện tối đa một thông báo liên quan tới hành động hiện tại. */}
+      {eth.showRecipientCheck && (
         <Notice tone="info" loading>
-          Đang kiểm tra loại địa chỉ nhận (ví thường hay smart contract)…
+          Đang kiểm tra loại địa chỉ nhận…
         </Notice>
       )}
-
-      {eth.warnings.map((w) => (
-        <Notice key={w} tone="warning">
-          {w}
-        </Notice>
-      ))}
-
+      {eth.warning && <Notice tone="warning">{eth.warning}</Notice>}
       {eth.preflightError && <Notice tone="error">{eth.preflightError}</Notice>}
 
       <Button fullWidth loading={eth.isBusy} disabled={!eth.canSubmit} onClick={eth.send}>

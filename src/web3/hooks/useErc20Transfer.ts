@@ -13,6 +13,7 @@ interface Params {
   token: Address | undefined
   decimals: number | undefined
   balance: bigint | undefined
+  /** Đọc lại số dư token sau khi giao dịch xong */
   refetchInfo: () => unknown
   canTransact: boolean
 }
@@ -42,16 +43,24 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
   const [preflightError, setPreflightError] = useState<string | null>(null)
   const preparingRef = useRef(false)
 
+  const isBusy = isSigning || tx.isConfirming || isPreparing
+  // Đã có hoạt động / kết quả giao dịch -> chỉ hiển thị TxStatus, ẩn các cảnh báo "trước khi gửi".
+  const hasTxActivity = isBusy || Boolean(hash) || Boolean(writeError)
+
+  const clearStaleResult = () => {
+    setPreflightError(null)
+    if (!isBusy && (hash || writeError)) reset()
+  }
   const setToAddress = (value: string) => {
     setToAddressState(value)
-    setPreflightError(null)
+    clearStaleResult()
   }
   const setAmount = (value: string) => {
     setAmountState(value)
-    setPreflightError(null)
+    clearStaleResult()
   }
 
-  /** Xoá số lượng + trạng thái giao dịch (gọi khi đổi token để không hiện kết quả của token cũ). */
+  /** Xoá số lượng + trạng thái giao dịch. */
   const clear = () => {
     reset()
     setAmountState('')
@@ -77,7 +86,6 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
     else if (balance !== undefined && value > balance) amountError = 'Số dư token không đủ.'
   }
 
-  const isBusy = isSigning || tx.isConfirming || isPreparing
   const canSubmit =
     canTransact &&
     !isBusy &&
@@ -88,9 +96,9 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
     balance !== undefined &&
     value <= balance // chặn gửi khi vượt số dư
 
-  // ---- Cảnh báo sớm khi người dùng còn đang nhập (không chặn) ----
+  // ---- Cảnh báo sớm khi người dùng đã nhập đủ thông tin (không chặn) ----
   // useSimulateContract: chạy thử transfer() trên RPC. Nếu contract sẽ revert thì báo ngay.
-  // Việc chặn gửi được thực hiện lại ở hàm transfer() bên dưới bằng một lần kiểm tra mới.
+  // Việc chặn gửi được thực hiện lại ở hàm transfer() bên dưới
   const { error: simulateError } = useSimulateContract({
     address: token ?? zeroAddress,
     abi: erc20Abi,
@@ -101,17 +109,18 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
     query: { enabled: canSubmit, retry: false },
   })
 
-  const warnings: string[] = []
-  if (validTo && validTo.toLowerCase() === owner.toLowerCase())
-    warnings.push('Địa chỉ nhận trùng với ví đang gửi.')
-  if (validTo === zeroAddress)
-    warnings.push('Địa chỉ nhận là địa chỉ 0x000…000 (địa chỉ đốt). Token gửi tới đây sẽ mất vĩnh viễn.')
-  if (validTo && token && validTo.toLowerCase() === token.toLowerCase())
-    warnings.push('Địa chỉ nhận chính là contract của token. Token gửi vào đây thường không thể lấy lại.')
-  if (simulateError)
-    warnings.push(
-      `Mô phỏng trước cho thấy giao dịch có thể thất bại: ${getErrorMessage(simulateError)}`,
-    )
+  let warning: string | null = null
+  if (!hasTxActivity && !preflightError && validTo) {
+    if (simulateError) {
+      warning = `Mô phỏng trước cho thấy giao dịch có thể thất bại: ${getErrorMessage(simulateError)}`
+    } else if (validTo === zeroAddress) {
+      warning = 'Địa chỉ nhận là địa chỉ đốt 0x000…000. Token gửi tới đây sẽ mất vĩnh viễn.'
+    } else if (token && validTo.toLowerCase() === token.toLowerCase()) {
+      warning = 'Địa chỉ nhận chính là contract của token. Token gửi vào đây thường không thể lấy lại.'
+    } else if (validTo.toLowerCase() === owner.toLowerCase()) {
+      warning = 'Địa chỉ nhận trùng với ví đang gửi.'
+    }
+  }
 
   const transfer = async () => {
     if (!token || !validTo || value === null || !publicClient || preparingRef.current) return
@@ -122,7 +131,7 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
 
     try {
       // Ước tính gas của transfer() ngay bây giờ. Nếu contract sẽ revert (số dư không đủ,
-      // token bị chặn, không phải ERC-20...) thì ném lỗi -> không gửi, người dùng không mất phí.
+      // token bị chặn, không phải ERC-20...) thì ném lỗi -> không gửi, không mất phí.
       const gasEstimate = await publicClient.estimateContractGas({
         address: token,
         abi: erc20Abi,
@@ -143,7 +152,6 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
 
       // Gọi transfer(address to, uint256 amount) — args được kiểm tra kiểu theo ABI.
       // account: gửi đúng từ account đang chọn trong app.
-      // Không tự đặt gas/nonce: để MetaMask xử lý.
       writeContract({
         address: token,
         abi: erc20Abi,
@@ -167,7 +175,7 @@ export function useErc20Transfer({ owner, token, decimals, balance, refetchInfo,
     setAmount,
     toError: toError_,
     amountError,
-    warnings,
+    warning,
     preflightError,
     canSubmit,
     isBusy,

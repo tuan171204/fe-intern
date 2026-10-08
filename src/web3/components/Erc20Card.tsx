@@ -1,3 +1,4 @@
+// Đọc dữ liệu: useErc20Info. Gửi giao dịch: useErc20Transfer.
 import { useState } from 'react'
 import { formatUnits, type Address } from 'viem'
 import { useErc20Info } from '../hooks/useErc20Info'
@@ -106,6 +107,7 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
                 suffix={
                   <>
                     <span className="text-xs font-semibold text-slate-400">{symbol}</span>
+                    {/* Max: điền toàn bộ số dư token (phí gas trả bằng ETH nên không ảnh hưởng) */}
                     <button
                       type="button"
                       disabled={locked}
@@ -120,12 +122,8 @@ export function Erc20Card({ address, canTransact }: Erc20CardProps) {
             )}
           </Field>
 
-          {transfer.warnings.map((w) => (
-            <Notice key={w} tone="warning">
-              {w}
-            </Notice>
-          ))}
-
+          {/* Tại mỗi thời điểm chỉ hiện tối đa một thông báo liên quan tới hành động hiện tại. */}
+          {transfer.warning && <Notice tone="warning">{transfer.warning}</Notice>}
           {transfer.preflightError && <Notice tone="error">{transfer.preflightError}</Notice>}
 
           <Button fullWidth loading={transfer.isBusy} disabled={!transfer.canSubmit} onClick={transfer.transfer}>
