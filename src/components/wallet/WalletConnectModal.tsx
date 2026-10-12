@@ -1,0 +1,90 @@
+import type { Connector } from "wagmi"
+
+import cn from "../../utils/cn"
+import { Dialog } from "../ui/dialog"
+import Icon from "../ui/icon"
+import { Loading } from "../ui/loading"
+
+export interface WalletConnectModalProps {
+    isOpen: boolean
+    onClose: () => void
+    connectors: readonly Connector[]
+    /** id connector đang chờ xác nhận trong ví */
+    pendingConnectorId?: string
+    isPending: boolean
+    onSelect: (connector: Connector) => void
+}
+
+const WalletConnectModal = ({
+    isOpen,
+    onClose,
+    connectors,
+    pendingConnectorId,
+    isPending,
+    onSelect,
+}: WalletConnectModalProps) => (
+    <Dialog isOpen={isOpen} onClose={onClose} title="Connect Wallet">
+        <div className="flex flex-col gap-3">
+            <p className="text-center text-xs text-muted-foreground">
+                Chọn ví để kết nối. Ứng dụng chạy trên Sepolia Testnet.
+            </p>
+
+            <ul className="flex flex-col gap-2">
+                {connectors.map((connector) => {
+                    const loading = isPending && pendingConnectorId === connector.id
+                    return (
+                        <li key={connector.uid}>
+                            <button
+                                type="button"
+                                disabled={isPending}
+                                onClick={() => onSelect(connector)}
+                                className={cn(
+                                    "flex w-full items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-left text-sm font-medium transition-colors",
+                                    "hover:border-teal-600/60 hover:bg-teal-50/40",
+                                    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                                    "disabled:cursor-not-allowed disabled:opacity-60"
+                                )}
+                            >
+                                {connector.icon ? (
+                                    <img src={connector.icon} alt="" className="size-7 shrink-0 rounded-md" />
+                                ) : (
+                                    <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-teal-100 text-teal-700">
+                                        <Icon name="wallet" size="md" />
+                                    </span>
+                                )}
+                                <span className="flex-1">{connector.name}</span>
+                                {loading && (
+                                    <span className="flex items-center gap-1.5 text-xs font-normal text-muted-foreground">
+                                        <Loading size="sm" className="text-teal-600" />
+                                        Chờ xác nhận…
+                                    </span>
+                                )}
+                            </button>
+                        </li>
+                    )
+                })}
+            </ul>
+
+            {isPending && (
+                <p role="status" className="text-center text-xs text-muted-foreground">
+                    Hãy mở MetaMask và xác nhận yêu cầu kết nối.
+                </p>
+            )}
+
+            <p className="text-center text-xs text-muted-foreground">
+                Chưa có ví?{" "}
+                <a
+                    href="https://metamask.io/download/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-teal-600 underline underline-offset-2 hover:text-teal-700"
+                >
+                    Cài MetaMask
+                </a>
+            </p>
+        </div>
+    </Dialog>
+)
+
+export { WalletConnectModal }
+export default WalletConnectModal

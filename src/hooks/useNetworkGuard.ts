@@ -1,15 +1,20 @@
+// File: src/hooks/useNetworkGuard.ts
 import * as React from "react"
 import { useAccount, useSwitchChain } from "wagmi"
 
 import { SEPOLIA_CHAIN_ID } from "../config/network"
 
+export interface UseNetworkGuardOptions {
+    /** true: tự yêu cầu ví chuyển sang Sepolia (1 lần / lần kết nối). Chỉ bật ở NetworkGuard toàn cục. */
+    autoSwitch?: boolean
+}
+
 /**
- * Chain Guard: khi ví đang kết nối nhưng sai mạng, tự động yêu cầu chuyển sang Sepolia (1 lần / lần kết nối).
- * Nếu người dùng từ chối, `isWrongNetwork` vẫn là true để UI hiện banner + nút "Switch to Sepolia".
- * Khi chưa kết nối ví, hook không làm gì
+ * Chain Guard: phát hiện ví đang kết nối nhưng sai mạng (không phải Sepolia 11155111).
+ * Khi chưa kết nối ví, hook không làm gì nên các trang Web2 không bị ảnh hưởng.
  */
-export function useNetworkGuard() {
-    // chainId ở đây là chain thực tế mà ví đang dùng (kể cả chain không nằm trong config)
+export function useNetworkGuard({ autoSwitch = false }: UseNetworkGuardOptions = {}) {
+    // chainId ở đây là chain THỰC TẾ mà ví đang dùng (kể cả chain không nằm trong config)
     const { address, chainId, isConnected } = useAccount()
     const { switchChain } = useSwitchChain()
 
@@ -21,14 +26,15 @@ export function useNetworkGuard() {
             autoSwitchAsked.current = false
             return
         }
-        if (isWrongNetwork && !autoSwitchAsked.current) {
+        if (autoSwitch && isWrongNetwork && !autoSwitchAsked.current) {
             autoSwitchAsked.current = true
             switchChain({ chainId: SEPOLIA_CHAIN_ID })
         }
-    }, [isConnected, isWrongNetwork, switchChain])
+    }, [autoSwitch, isConnected, isWrongNetwork, switchChain])
 
     return {
         address,
+        chainId,
         isConnected,
         isWrongNetwork,
         /** Chỉ cho phép gửi giao dịch khi đã kết nối và đúng mạng */
