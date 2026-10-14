@@ -1,3 +1,4 @@
+// File: src/App.tsx
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom"
 
 import Footer from "./components/footer"
@@ -12,21 +13,18 @@ import TokenList from "./pages/token-list"
 import NftCreator from "./pages/nft-creator"
 import NftList from "./pages/nft-list"
 import Profile from "./pages/profile"
-import { AuthProvider, useAuth } from "./store/AuthContext"
+import { AuthProvider } from "./store/AuthContext"
+import { WalletAuthProvider } from "./store/WalletAuthContext"
 
-const Layout = () => {
-  const { isLogged, user } = useAuth()
-
-  return (
-    <div className="flex min-h-svh flex-col bg-background text-foreground">
-      <Header isConnected={isLogged} address={user?.address} />
-      <main className="flex flex-1 flex-col">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
-  )
-}
+const Layout = () => (
+  <div className="flex min-h-svh flex-col bg-background text-foreground">
+    <Header />
+    <main className="flex flex-1 flex-col">
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
+)
 
 const ComingSoon = () => (
   <div className="py-24 text-center text-sm text-muted-foreground">Coming soon</div>
@@ -34,27 +32,29 @@ const ComingSoon = () => (
 
 const App = () => (
   <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<GuestRoute />}>
-          <Route element={<Layout />}>
-            <Route index element={<ConnectPage />} />
+    <WalletAuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<GuestRoute />}>
+            <Route element={<Layout />}>
+              <Route index element={<ConnectPage />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route element={<ProtectedRoute />}>
-          <Route element={<DashboardLayout />}>
-            <Route path="dashboard" element={<Leaderboard />} />
-            <Route path="token/create" element={<TokenCreator />} />
-            <Route path="token/list" element={<TokenList />} />
-            <Route path="nft/create" element={<NftCreator />} />
-            <Route path="nft/list" element={<NftList />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="*" element={<ComingSoon />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="dashboard" element={<Leaderboard />} />
+              <Route path="token/create" element={<TokenCreator />} />
+              <Route path="token/list" element={<TokenList />} />
+              <Route path="nft/create" element={<NftCreator />} />
+              <Route path="nft/list" element={<NftList />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="*" element={<ComingSoon />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </WalletAuthProvider>
   </AuthProvider>
 )
 

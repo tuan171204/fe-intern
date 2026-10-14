@@ -1,4 +1,3 @@
-// File: src/components/layout/DashboardHeader.tsx
 import * as React from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 
@@ -8,6 +7,7 @@ import { shortenAddress } from "../ui/copy-address"
 import Icon from "../ui/icon"
 import WalletButton from "../wallet/WalletButton"
 import { useAuth } from "../../store/AuthContext"
+import { useWalletAuth } from "../../store/WalletAuthContext"
 
 export interface DashboardHeaderProps {
     onMenuClick: () => void
@@ -26,7 +26,9 @@ const menuItemClass = (active: boolean) =>
 const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN" }: DashboardHeaderProps) => {
     const { pathname } = useLocation()
     const navigate = useNavigate()
-    const { user, logout } = useAuth()
+    const { user } = useAuth()
+    /* Logout = xoá JWT + ngắt kết nối ví */
+    const { logout } = useWalletAuth()
     const address = addressProp ?? user?.address ?? DEMO_ADDRESS
 
     const [menuOpen, setMenuOpen] = React.useState(false)
