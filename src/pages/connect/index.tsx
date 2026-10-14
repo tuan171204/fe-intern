@@ -24,6 +24,7 @@ const Home = () => (
                     size="lg"
                     label="Connect Your Wallet"
                     className="mt-1 h-11 rounded-full text-md bg-white px-8 py-7 text-teal-600 hover:bg-teal-700 lg:h-12"
+                    secondaryClassName="mt-1 h-11 rounded-full border-white bg-white/30 px-8 py-7 text-md text-neutral-900 shadow-none backdrop-blur-sm hover:bg-white/50 lg:h-12"
                 />
             </div>
             <div className="flex-1" aria-hidden="true" />

@@ -20,10 +20,16 @@ export interface ConnectWalletButtonProps {
     label?: string
     size?: ButtonProps["size"]
     className?: string
+    secondaryClassName?: string
 }
 
 /** Nút Connect + đăng nhập SIWE cho khu vực guest (chưa có JWT) */
-const ConnectWalletButton = ({ label = "Connect Wallet", size, className }: ConnectWalletButtonProps) => {
+const ConnectWalletButton = ({
+    label = "Connect Wallet",
+    size,
+    className,
+    secondaryClassName,
+}: ConnectWalletButtonProps) => {
     const { address, chainId, status } = useAccount()
     const { walletConnectors, isRestoring } = useWalletConnection()
     const { step, isBusy, pendingConnectorId, connectAndSignIn, signIn, logout } = useWalletAuth()
@@ -32,6 +38,13 @@ const ConnectWalletButton = ({ label = "Connect Wallet", size, className }: Conn
 
     const isConnected = status === "connected" && !!address
     const isWrongNetwork = isConnected && chainId !== SEPOLIA_CHAIN_ID
+
+    /* Lối thoát khi ví đã kết nối nhưng chưa đăng nhập: đổi ví khác hoặc huỷ kết nối */
+    const disconnectButton = (
+        <Button type="button" variant="outline" size={size} onClick={logout} className={secondaryClassName}>
+            Disconnect
+        </Button>
+    )
 
     let content: React.ReactNode
 
@@ -48,7 +61,7 @@ const ConnectWalletButton = ({ label = "Connect Wallet", size, className }: Conn
                 <Button size={size} loading={isSwitching} onClick={switchToSepolia} className={className}>
                     Switch to Sepolia
                 </Button>
-                <DisconnectLink onClick={logout} />
+                {disconnectButton}
             </>
         )
     } else if (isConnected) {
@@ -58,7 +71,7 @@ const ConnectWalletButton = ({ label = "Connect Wallet", size, className }: Conn
                 <Button size={size} onClick={() => void signIn()} className={className}>
                     {step === "error" ? "Retry Sign In" : "Sign In"}
                 </Button>
-                <DisconnectLink onClick={logout} />
+                {disconnectButton}
             </>
         )
     } else {
@@ -85,16 +98,6 @@ const ConnectWalletButton = ({ label = "Connect Wallet", size, className }: Conn
         </>
     )
 }
-
-const DisconnectLink = ({ onClick }: { onClick: () => void }) => (
-    <button
-        type="button"
-        onClick={onClick}
-        className="text-xs underline underline-offset-2 opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-    >
-        Disconnect
-    </button>
-)
 
 export { ConnectWalletButton }
 export default ConnectWalletButton

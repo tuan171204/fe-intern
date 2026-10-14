@@ -9,7 +9,10 @@ const Header = () => (
                 ACW3
             </Link>
 
-            <ConnectWalletButton className="h-9 rounded-full bg-teal-600 px-4 text-white hover:bg-teal-700" />
+            <ConnectWalletButton
+                className="h-9 rounded-full bg-teal-600 px-4 text-white hover:bg-teal-700"
+                secondaryClassName="h-9 rounded-full border-teal-600 px-4 text-teal-600 shadow-none hover:bg-teal-50 hover:text-teal-700"
+            />
         </div>
     </header>
 )
