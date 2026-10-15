@@ -1,4 +1,3 @@
-// File: src/pages/profile/components/ProfileCard.tsx
 import * as React from "react"
 
 import { Button } from "../../../components/ui/button"

@@ -1,4 +1,3 @@
-// File: src/pages/profile/components/ProfileAssets.tsx
 import * as React from "react"
 
 import { Tabs, type TabOption } from "../../../components/ui/tabs"

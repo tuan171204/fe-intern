@@ -1,4 +1,3 @@
-// File: src/pages/profile/components/EditProfileModal.tsx
 import * as React from "react"
 
 import { updateProfile } from "../../../api/profile"
