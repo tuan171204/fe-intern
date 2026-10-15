@@ -1,20 +1,21 @@
+
 export interface Token {
     _id: string
+    /** Địa chỉ contract ERC20 của token */
+    tokenAddress: string
     name: string
     symbol: string
-    decimals: number
-    supply: number
+    maxSupply: string
+    amountPerMint: string
+    mintFee: string
     image: string
     description: string
     websiteUrl?: string | null
     telegramUrl?: string | null
     discordUrl?: string | null
     xUrl?: string | null
+    /** Ví tạo token */
     owner: string
-    tokenAddress?: string
-    maxSupply?: string
-    amountPerMint?: string
-    mintFee?: string
 }
 
 export interface PaginationMeta {

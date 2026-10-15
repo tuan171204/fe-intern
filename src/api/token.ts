@@ -7,19 +7,21 @@ import type {
     TokenListResponse,
 } from "../types/tokens"
 
-/** Danh sách token công khai (có phân trang) */
+/** Danh sách token công khai */
 export const getTokens = async (params: PaginationParams = {}): Promise<TokenListResponse> => {
     const { data } = await api.get<TokenListResponse>("/tokens", { params })
     return data
 }
 
-export const getTokenById = async (id: string): Promise<TokenDetailResponse> => {
-    const { data } = await api.get<TokenDetailResponse>(`/tokens/${id}`)
+/** Chi tiết token theo địa chỉ contract */
+export const getTokenByAddress = async (address: string): Promise<TokenDetailResponse> => {
+    const { data } = await api.get<TokenDetailResponse>(`/tokens/${address}`)
     return data
 }
 
 /**
  * Lưu metadata token sau khi giao dịch on-chain đã xác nhận (multipart/form-data).
+ * Field optional rỗng sẽ không được gửi. 
  */
 export const createToken = async ({ image, ...fields }: CreateTokenPayload): Promise<CreateTokenResponse> => {
     const formData = new FormData()
