@@ -4,7 +4,6 @@ export interface Token {
     symbol: string
     decimals: number
     supply: number
-    /** Đường dẫn ảnh do server trả về, dùng getImageUrl() để ghép host */
     image: string
     description: string
     websiteUrl?: string | null
@@ -12,6 +11,10 @@ export interface Token {
     discordUrl?: string | null
     xUrl?: string | null
     owner: string
+    tokenAddress?: string
+    maxSupply?: string
+    amountPerMint?: string
+    mintFee?: string
 }
 
 export interface PaginationMeta {
@@ -36,12 +39,10 @@ export interface TokenDetailResponse {
     data: Token
 }
 
+/** Payload gửi POST /v1/tokens (multipart). Metadata on-chain backend tự đọc từ txHash */
 export interface CreateTokenPayload {
     image: File
-    name: string
-    symbol: string
-    decimals: string | number
-    supply: string | number
+    txHash: string
     description: string
     websiteUrl?: string
     telegramUrl?: string

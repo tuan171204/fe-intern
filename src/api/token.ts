@@ -1,4 +1,3 @@
-// File: src/api/token.ts
 import api from "../utils/api"
 import type {
     CreateTokenPayload,
@@ -19,7 +18,9 @@ export const getTokenById = async (id: string): Promise<TokenDetailResponse> => 
     return data
 }
 
-/** Tạo token mới (multipart/form-data). Field social rỗng sẽ không được gửi */
+/**
+ * Lưu metadata token sau khi giao dịch on-chain đã xác nhận (multipart/form-data).
+ */
 export const createToken = async ({ image, ...fields }: CreateTokenPayload): Promise<CreateTokenResponse> => {
     const formData = new FormData()
     formData.append("image", image)
@@ -32,6 +33,7 @@ export const createToken = async ({ image, ...fields }: CreateTokenPayload): Pro
 
     const { data } = await api.post<CreateTokenResponse>("/tokens", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60_000,
     })
     return data
 }
