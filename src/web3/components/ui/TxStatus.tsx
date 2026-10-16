@@ -1,6 +1,6 @@
-// Hiển thị trạng thái giao dịch: Loading / Success / Revert / Timeout / Error (kèm link Etherscan).
 import { EXPLORER_URL } from '../../constants/network'
 import { getErrorMessage, shortenAddress } from '../../lib/format'
+import { isUserRejection } from '../../lib/tx'
 import type { TxState } from '../../types'
 import { Icon } from './Icon'
 import { Notice } from './Notice'
@@ -38,7 +38,16 @@ export function TxStatus({ tx }: { tx: TxState }) {
       </Notice>
     )
 
-  if (sendError) return <Notice tone="error">Giao dịch thất bại: {getErrorMessage(sendError)}</Notice>
+  if (sendError) {
+    // Người dùng tự bấm Reject: không phải lỗi hệ thống và không mất phí gas.
+    if (isUserRejection(sendError))
+      return (
+        <Notice tone="warning">
+          Bạn đã từ chối giao dịch trong MetaMask. Không có giao dịch nào được gửi nên bạn không mất phí gas.
+        </Notice>
+      )
+    return <Notice tone="error">Giao dịch thất bại: {getErrorMessage(sendError)}</Notice>
+  }
 
   if (receiptFailure && hash) {
     if (receiptFailure.kind === 'reverted')

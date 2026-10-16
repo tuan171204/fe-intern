@@ -1,4 +1,3 @@
-// config.ts
 // Cấu hình Wagmi: chỉ hỗ trợ Sepolia Testnet (chainId = 11155111) + ví MetaMask.
 import { createConfig, fallback, http } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
@@ -6,7 +5,10 @@ import { injected } from 'wagmi/connectors'
 
 // RPC riêng (Alchemy/Infura) đặt trong .env.local:
 //   VITE_SEPOLIA_RPC=https://eth-sepolia.g.alchemy.com/v2/<KEY>
-const customRpc = import.meta.env.VITE_SEPOLIA_RPC as string | undefined
+
+const rawRpc = (import.meta.env.VITE_SEPOLIA_RPC as string | undefined)?.trim()
+const customRpc =
+    rawRpc && /^https?:\/\//.test(rawRpc) && !rawRpc.includes('YOUR_ALCHEMY_API_KEY') ? rawRpc : undefined
 
 export const config = createConfig({
     // Danh sách chain app hỗ trợ. switchChain() chỉ chuyển được sang chain nằm trong danh sách này.

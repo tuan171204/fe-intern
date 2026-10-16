@@ -1,6 +1,7 @@
 import { useTransactionReceipt, useWaitForTransactionReceipt } from 'wagmi'
 import type { Hash } from 'viem'
 import { SEPOLIA_CHAIN_ID } from '../constants/network'
+import { getErrorMessage } from '../lib/format'
 import { isReceiptTimeout } from '../lib/tx'
 import type { ReceiptFailure, TxState } from '../types'
 
@@ -29,7 +30,7 @@ export function useTxReceipt(hash: Hash | undefined, sendError: Error | null, is
     if (directStatus === 'reverted') receiptFailure = { kind: 'reverted' }
     else if (directStatus === 'success') receiptFailure = null // receipt thực ra thành công
     else if (isReceiptTimeout(wait.error)) receiptFailure = { kind: 'timeout' }
-    else receiptFailure = { kind: 'error', message: wait.error.message }
+    else receiptFailure = { kind: 'error', message: getErrorMessage(wait.error) }
   }
 
   return {
