@@ -1,18 +1,18 @@
-export interface SignUpPayload {
+export interface RequestMessagePayload {
     walletAddress: string
-    password: string
 }
 
-export interface SignUpResponse {
+export interface RequestMessageResponse {
+    data: string
+}
+
+export interface LoginPayload {
+    walletAddress: string
+    signature: string
     message: string
 }
 
-export interface SignInPayload {
-    walletAddress: string
-    password: string
-}
-
-export interface SignInResponse {
+export interface LoginResponse {
     message: string
     /** JWT token */
     data: string

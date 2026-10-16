@@ -1,12 +1,14 @@
 import api from "../utils/api"
-import type { SignInPayload, SignInResponse, SignUpPayload, SignUpResponse } from "../types/auth"
+import type { LoginPayload, LoginResponse, RequestMessagePayload, RequestMessageResponse } from "../types/auth"
 
-export const signUp = async (payload: SignUpPayload): Promise<SignUpResponse> => {
-    const { data } = await api.post<SignUpResponse>("/users/sign-up", payload)
-    return data
+/** SIWE: xin message cần ký cho ví */
+export const requestMessage = async (payload: RequestMessagePayload): Promise<string> => {
+    const { data } = await api.post<RequestMessageResponse>("/users/request", payload)
+    return data.data
 }
 
-export const signIn = async (payload: SignInPayload): Promise<SignInResponse> => {
-    const { data } = await api.post<SignInResponse>("/users/sign-in", payload)
-    return data
+/** SIWE: gửi chữ ký để đổi lấy JWT */
+export const loginWithSignature = async (payload: LoginPayload): Promise<string> => {
+    const { data } = await api.post<LoginResponse>("/users/login", payload)
+    return data.data
 }

@@ -3,14 +3,11 @@ import {
     BarChart3,
     Check,
     ChevronDown,
-    ChevronLeft,
-    ChevronRight,
     Coins,
     Copy,
     Eye,
     EyeOff,
     FileText,
-    Github,
     Globe,
     Hexagon,
     Home,
@@ -19,8 +16,10 @@ import {
     MessageCircle,
     Send,
     TrendingDown,
+    TriangleAlert,
     Upload,
     User,
+    Wallet,
     X,
     type LucideProps,
 } from "lucide-react"
@@ -41,7 +40,7 @@ const TelegramGlyph = (props: LucideProps) => (
     </svg>
 )
 
-/** Bảng tra icon dùng chung toàn dự án - mọi nơi cần icon chỉ dùng component Icon này */
+/** Bảng tra icon dùng chung toàn dự án */
 const ICONS = {
     eye: Eye,
     "eye-off": EyeOff,
@@ -62,11 +61,10 @@ const ICONS = {
     home: Home,
     coins: Coins,
     hexagon: Hexagon,
+    wallet: Wallet,
+    alert: TriangleAlert,
     "x-twitter": XTwitterGlyph,
     telegram: TelegramGlyph,
-    "chevron-left": ChevronLeft,
-    "chevron-right": ChevronRight,
-    github: Github,
 } as const
 
 export type IconName = keyof typeof ICONS

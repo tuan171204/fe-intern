@@ -5,7 +5,9 @@ import cn from "../../utils/cn"
 import { getPageTitle } from "../left-menu/nav-config"
 import { shortenAddress } from "../ui/copy-address"
 import Icon from "../ui/icon"
+import WalletButton from "../wallet/WalletButton"
 import { useAuth } from "../../store/AuthContext"
+import { useWalletAuth } from "../../store/WalletAuthContext"
 
 export interface DashboardHeaderProps {
     onMenuClick: () => void
@@ -24,7 +26,9 @@ const menuItemClass = (active: boolean) =>
 const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN" }: DashboardHeaderProps) => {
     const { pathname } = useLocation()
     const navigate = useNavigate()
-    const { user, logout } = useAuth()
+    const { user } = useAuth()
+    /* Logout = xoá JWT + ngắt kết nối ví */
+    const { logout } = useWalletAuth()
     const address = addressProp ?? user?.address ?? DEMO_ADDRESS
 
     const [menuOpen, setMenuOpen] = React.useState(false)
@@ -66,63 +70,67 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN
                 <p className="truncate text-lg font-semibold">{getPageTitle(pathname)}</p>
             </div>
 
-            <div ref={menuRef} className="relative">
-                <button
-                    type="button"
-                    onClick={() => setMenuOpen((v) => !v)}
-                    aria-haspopup="menu"
-                    aria-expanded={menuOpen}
-                    aria-label="Account menu"
-                    className={cn(
-                        "flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                        menuOpen && "bg-accent"
-                    )}
-                >
-                    <span aria-hidden="true" className="size-8 shrink-0 rounded-full bg-teal-600" />
-                    <span className="hidden flex-col text-left leading-tight sm:flex">
-                        <span className="text-[11px] text-foreground" title={address}>
-                            {shortenAddress(address, 5, 9)}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">{balance}</span>
-                    </span>
-                    <Icon
-                        name="chevron-down"
-                        size="md"
-                        aria-hidden="true"
-                        className={cn("text-muted-foreground transition-transform", menuOpen && "rotate-180")}
-                    />
-                </button>
+            <div className="flex shrink-0 items-center gap-2">
+                <WalletButton />
 
-                {menuOpen && (
-                    <ul
-                        role="menu"
-                        className="absolute right-0 top-full z-40 mt-2 w-44 rounded-lg border border-border bg-background p-1 shadow-lg animate-in fade-in-0 zoom-in-95 duration-150"
+                <div ref={menuRef} className="relative">
+                    <button
+                        type="button"
+                        onClick={() => setMenuOpen((v) => !v)}
+                        aria-haspopup="menu"
+                        aria-expanded={menuOpen}
+                        aria-label="Account menu"
+                        className={cn(
+                            "flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            menuOpen && "bg-accent"
+                        )}
                     >
-                        <li role="none">
-                            <Link
-                                role="menuitem"
-                                to="/profile"
-                                aria-current={pathname === "/profile" ? "page" : undefined}
-                                onClick={() => setMenuOpen(false)}
-                                className={menuItemClass(pathname === "/profile")}
-                            >
-                                <Icon name="user" size="md" aria-hidden="true" />
-                                Profile
-                            </Link>
-                        </li>
-                        <li role="none">
-                            <button
-                                type="button"
-                                role="menuitem"
-                                onClick={handleLogout}
-                                className={cn(menuItemClass(false), "w-full text-left")}
-                            >
-                                <Icon name="logout" size="md" aria-hidden="true" />
-                                Log out
-                            </button>
-                        </li>
-                    </ul>
-                )}
+                        <span aria-hidden="true" className="size-8 shrink-0 rounded-full bg-teal-600" />
+                        <span className="hidden flex-col text-left leading-tight sm:flex">
+                            <span className="text-[11px] text-foreground" title={address}>
+                                {shortenAddress(address, 5, 9)}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">{balance}</span>
+                        </span>
+                        <Icon
+                            name="chevron-down"
+                            size="md"
+                            aria-hidden="true"
+                            className={cn("text-muted-foreground transition-transform", menuOpen && "rotate-180")}
+                        />
+                    </button>
+
+                    {menuOpen && (
+                        <ul
+                            role="menu"
+                            className="absolute right-0 top-full z-40 mt-2 w-44 rounded-lg border border-border bg-background p-1 shadow-lg animate-in fade-in-0 zoom-in-95 duration-150"
+                        >
+                            <li role="none">
+                                <Link
+                                    role="menuitem"
+                                    to="/profile"
+                                    aria-current={pathname === "/profile" ? "page" : undefined}
+                                    onClick={() => setMenuOpen(false)}
+                                    className={menuItemClass(pathname === "/profile")}
+                                >
+                                    <Icon name="user" size="md" aria-hidden="true" />
+                                    Profile
+                                </Link>
+                            </li>
+                            <li role="none">
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={handleLogout}
+                                    className={cn(menuItemClass(false), "w-full text-left")}
+                                >
+                                    <Icon name="logout" size="md" aria-hidden="true" />
+                                    Log out
+                                </button>
+                            </li>
+                        </ul>
+                    )}
+                </div>
             </div>
         </header>
     )
