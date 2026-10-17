@@ -35,18 +35,18 @@ export const isRequestPending = (error: unknown) =>
  */
 export function getWalletErrorMessage(
     error: unknown,
-    rejectedMessage = "Bạn đã từ chối yêu cầu trong MetaMask."
+    rejectedMessage = "You rejected the request in MetaMask."
 ): string {
     if (isProviderNotFound(error)) {
-        return "Không tìm thấy ví MetaMask. Hãy cài extension MetaMask rồi tải lại trang."
+        return "MetaMask not found. Please install the MetaMask extension and reload the page."
     }
     if (isUserRejection(error)) return rejectedMessage
     if (isRequestPending(error)) {
-        return "MetaMask đang có một yêu cầu chờ xử lý. Hãy mở extension MetaMask để xác nhận hoặc hủy."
+        return "MetaMask already has a pending request. Open the MetaMask extension to confirm or cancel it."
     }
 
     const [first] = errorChain(error)
     if (typeof first?.shortMessage === "string" && first.shortMessage) return first.shortMessage
     if (typeof first?.message === "string" && first.message) return first.message
-    return "Đã có lỗi xảy ra. Vui lòng thử lại."
+    return "Something went wrong. Please try again."
 }

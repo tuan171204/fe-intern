@@ -26,7 +26,7 @@ const WalletConnectModal = ({
     <Dialog isOpen={isOpen} onClose={onClose} title="Connect Wallet">
         <div className="flex flex-col gap-3">
             <p className="text-center text-xs text-muted-foreground">
-                Chọn ví để kết nối. Ứng dụng chạy trên Sepolia Testnet.
+                Choose a wallet to connect. This app runs on Sepolia Testnet.
             </p>
 
             <ul className="flex flex-col gap-2">
@@ -56,7 +56,7 @@ const WalletConnectModal = ({
                                 {loading && (
                                     <span className="flex items-center gap-1.5 text-xs font-normal text-muted-foreground">
                                         <Loading size="sm" className="text-teal-600" />
-                                        Chờ xác nhận…
+                                        Waiting for confirmation…
                                     </span>
                                 )}
                             </button>
@@ -67,19 +67,19 @@ const WalletConnectModal = ({
 
             {isPending && (
                 <p role="status" className="text-center text-xs text-muted-foreground">
-                    Hãy mở MetaMask và xác nhận yêu cầu kết nối.
+                    Open MetaMask and confirm the connection request.
                 </p>
             )}
 
             <p className="text-center text-xs text-muted-foreground">
-                Chưa có ví?{" "}
+                Don&apos;t have a wallet?{" "}
                 <a
                     href="https://metamask.io/download/"
                     target="_blank"
                     rel="noreferrer"
                     className="font-medium text-teal-600 underline underline-offset-2 hover:text-teal-700"
                 >
-                    Cài MetaMask
+                    Install MetaMask
                 </a>
             </p>
         </div>

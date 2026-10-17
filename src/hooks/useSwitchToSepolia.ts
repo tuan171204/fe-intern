@@ -14,9 +14,9 @@ export function useSwitchToSepolia() {
         switchChain(
             { chainId: SEPOLIA_CHAIN_ID },
             {
-                onSuccess: () => success("Đã chuyển sang Sepolia Testnet"),
+                onSuccess: () => success("Switched to Sepolia Testnet"),
                 onError: (err) =>
-                    showError(getWalletErrorMessage(err, "Bạn đã từ chối chuyển mạng trong MetaMask.")),
+                    showError(getWalletErrorMessage(err, "You rejected the network switch in MetaMask.")),
             }
         )
     }, [switchChain, success, showError])
