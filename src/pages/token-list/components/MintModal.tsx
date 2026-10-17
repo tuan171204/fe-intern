@@ -1,100 +1,162 @@
 import * as React from "react"
+import { formatEther } from "viem"
 
+import { Button } from "../../../components/ui/button"
 import { Dialog } from "../../../components/ui/dialog"
 import { Input } from "../../../components/ui/input"
+import { Loading } from "../../../components/ui/loading"
 import { SubmitButton } from "../../../components/ui/submit-button"
-import { useToast } from "../../../store/ToastContext"
+import { TOKEN_DECIMALS } from "../../../constants/contract"
+import { useMintToken, type MintTokenStep } from "../../../hooks/useMintToken"
+import { useNetworkGuard } from "../../../hooks/useNetworkGuard"
+import type { TokenOnchainInfo } from "../../../hooks/useTokenOnchainData"
 import type { Token } from "../../../types/tokens"
-import { AMOUNT_PER_MINT, MINT_FEE } from "./mint-config"
+import { toBigInt } from "../../../utils/token-math"
+import { formatTokenAmount } from "../../../utils/web3-format"
 
 export interface MintModalProps {
     token: Token | null
+    /** Dữ liệu on-chain (totalSupply) của token đang mint; undefined nếu chưa tải được */
+    onchain?: TokenOnchainInfo
     onClose: () => void
+    /** Gọi sau khi mint thành công để trang cha refetch supply / balance */
+    onMinted: () => void
 }
 
-const readOnlyField = "text-muted-foreground read-only:hover:border-transparent cursor-not-allowed"
+const SUBMIT_LABELS: Partial<Record<MintTokenStep, string>> = {
+    submitting: "Confirm in MetaMask...",
+    confirming: "Confirming on Chain...",
+    error: "Retry Mint",
+}
 
-const MintModal = ({ token, onClose }: MintModalProps) => {
-    const [quantity, setQuantity] = React.useState("1")
-    const [touched, setTouched] = React.useState(false)
-    const [feeWarning, setFeeWarning] = React.useState<string | undefined>(undefined)
-    const [amountWarning, setAmountWarning] = React.useState<string | undefined>(undefined)
-    const [submitting, setSubmitting] = React.useState(false)
-    const { success } = useToast()
+const STATUS_TEXT: Partial<Record<MintTokenStep, string>> = {
+    submitting: "Checking supply and waiting for your confirmation in MetaMask",
+    confirming: "Transaction sent. Waiting for block confirmation",
+}
 
+/* Ô chỉ đọc: không cho focus bằng Tab, không đổi con trỏ thành "cấm" vì đây là thông tin, không phải ô bị khoá */
+const readOnlyProps = { readOnly: true, tabIndex: -1, className: "cursor-default focus-visible:border-transparent" } as const
+
+const EtherscanLink = ({ href }: { href: string }) => (
+    <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className="text-xs font-medium text-teal-600 underline underline-offset-2 hover:text-teal-700"
+    >
+        View transaction on Etherscan
+    </a>
+)
+
+const MintModal = ({ token, onchain, onClose, onMinted }: MintModalProps) => {
+    const { canTransact } = useNetworkGuard()
+    const { step, error, isBusy, txUrl, submit, reset } = useMintToken({ onSuccess: onMinted })
+
+    /* Mỗi lần mở modal cho token khác: đưa luồng mint về ban đầu */
     React.useEffect(() => {
-        setQuantity("1")
-        setTouched(false)
-        setFeeWarning(undefined)
-        setAmountWarning(undefined)
-        setSubmitting(false)
-    }, [token])
+        reset()
+    }, [token, reset])
 
+    /* Không cho đóng khi đang ký / chờ xác nhận để user không mất dấu giao dịch */
     const handleClose = () => {
-        setFeeWarning(undefined)
-        setAmountWarning(undefined)
+        if (isBusy) return
+        reset()
         onClose()
     }
 
-    const quantityNum = Number(quantity)
-    const isQuantityValid = quantity.trim() !== "" && Number.isInteger(quantityNum) && quantityNum > 0
-    const error = touched && !isQuantityValid ? "Quantity must be a positive integer" : undefined
+    const maxSupply = toBigInt(token?.maxSupply)
+    const totalSupply = onchain?.totalSupply
+    const remaining = totalSupply !== undefined ? (maxSupply > totalSupply ? maxSupply - totalSupply : 0n) : undefined
+    const soldOut = totalSupply !== undefined && maxSupply > 0n && totalSupply >= maxSupply
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        setTouched(true)
-        if (!isQuantityValid || !token) return
-
-        setSubmitting(true)
-        // Giả lập gọi API mint (backend chưa có endpoint mint)
-        window.setTimeout(() => {
-            setSubmitting(false)
-            success(`Minted ${quantityNum} ${token.name} successfully`)
-            handleClose()
-        }, 600)
+        if (!token || isBusy || soldOut || !canTransact) return
+        void submit(token.tokenAddress)
     }
 
-    const totalFee = isQuantityValid ? (Number(MINT_FEE) * quantityNum).toFixed(3) : MINT_FEE
+    const amountPerMint = token ? formatTokenAmount(toBigInt(token.amountPerMint), TOKEN_DECIMALS, 4) : ""
+    const mintFee = token ? formatEther(toBigInt(token.mintFee)) : ""
+    const remainingText = remaining !== undefined ? formatTokenAmount(remaining, TOKEN_DECIMALS, 4) : "-"
 
     return (
         <Dialog isOpen={!!token} onClose={handleClose} title={token ? `${token.name} Token` : undefined}>
             {token && (
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
                     <Input
-                        label="Quantity"
-                        required
-                        type="number"
-                        inputMode="numeric"
-                        min={1}
-                        value={quantity}
-                        onChange={(e) => {
-                            setQuantity(e.target.value)
-                            setTouched(true)
-                        }}
-                        error={error}
-                    />
-                    <Input
                         label="Amount Per Mint"
-                        readOnly
-                        value={AMOUNT_PER_MINT}
-                        className={readOnlyField}
-                        onClick={() => setAmountWarning("You are not allowed to change the amount per mint")}
-                        onFocus={() => setAmountWarning("You are not allowed to change the amount per mint")}
-                        error={amountWarning}
+                        value={amountPerMint}
+                        endAdornment={<span className="text-xs text-muted-foreground">{token.symbol}</span>}
+                        {...readOnlyProps}
                     />
                     <Input
-                        label="Total Mint Fee"
-                        readOnly
-                        value={totalFee}
-                        className={readOnlyField}
-                        endAdornment={<span className="text-xs text-muted-foreground">ZKN</span>}
-                        onClick={() => setFeeWarning("You are not allowed to change the mint fee")}
-                        onFocus={() => setFeeWarning("You are not allowed to change the mint fee")}
-                        error={feeWarning}
+                        label="Mint Fee"
+                        value={mintFee}
+                        endAdornment={<span className="text-xs text-muted-foreground">ETH</span>}
+                        {...readOnlyProps}
                     />
-                    <SubmitButton loading={submitting} disabled={submitting} className="mt-2">
-                        Mint
-                    </SubmitButton>
+                    <Input
+                        label="Remaining Supply"
+                        value={remainingText}
+                        endAdornment={<span className="text-xs text-muted-foreground">{token.symbol}</span>}
+                        {...readOnlyProps}
+                    />
+
+                    {soldOut && (
+                        <p role="alert" className="rounded-md bg-red-50 p-3 text-xs text-destructive">
+                            Max supply reached. This token can&apos;t be minted any further.
+                        </p>
+                    )}
+
+                    {!soldOut && !canTransact && (
+                        <p role="alert" className="rounded-md bg-amber-50 p-3 text-xs text-amber-800">
+                            Connect your wallet on Sepolia Testnet to mint.
+                        </p>
+                    )}
+
+                    {isBusy && (
+                        <div
+                            role="status"
+                            aria-live="polite"
+                            className="flex items-start gap-2 rounded-md border border-border bg-muted/40 p-3 text-xs"
+                        >
+                            <Loading size="sm" className="mt-0.5 text-teal-600" />
+                            <div className="flex flex-col gap-1">
+                                <span>{STATUS_TEXT[step]}</span>
+                                {txUrl && <EtherscanLink href={txUrl} />}
+                            </div>
+                        </div>
+                    )}
+
+                    {step === "error" && error && (
+                        <p role="alert" className="rounded-md bg-red-50 p-3 text-xs text-destructive">
+                            {error}
+                        </p>
+                    )}
+
+                    {step === "success" ? (
+                        <div className="flex flex-col gap-3 text-center">
+                            <p className="text-sm">
+                                Minted{" "}
+                                <span className="font-semibold">
+                                    {amountPerMint} {token.symbol}
+                                </span>{" "}
+                                successfully.
+                            </p>
+                            {txUrl && <EtherscanLink href={txUrl} />}
+                            <Button
+                                type="button"
+                                onClick={handleClose}
+                                className="h-11 w-full rounded-full bg-teal-600 text-white hover:bg-teal-700"
+                            >
+                                Done
+                            </Button>
+                        </div>
+                    ) : (
+                        <SubmitButton loading={isBusy} disabled={isBusy || soldOut || !canTransact} className="mt-2">
+                            {SUBMIT_LABELS[step] ?? "Mint"}
+                        </SubmitButton>
+                    )}
                 </form>
             )}
         </Dialog>
