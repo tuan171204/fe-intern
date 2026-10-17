@@ -25,7 +25,7 @@ const getPageItems = (page: number, totalPages: number): PageItem[] => {
 const buttonClass =
     "inline-flex size-8 items-center justify-center rounded-md text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
 
-/** Ẩn khi chỉ có 1 trang */
+/** Ẩn khi chỉ có 1 trang.  */
 const Pagination = ({ page, limit, total, onPageChange, disabled = false, className }: PaginationProps) => {
     const totalPages = Math.max(1, Math.ceil(total / limit))
     if (totalPages <= 1) return null
@@ -39,7 +39,7 @@ const Pagination = ({ page, limit, total, onPageChange, disabled = false, classN
                 onClick={() => onPageChange(page - 1)}
                 className={cn(buttonClass, "text-muted-foreground hover:bg-accent")}
             >
-                <Icon name="chevron-left" size="md" />
+                <Icon name="chevron-down" size="md" className="rotate-90" />
             </button>
 
             {getPageItems(page, totalPages).map((item) =>
@@ -72,7 +72,7 @@ const Pagination = ({ page, limit, total, onPageChange, disabled = false, classN
                 onClick={() => onPageChange(page + 1)}
                 className={cn(buttonClass, "text-muted-foreground hover:bg-accent")}
             >
-                <Icon name="chevron-right" size="md" />
+                <Icon name="chevron-down" size="md" className="-rotate-90" />
             </button>
         </nav>
     )
