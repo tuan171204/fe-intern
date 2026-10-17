@@ -1,8 +1,16 @@
 import { useNetworkGuard } from "../../hooks/useNetworkGuard"
+import { useAuth } from "../../store/AuthContext"
+import { useWalletAuth } from "../../store/WalletAuthContext"
 
-/** Component không có UI, chỉ kích hoạt Chain Guard (tự yêu cầu chuyển sang Sepolia) cho toàn app. */
+/**
+ * Component không có UI, kích hoạt Chain Guard toàn app.
+ * Chỉ tự chuyển mạng khi đã đăng nhập và luồng SIWE không bận; trong lúc đăng nhập,
+ */
 const NetworkGuard = () => {
-    useNetworkGuard({ autoSwitch: true })
+    const { isLogged } = useAuth()
+    const { isBusy } = useWalletAuth()
+
+    useNetworkGuard({ autoSwitch: isLogged && !isBusy })
     return null
 }
 

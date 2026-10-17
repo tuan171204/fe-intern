@@ -1,4 +1,3 @@
-// File: src/App.tsx
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom"
 
 import Footer from "./components/footer"
@@ -6,6 +5,7 @@ import Header from "./components/header"
 import DashboardLayout from "./components/layout/DashboardLayout"
 import GuestRoute from "./components/routing/GuestRoute"
 import ProtectedRoute from "./components/routing/ProtectedRoute"
+import NetworkGuard from "./components/web3/NetworkGuard"
 import ConnectPage from "./pages/connect"
 import Leaderboard from "./pages/leaderboard"
 import TokenCreator from "./pages/token-creator"
@@ -33,6 +33,7 @@ const ComingSoon = () => (
 const App = () => (
   <AuthProvider>
     <WalletAuthProvider>
+      <NetworkGuard />
       <BrowserRouter>
         <Routes>
           <Route element={<GuestRoute />}>

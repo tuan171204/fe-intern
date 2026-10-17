@@ -11,6 +11,7 @@ import WalletConnectModal from "./WalletConnectModal"
 
 const STEP_LABELS: Partial<Record<SiweStep, string>> = {
     connecting: "Connecting...",
+    switching: "Switching Network...",
     requesting: "Requesting Message...",
     signing: "Waiting for Signature...",
     authenticating: "Authenticating...",
@@ -49,7 +50,7 @@ const ConnectWalletButton = ({
     let content: React.ReactNode
 
     if (isBusy || isRestoring) {
-        // Đang chạy 1 trong các bước: Connecting -> Requesting -> Signing -> Authenticating
+        // Đang chạy 1 trong các bước: Connecting -> Switching -> Requesting -> Signing -> Authenticating
         content = (
             <Button size={size} disabled loading className={className} title="Please follow the prompts in MetaMask">
                 {STEP_LABELS[step] ?? "Connecting..."}
@@ -59,7 +60,7 @@ const ConnectWalletButton = ({
         content = (
             <>
                 <Button size={size} loading={isSwitching} onClick={switchToSepolia} className={className}>
-                    Switch to Sepolia
+                    {isSwitching ? "Switching Network..." : "Switch to Sepolia"}
                 </Button>
                 {disconnectButton}
             </>
