@@ -49,3 +49,40 @@ export function getCreateTokenErrorMessage(error: unknown): string {
 
     return getWalletErrorMessage(error, REJECTED_MESSAGE)
 }
+
+/** Lỗi khi mint token: simulate / gửi giao dịch / chờ receipt */
+export function getMintTokenErrorMessage(error: unknown): string {
+    if (isUserRejection(error)) return REJECTED_MESSAGE
+
+    const text = flatten(error)
+
+    if (
+        text.includes("insufficient funds") ||
+        text.includes("insufficientfunds") ||
+        text.includes("transaction creation failed")
+    ) {
+        return "Not enough Sepolia ETH to pay the mint fee and gas. Get some from a faucet and try again."
+    }
+    if (
+        text.includes("intrinsicgastoolow") ||
+        text.includes("out of gas") ||
+        text.includes("gas required exceeds") ||
+        text.includes("exceeds block gas limit")
+    ) {
+        return "Gas is too low or the gas estimate failed. Raise the gas limit in MetaMask and try again."
+    }
+    if (text.includes("chainmismatch")) {
+        return "Your wallet is on the wrong network. Please switch to Sepolia."
+    }
+    if (text.includes("max supply") || text.includes("maxsupply") || text.includes("exceed")) {
+        return "Max supply reached. This token can't be minted any further."
+    }
+    if (text.includes("mint fee") || text.includes("incorrect fee") || text.includes("insufficient fee")) {
+        return "The mint fee sent doesn't match what the contract requires."
+    }
+    if (text.includes("reverted") || text.includes("executionreverted")) {
+        return "The contract rejected this mint. The max supply may have been reached or the fee is incorrect."
+    }
+
+    return getWalletErrorMessage(error, REJECTED_MESSAGE)
+}
