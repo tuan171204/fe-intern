@@ -5,23 +5,15 @@ import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, 
 import { loginWithSignature, requestMessage } from "../api/auth"
 import { SEPOLIA_CHAIN_ID } from "../config/network"
 import { getErrorMessage } from "../utils/api"
-import { getWalletErrorMessage, isUserRejection } from "../utils/web3-errors"
+import { getWalletErrorMessage } from "../utils/web3-errors"
 import { useAuth } from "./AuthContext"
 import { useToast } from "./ToastContext"
 
-export type SiweStep =
-    | "idle"
-    | "connecting"
-    | "switching" // chờ ví chuyển sang Sepolia (phải xong trước khi xin chữ ký)
-    | "requesting"
-    | "signing"
-    | "authenticating"
-    | "success"
-    | "error"
+export type SiweStep = "idle" | "connecting" | "requesting" | "signing" | "authenticating" | "success" | "error"
 
 interface WalletAuthContextValue {
     step: SiweStep
-    /** Đang ở 1 trong các bước connecting -> switching -> requesting -> signing -> authenticating */
+    /** Đang ở 1 trong các bước connecting -> authenticating */
     isBusy: boolean
     /** id connector đang chờ xác nhận trong ví */
     pendingConnectorId: string | undefined
@@ -43,9 +35,9 @@ const toErrorMessage = (err: unknown) =>
 const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const { address, chainId, status } = useAccount()
     const { connectAsync } = useConnect()
-    const { switchChainAsync } = useSwitchChain()
     const { disconnect } = useDisconnect()
     const { signMessageAsync } = useSignMessage()
+    const { switchChainAsync } = useSwitchChain()
     const { isLogged, user, login, logout: clearSession } = useAuth()
     const { success, error: toastError } = useToast()
 
@@ -55,23 +47,13 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     /* Chặn chạy trùng flow (double click, StrictMode, bấm retry khi đang chạy) */
     const inFlight = React.useRef(false)
 
-    /**
-     * Flow sequencing: chỉ khi ví đã ở Sepolia mới được xin chữ ký SIWE.
-     * Nếu sai mạng -> yêu cầu chuyển mạng và chờ kết quả; user từ chối -> ném lỗi để dừng flow.
-     */
+    /* Phải ở đúng mạng TRƯỚC khi xin chữ ký: switch xong (hoặc bị từ chối) mới sang bước ký,
+       nên MetaMask không bao giờ có 2 popup cùng lúc. NetworkGuard bị tắt trong lúc flow này chạy. */
     const ensureSepolia = React.useCallback(
         async (currentChainId: number | undefined) => {
             if (currentChainId === SEPOLIA_CHAIN_ID) return
-
-            setStep("switching")
-            try {
-                await switchChainAsync({ chainId: SEPOLIA_CHAIN_ID })
-            } catch (err) {
-                if (isUserRejection(err)) {
-                    throw new Error("You rejected the network switch. Please switch to Sepolia to sign in.")
-                }
-                throw err
-            }
+            setStep("connecting")
+            await switchChainAsync({ chainId: SEPOLIA_CHAIN_ID })
         },
         [switchChainAsync]
     )
@@ -140,15 +122,16 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
         setStep("idle")
     }, [clearSession, disconnect])
 
-    /* Ví ngắt kết nối (sau khi đã từng connected trong phiên này) -> xoá phiên đăng nhập. */
-    const wasConnected = React.useRef(false)
+    /* Ví ngắt kết nối -> xoá phiên đăng nhập. Tính cả trường hợp reload trang: wagmi đi qua
+       "connecting"/"reconnecting" rồi về "disconnected" khi MetaMask không còn cấp quyền cho site. */
+    const walletWasActive = React.useRef(false)
     React.useEffect(() => {
-        if (status === "connected") {
-            wasConnected.current = true
+        if (status === "connected" || status === "connecting" || status === "reconnecting") {
+            walletWasActive.current = true
             return
         }
-        if (status === "disconnected" && wasConnected.current) {
-            wasConnected.current = false
+        if (status === "disconnected" && walletWasActive.current) {
+            walletWasActive.current = false
             if (isLogged) clearSession()
         }
     }, [status, isLogged, clearSession])
@@ -170,12 +153,7 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const value = React.useMemo<WalletAuthContextValue>(
         () => ({
             step,
-            isBusy:
-                step === "connecting" ||
-                step === "switching" ||
-                step === "requesting" ||
-                step === "signing" ||
-                step === "authenticating",
+            isBusy: step === "connecting" || step === "requesting" || step === "signing" || step === "authenticating",
             pendingConnectorId,
             connectAndSignIn,
             signIn,

@@ -3,8 +3,10 @@ import { useAuth } from "../../store/AuthContext"
 import { useWalletAuth } from "../../store/WalletAuthContext"
 
 /**
- * Component không có UI, kích hoạt Chain Guard toàn app.
- * Chỉ tự chuyển mạng khi đã đăng nhập và luồng SIWE không bận; trong lúc đăng nhập,
+ * Không có UI, kích hoạt Chain Guard (tự yêu cầu chuyển sang Sepolia) cho toàn app.
+ * - Chưa đăng nhập: việc chuyển mạng do flow SIWE (WalletAuthContext) đảm nhiệm, để không có 2 popup MetaMask cùng lúc.
+ * - Đã đăng nhập: nếu user đổi sang mạng khác thì yêu cầu chuyển lại (khi không có flow nào đang chạy).
+ * Phải được render bên trong AuthProvider và WalletAuthProvider.
  */
 const NetworkGuard = () => {
     const { isLogged } = useAuth()
