@@ -1,8 +1,10 @@
 import * as React from "react"
+import type { Address } from "viem"
 
 import { Button } from "../../../components/ui/button"
 import { shortenAddress } from "../../../components/ui/copy-address"
 import Icon from "../../../components/ui/icon"
+import { useEthBalance } from "../../../hooks/useEthBalance"
 import type { UserProfile } from "../../../types/profile"
 import EditProfileModal from "./EditProfileModal"
 import { SOCIAL_LINKS } from "./social-links"
@@ -12,25 +14,20 @@ export interface ProfileCardProps {
     onSave: (profile: UserProfile) => void
 }
 
-/* Backend chưa có level/balance  */
-const STATIC_LEVEL = "2/2"
-const STATIC_BALANCE = "200 ZKN"
-
-/* Backend cho phép link không có http(s):// -> bổ sung để <a> không thành link tương đối */
 const toHref = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
 const ProfileCard = ({ profile, onSave }: ProfileCardProps) => {
     const [editing, setEditing] = React.useState(false)
+    const { formatted: ethBalance, isLoading: balanceLoading, isError: balanceError } = useEthBalance(
+        profile.walletAddress as Address
+    )
+
+    const balanceText = balanceLoading ? "Loading..." : balanceError ? "Unavailable" : (ethBalance ?? "0 ETH")
 
     return (
         <section aria-label="Profile" className="flex flex-col gap-4 rounded-lg bg-background p-4">
             <div className="flex items-center gap-3">
-                <div className="relative shrink-0">
-                    <span aria-hidden="true" className="block size-10 rounded-full bg-teal-600" />
-                    <span className="absolute -left-1 -top-1 rounded-full bg-orange-200 px-1 text-[9px] font-medium leading-4">
-                        {STATIC_LEVEL}
-                    </span>
-                </div>
+                <span aria-hidden="true" className="block size-10 shrink-0 rounded-full bg-teal-600" />
                 <div className="min-w-0">
                     <p className="text-sm font-medium">{profile.username || "Unnamed"}</p>
                     <p className="truncate text-xs text-muted-foreground" title={profile.walletAddress}>
@@ -41,7 +38,7 @@ const ProfileCard = ({ profile, onSave }: ProfileCardProps) => {
 
             <div>
                 <h2 className="text-base font-medium">Balance</h2>
-                <p className="mt-1 text-xs text-muted-foreground">{STATIC_BALANCE}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{balanceText}</p>
             </div>
 
             <div>
