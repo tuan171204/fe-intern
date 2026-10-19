@@ -5,7 +5,7 @@ import { useAccount, usePublicClient, useWaitForTransactionReceipt, useWriteCont
 import { EXPLORER_URL, SEPOLIA_CHAIN_ID } from "../config/network"
 import { StandardERC20ABI } from "../constants/erc20-abi"
 import { useToast } from "../store/ToastContext"
-import { getMintTokenErrorMessage } from "../utils/token-errors"
+import { RECEIPT_UNCONFIRMED_MESSAGE, getMintTokenErrorMessage } from "../utils/token-errors"
 import { isUserRejection } from "../utils/web3-errors"
 
 export type MintTokenStep =
@@ -18,8 +18,12 @@ export type MintTokenStep =
 /** Lỗi do mình chủ động chặn trước khi gửi tx (không phải lỗi từ ví/RPC) */
 class MintPreflightError extends Error { }
 
+/* Lỗi lấy receipt (rate-limit, timeout) KHÔNG có nghĩa tx thất bại -> thử lại vài lần trước khi báo lỗi */
+const RECEIPT_MAX_RECHECKS = 5
+const RECEIPT_RECHECK_DELAY_MS = 5_000
+
 export interface UseMintTokenOptions {
-    /** Gọi 1 lần sau khi tx mint được xác nhận thành công (vd: refetch dữ liệu on-chain) */
+    /** Gọi 1 lần sau khi tx mint được xác nhận thành công */
     onSuccess?: () => void
 }
 
@@ -29,9 +33,18 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
     const { writeContractAsync } = useWriteContract()
     const { success, error: toastError } = useToast()
 
-    const [step, setStep] = React.useState<MintTokenStep>("idle")
+    const [step, setStepState] = React.useState<MintTokenStep>("idle")
     const [txHash, setTxHash] = React.useState<Hash | undefined>(undefined)
     const [error, setError] = React.useState<string | null>(null)
+
+    /* stepRef cập nhật đồng bộ -> chặn double-submit trong cùng 1 tick (state chỉ đổi sau khi re-render) */
+    const stepRef = React.useRef<MintTokenStep>("idle")
+    const setStep = React.useCallback((next: MintTokenStep) => {
+        stepRef.current = next
+        setStepState(next)
+    }, [])
+
+    const recheckCount = React.useRef(0)
 
     const onSuccessRef = React.useRef(onSuccess)
     React.useEffect(() => {
@@ -39,6 +52,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
     })
 
     const receipt = useWaitForTransactionReceipt({ hash: txHash, chainId: SEPOLIA_CHAIN_ID })
+    const { refetch: refetchReceipt } = receipt
 
     const fail = React.useCallback(
         (message: string) => {
@@ -46,15 +60,22 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
             setStep("error")
             toastError(message)
         },
-        [toastError]
+        [setStep, toastError]
     )
 
-    /* Receipt thành công -> báo thành công + refetch; revert/lỗi RPC -> báo lỗi */
+    /* Receipt thành công -> báo thành công + refetch; revert -> báo lỗi; lỗi RPC -> thử lại rồi mới báo */
     React.useEffect(() => {
         if (step !== "confirming" || !txHash) return
 
         if (receipt.isError) {
-            fail(getMintTokenErrorMessage(receipt.error))
+            if (recheckCount.current < RECEIPT_MAX_RECHECKS) {
+                const timer = window.setTimeout(() => {
+                    recheckCount.current += 1
+                    void refetchReceipt()
+                }, RECEIPT_RECHECK_DELAY_MS)
+                return () => window.clearTimeout(timer)
+            }
+            fail(RECEIPT_UNCONFIRMED_MESSAGE)
             return
         }
         if (!receipt.isSuccess) return
@@ -67,10 +88,12 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
         setStep("success")
         success("Minted successfully")
         onSuccessRef.current?.()
-    }, [step, txHash, receipt.isError, receipt.isSuccess, receipt.error, receipt.data, fail, success])
+    }, [step, txHash, receipt.isError, receipt.isSuccess, receipt.error, receipt.data, refetchReceipt, fail, success, setStep])
 
     const submit = React.useCallback(
         async (tokenAddress: string) => {
+            if (stepRef.current === "submitting" || stepRef.current === "confirming") return
+
             if (!address || !publicClient) {
                 fail("Please connect your wallet on Sepolia to mint")
                 return
@@ -79,6 +102,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
             const token = tokenAddress as Address
             setError(null)
             setTxHash(undefined)
+            recheckCount.current = 0
             setStep("submitting")
 
             try {
@@ -141,14 +165,15 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
                 }
             }
         },
-        [address, publicClient, writeContractAsync, fail, toastError]
+        [address, publicClient, writeContractAsync, fail, toastError, setStep]
     )
 
     const reset = React.useCallback(() => {
+        recheckCount.current = 0
         setTxHash(undefined)
         setError(null)
         setStep("idle")
-    }, [])
+    }, [setStep])
 
     return {
         step,

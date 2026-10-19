@@ -1,5 +1,6 @@
 import * as React from "react"
 import { formatEther } from "viem"
+import { useAccount } from "wagmi"
 
 import { Button } from "../../../components/ui/button"
 import { Dialog } from "../../../components/ui/dialog"
@@ -7,6 +8,7 @@ import { Input } from "../../../components/ui/input"
 import { Loading } from "../../../components/ui/loading"
 import { SubmitButton } from "../../../components/ui/submit-button"
 import { TOKEN_DECIMALS } from "../../../constants/contract"
+import { useEthBalance } from "../../../hooks/useEthBalance"
 import { useMintToken, type MintTokenStep } from "../../../hooks/useMintToken"
 import { useNetworkGuard } from "../../../hooks/useNetworkGuard"
 import type { TokenOnchainInfo } from "../../../hooks/useTokenOnchainData"
@@ -49,8 +51,11 @@ const EtherscanLink = ({ href }: { href: string }) => (
 )
 
 const MintModal = ({ token, onchain, onClose, onMinted }: MintModalProps) => {
+    const { address } = useAccount()
     const { canTransact } = useNetworkGuard()
     const { step, error, isBusy, txUrl, submit, reset } = useMintToken({ onSuccess: onMinted })
+    /* Chỉ theo dõi số dư ETH khi modal đang mở */
+    const { balance: ethBalance } = useEthBalance(token ? address : undefined)
 
     /* Mỗi lần mở modal cho token khác: đưa luồng mint về ban đầu */
     React.useEffect(() => {
@@ -65,18 +70,27 @@ const MintModal = ({ token, onchain, onClose, onMinted }: MintModalProps) => {
     }
 
     const maxSupply = toBigInt(token?.maxSupply)
+    const amountPerMintWei = toBigInt(token?.amountPerMint)
+    const mintFeeWei = toBigInt(token?.mintFee)
+
     const totalSupply = onchain?.totalSupply
     const remaining = totalSupply !== undefined ? (maxSupply > totalSupply ? maxSupply - totalSupply : 0n) : undefined
     const soldOut = totalSupply !== undefined && maxSupply > 0n && totalSupply >= maxSupply
+    /* Còn supply nhưng không đủ cho 1 lần mint -> contract sẽ revert */
+    const remainingTooLow = !soldOut && remaining !== undefined && remaining < amountPerMintWei
+    /* Chưa đủ ETH cho mintFee (chưa tính gas) */
+    const insufficientFee = !soldOut && canTransact && ethBalance !== undefined && ethBalance.value < mintFeeWei
+
+    const blocked = soldOut || remainingTooLow || insufficientFee || !canTransact
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        if (!token || isBusy || soldOut || !canTransact) return
+        if (!token || isBusy || blocked) return
         void submit(token.tokenAddress)
     }
 
-    const amountPerMint = token ? formatTokenAmount(toBigInt(token.amountPerMint), TOKEN_DECIMALS, 4) : ""
-    const mintFee = token ? formatEther(toBigInt(token.mintFee)) : ""
+    const amountPerMint = token ? formatTokenAmount(amountPerMintWei, TOKEN_DECIMALS, 4) : ""
+    const mintFee = token ? formatEther(mintFeeWei) : ""
     const remainingText = remaining !== undefined ? formatTokenAmount(remaining, TOKEN_DECIMALS, 4) : "-"
 
     return (
@@ -108,9 +122,22 @@ const MintModal = ({ token, onchain, onClose, onMinted }: MintModalProps) => {
                         </p>
                     )}
 
+                    {remainingTooLow && (
+                        <p role="alert" className="rounded-md bg-red-50 p-3 text-xs text-destructive">
+                            The remaining supply is smaller than the amount per mint.
+                        </p>
+                    )}
+
                     {!soldOut && !canTransact && (
                         <p role="alert" className="rounded-md bg-amber-50 p-3 text-xs text-amber-800">
                             Connect your wallet on Sepolia Testnet to mint.
+                        </p>
+                    )}
+
+                    {insufficientFee && ethBalance && (
+                        <p role="alert" className="rounded-md bg-amber-50 p-3 text-xs text-amber-800">
+                            Not enough Sepolia ETH. Minting needs {mintFee} ETH plus gas, but your balance is{" "}
+                            {formatEther(ethBalance.value)} ETH.
                         </p>
                     )}
 
@@ -129,9 +156,11 @@ const MintModal = ({ token, onchain, onClose, onMinted }: MintModalProps) => {
                     )}
 
                     {step === "error" && error && (
-                        <p role="alert" className="rounded-md bg-red-50 p-3 text-xs text-destructive">
-                            {error}
-                        </p>
+                        <div role="alert" className="flex flex-col gap-1.5 rounded-md bg-red-50 p-3 text-xs text-destructive">
+                            <p>{error}</p>
+                            {/* Có txHash = tx đã được gửi đi: cho user tự kiểm tra trước khi Retry */}
+                            {txUrl && <EtherscanLink href={txUrl} />}
+                        </div>
                     )}
 
                     {step === "success" ? (
@@ -153,7 +182,7 @@ const MintModal = ({ token, onchain, onClose, onMinted }: MintModalProps) => {
                             </Button>
                         </div>
                     ) : (
-                        <SubmitButton loading={isBusy} disabled={isBusy || soldOut || !canTransact} className="mt-2">
+                        <SubmitButton loading={isBusy} disabled={isBusy || blocked} className="mt-2">
                             {SUBMIT_LABELS[step] ?? "Mint"}
                         </SubmitButton>
                     )}
