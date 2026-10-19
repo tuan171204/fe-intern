@@ -14,6 +14,8 @@ import TokenRowSkeleton from "./components/TokenRowSkeleton"
 
 const TOKENS_PER_PAGE = 10
 const SKELETON_ROWS = 5
+/* RPC fallback có thể trả về node chưa kịp đồng bộ block mới -> refetch thêm 1 lần sau mint */
+const POST_MINT_REFETCH_DELAY_MS = 4000
 
 const TokenList = () => {
     const [page, setPage] = React.useState(1)
@@ -24,16 +26,18 @@ const TokenList = () => {
 
     /* Dữ liệu on-chain của cả trang trong 2 multicall (totalSupply + balanceOf) */
     const onchain = useTokenOnchainData(items)
+    const { refetch: refetchOnchain } = onchain
+
+    /* Mint xong: tải lại totalSupply + balanceOf để Mint Progress / Balance / % of Supply cập nhật ngay */
+    const handleMinted = React.useCallback(() => {
+        void refetchOnchain()
+        window.setTimeout(() => void refetchOnchain(), POST_MINT_REFETCH_DELAY_MS)
+    }, [refetchOnchain])
 
     const handlePageChange = (nextPage: number) => {
         setPage(nextPage)
         window.scrollTo({ top: 0, behavior: "smooth" })
     }
-
-    /* Mint xong: tải lại totalSupply + balanceOf để Mint Progress / Balance / % of Supply cập nhật ngay */
-    const handleMinted = React.useCallback(() => {
-        void onchain.refetch()
-    }, [onchain])
 
     const renderRows = () => {
         if (loading) {
