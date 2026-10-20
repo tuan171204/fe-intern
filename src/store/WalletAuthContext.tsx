@@ -9,7 +9,15 @@ import { getWalletErrorMessage } from "../utils/web3-errors"
 import { useAuth } from "./AuthContext"
 import { useToast } from "./ToastContext"
 
-export type SiweStep = "idle" | "connecting" | "requesting" | "signing" | "authenticating" | "success" | "error"
+export type SiweStep =
+    | "idle"
+    | "connecting"
+    | "switching"
+    | "requesting"
+    | "signing"
+    | "authenticating"
+    | "success"
+    | "error"
 
 interface WalletAuthContextValue {
     step: SiweStep
@@ -52,7 +60,7 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const ensureSepolia = React.useCallback(
         async (currentChainId: number | undefined) => {
             if (currentChainId === SEPOLIA_CHAIN_ID) return
-            setStep("connecting")
+            setStep("switching")
             await switchChainAsync({ chainId: SEPOLIA_CHAIN_ID })
         },
         [switchChainAsync]
@@ -153,7 +161,12 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const value = React.useMemo<WalletAuthContextValue>(
         () => ({
             step,
-            isBusy: step === "connecting" || step === "requesting" || step === "signing" || step === "authenticating",
+            isBusy:
+                step === "connecting" ||
+                step === "switching" ||
+                step === "requesting" ||
+                step === "signing" ||
+                step === "authenticating",
             pendingConnectorId,
             connectAndSignIn,
             signIn,
