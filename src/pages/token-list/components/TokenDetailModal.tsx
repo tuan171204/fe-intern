@@ -1,18 +1,22 @@
 import * as React from "react"
+import { formatEther } from "viem"
 
-import { getTokenById } from "../../../api/token"
+import { getTokenByAddress } from "../../../api/token"
 import { Avatar } from "../../../components/ui/avatar"
 import { Button } from "../../../components/ui/button"
 import { CopyAddress } from "../../../components/ui/copy-address"
 import { Dialog } from "../../../components/ui/dialog"
 import Icon, { type IconName } from "../../../components/ui/icon"
 import { Skeleton } from "../../../components/ui/skeleton"
+import { TOKEN_DECIMALS } from "../../../constants/contract"
 import type { Token } from "../../../types/tokens"
 import { getErrorMessage, getImageUrl } from "../../../utils/api"
+import { toBigInt } from "../../../utils/token-math"
+import { formatTokenAmount } from "../../../utils/web3-format"
 
 export interface TokenDetailModalProps {
-    /** id token đang xem; null = đóng popup */
-    tokenId: string | null
+    /** Địa chỉ contract token đang xem; null = đóng popup */
+    tokenAddress: string | null
     onClose: () => void
 }
 
@@ -23,13 +27,16 @@ const LINKS: { key: "websiteUrl" | "telegramUrl" | "discordUrl" | "xUrl"; label:
     { key: "xUrl", label: "X", icon: "x-twitter" },
 ]
 
-/* Backend cho phép link không có http(s):// -> bổ sung để <a> không thành link tương đối */
 const toHref = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
-
-const formatNumber = (value: number) => value.toLocaleString("en-US")
 
 const TokenDetail = ({ token }: { token: Token }) => {
     const links = LINKS.filter(({ key }) => !!token[key])
+
+    const stats = [
+        { label: "Max Supply", value: formatTokenAmount(toBigInt(token.maxSupply), TOKEN_DECIMALS, 4) },
+        { label: "Amount Per Mint", value: formatTokenAmount(toBigInt(token.amountPerMint), TOKEN_DECIMALS, 4) },
+        { label: "Mint Fee", value: `${formatEther(toBigInt(token.mintFee))} ETH` },
+    ]
 
     return (
         <div className="flex flex-col gap-4">
@@ -40,18 +47,17 @@ const TokenDetail = ({ token }: { token: Token }) => {
                         <span className="text-base font-semibold">{token.name}</span>{" "}
                         <span className="text-sm text-muted-foreground">{token.symbol}</span>
                     </p>
-                    <CopyAddress address={token._id} head={8} tail={6} className="text-xs text-foreground" />
+                    <CopyAddress address={token.tokenAddress} head={8} tail={6} className="text-xs text-foreground" />
                 </div>
             </div>
 
-            <dl className="grid grid-cols-2 gap-2 text-center">
-                {[
-                    { label: "Total Supply", value: formatNumber(token.supply) },
-                    { label: "Decimals", value: String(token.decimals) },
-                ].map(({ label, value }) => (
+            <dl className="grid grid-cols-3 gap-2 text-center">
+                {stats.map(({ label, value }) => (
                     <div key={label} className="rounded-lg bg-muted/60 p-2">
                         <dt className="text-[10px] text-muted-foreground">{label}</dt>
-                        <dd className="mt-0.5 truncate text-sm font-semibold">{value}</dd>
+                        <dd className="mt-0.5 truncate text-sm font-semibold" title={value}>
+                            {value}
+                        </dd>
                     </div>
                 ))}
             </dl>
@@ -79,9 +85,8 @@ const TokenDetail = ({ token }: { token: Token }) => {
                         </li>
                     ))}
                 </ul>
-            )
-            }
-        </div >
+            )}
+        </div>
     )
 }
 
@@ -94,7 +99,8 @@ const DetailSkeleton = () => (
                 <Skeleton className="h-3 w-36" />
             </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
+            <Skeleton className="h-14 w-full" />
             <Skeleton className="h-14 w-full" />
             <Skeleton className="h-14 w-full" />
         </div>
@@ -103,18 +109,18 @@ const DetailSkeleton = () => (
     </div>
 )
 
-const TokenDetailModal = ({ tokenId, onClose }: TokenDetailModalProps) => {
+const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
     const [token, setToken] = React.useState<Token | null>(null)
     const [loading, setLoading] = React.useState(false)
     const [loadError, setLoadError] = React.useState<string | null>(null)
     const [reloadKey, setReloadKey] = React.useState(0)
 
-    /* Mỗi lần mở popup (hoặc retry): tải chi tiết token theo id */
+    /* Mỗi lần mở popup (hoặc retry): tải chi tiết token theo địa chỉ contract */
     React.useEffect(() => {
         setToken(null)
         setLoadError(null)
 
-        if (!tokenId) {
+        if (!tokenAddress) {
             setLoading(false)
             return
         }
@@ -122,7 +128,7 @@ const TokenDetailModal = ({ tokenId, onClose }: TokenDetailModalProps) => {
         let cancelled = false
         setLoading(true)
 
-        getTokenById(tokenId)
+        getTokenByAddress(tokenAddress)
             .then((res) => {
                 if (!cancelled) setToken(res.data)
             })
@@ -136,7 +142,7 @@ const TokenDetailModal = ({ tokenId, onClose }: TokenDetailModalProps) => {
         return () => {
             cancelled = true
         }
-    }, [tokenId, reloadKey])
+    }, [tokenAddress, reloadKey])
 
     const renderBody = () => {
         if (loading) return <DetailSkeleton />
@@ -157,7 +163,7 @@ const TokenDetailModal = ({ tokenId, onClose }: TokenDetailModalProps) => {
 
     return (
         <Dialog
-            isOpen={!!tokenId}
+            isOpen={!!tokenAddress}
             onClose={onClose}
             title={token ? `${token.name} Detail` : "Token Detail"}
             className="max-h-[90svh] overflow-y-auto"

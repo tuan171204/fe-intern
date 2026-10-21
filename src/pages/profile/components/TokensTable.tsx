@@ -1,10 +1,13 @@
-// File: src/pages/profile/components/TokensTable.tsx
 import { Button } from "../../../components/ui/button"
 import Pagination from "../../../components/ui/pagination"
 import { Skeleton } from "../../../components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
+import { TOKEN_DECIMALS } from "../../../constants/contract"
+import { useTokenOnchainData } from "../../../hooks/useTokenOnchainData"
 import type { PaginationMeta, Token } from "../../../types/tokens"
 import { getImageUrl } from "../../../utils/api"
+import { formatPercent, percentOf, toBigInt } from "../../../utils/token-math"
+import { formatTokenAmount } from "../../../utils/web3-format"
 import AssetIdentity from "./AssetIdentity"
 
 export interface TokensTableProps {
@@ -20,9 +23,9 @@ export interface TokensTableProps {
 
 const SKELETON_ROWS = 5
 
-const formatNumber = (value: number) => value.toLocaleString("en-US")
-
 const TokensTable = ({ tokens, page, pagination, loading, error, onRetry, onPageChange }: TokensTableProps) => {
+    const onchain = useTokenOnchainData(tokens)
+
     const renderRows = () => {
         if (loading) {
             return Array.from({ length: SKELETON_ROWS }, (_, i) => (
@@ -72,21 +75,44 @@ const TokensTable = ({ tokens, page, pagination, loading, error, onRetry, onPage
             )
         }
 
-        return tokens.map((token) => (
-            <TableRow key={token._id}>
-                <TableCell>
-                    <AssetIdentity
-                        name={token.name}
-                        symbol={token.symbol}
-                        address={token._id}
-                        avatar={getImageUrl(token.image)}
-                    />
-                </TableCell>
-                <TableCell className="text-center font-semibold">{formatNumber(token.supply)}</TableCell>
-                <TableCell className="text-center font-semibold">100%</TableCell>
-                <TableCell className="text-right font-semibold">{formatNumber(token.supply)}</TableCell>
-            </TableRow>
-        ))
+        return tokens.map((token) => {
+            const maxSupply = toBigInt(token.maxSupply)
+            const balance = onchain.byAddress[token.tokenAddress.toLowerCase()]?.balance
+
+            return (
+                <TableRow key={token._id}>
+                    <TableCell>
+                        <AssetIdentity
+                            name={token.name}
+                            symbol={token.symbol}
+                            address={token.tokenAddress}
+                            avatar={getImageUrl(token.image)}
+                        />
+                    </TableCell>
+                    <TableCell className="text-center font-semibold">
+                        {onchain.balanceLoading ? (
+                            <Skeleton className="mx-auto h-4 w-16" />
+                        ) : balance !== undefined ? (
+                            formatTokenAmount(balance, TOKEN_DECIMALS, 4)
+                        ) : (
+                            "-"
+                        )}
+                    </TableCell>
+                    <TableCell className="text-center font-semibold">
+                        {onchain.balanceLoading ? (
+                            <Skeleton className="mx-auto h-4 w-12" />
+                        ) : balance !== undefined ? (
+                            formatPercent(percentOf(balance, maxSupply))
+                        ) : (
+                            "-"
+                        )}
+                    </TableCell>
+                    <TableCell className="text-right font-semibold">
+                        {formatTokenAmount(maxSupply, TOKEN_DECIMALS, 4)}
+                    </TableCell>
+                </TableRow>
+            )
+        })
     }
 
     return (
