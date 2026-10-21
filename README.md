@@ -26,6 +26,7 @@ A frontend dApp running on **Sepolia Testnet**: sign in with your wallet (SIWE),
 ## Requirements
 
 - **Node.js** `v22.11.0+`
+- **Yarn** (recommended) or npm – use **one** package manager only, so lock files don't conflict
 - **MetaMask** installed in your browser
 - **Sepolia ETH** to pay for gas and mint fees (get it from a faucet, e.g. Alchemy or Google Cloud Web3 Sepolia Faucet)
 - **Backend API** running at `http://localhost:5035` (the dev proxy points here)
@@ -53,7 +54,7 @@ VITE_TOKEN_FACTORY_ADDRESS=0xa67f4aEcE759d95680A457F39A95C974Da592116
 | `VITE_SEPOLIA_RPC` | ❌ | Your own RPC. If empty or left as `YOUR_ALCHEMY_API_KEY`, the app falls back to public RPCs (easily rate-limited). |
 | `VITE_TOKEN_FACTORY_ADDRESS` | ✅ | TokenFactory contract address on Sepolia. If missing or malformed, the app throws an error on startup. |
 
-> `VITE_*` variables are embedded in the bundle at build time, so **never put secrets here**. Restart `npm run dev` after editing `.env.local`.
+> `VITE_*` variables are embedded in the bundle at build time, so **never put secrets here**. Restart the dev server after editing `.env.local`.
 
 ## Getting Started
 
@@ -67,6 +68,8 @@ cd fe-thai-tuan
 **2. Install dependencies**
 
 ```bash
+yarn install
+# or
 npm install
 ```
 
@@ -82,6 +85,8 @@ cp .env.local.example .env.local
 **5. Start the dev server**
 
 ```bash
+yarn dev
+# or
 npm run dev
 ```
 
@@ -89,18 +94,18 @@ Open [http://localhost:5173](http://localhost:5173), click **Connect Your Wallet
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the dev server (proxies `/v1` and `/uploads` → `localhost:5035`). |
-| `npm run build` | Type-check (`tsc -b`) and build for production into `dist/`. |
-| `npm run lint` | Run ESLint on the whole project. |
-| `npm run preview` | Serve the production build locally. |
+| Yarn | npm | Description |
+| --- | --- | --- |
+| `yarn dev` | `npm run dev` | Start the dev server (proxies `/v1` and `/uploads` → `localhost:5035`). |
+| `yarn build` | `npm run build` | Type-check (`tsc -b`) and build for production into `dist/`. |
+| `yarn lint` | `npm run lint` | Run ESLint on the whole project. |
+| `yarn preview` | `npm run preview` | Serve the production build locally. |
 
 ## Deployment
 
 ```bash
-npm install
-npm run build
+yarn install
+yarn build
 ```
 
 The output is in `dist/` (static HTML/CSS/JS) and can be hosted on Vercel, Netlify, Nginx, S3, etc.
@@ -110,13 +115,13 @@ Things to keep in mind:
 - Set `VITE_API_BASE_URL`, `VITE_ASSET_BASE_URL`, `VITE_SEPOLIA_RPC` and `VITE_TOKEN_FACTORY_ADDRESS` **before building** (the Vite proxy only exists in dev).
 - The app uses `BrowserRouter`, so the server must rewrite all routes to `index.html`.
 - The backend must allow CORS for the frontend's domain.
-- Verify the build locally with `npm run preview`.
+- Verify the build locally with `yarn preview`.
 
 ## Troubleshooting
 
 | Error | Fix |
 | --- | --- |
-| `Missing or invalid VITE_TOKEN_FACTORY_ADDRESS` | Check `.env.local`, then restart `npm run dev`. |
+| `Missing or invalid VITE_TOKEN_FACTORY_ADDRESS` | Check `.env.local`, then restart the dev server. |
 | `Cannot connect to the server` | The backend isn't running on `localhost:5035`, or `VITE_API_BASE_URL` is wrong. |
 | `The RPC node is rate-limiting requests` | Set your own Alchemy / Infura URL in `VITE_SEPOLIA_RPC`. |
 | `Wrong network` | Click **Switch to Sepolia** or change the network in MetaMask. |
