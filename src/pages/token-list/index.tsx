@@ -14,6 +14,8 @@ import TokenRowSkeleton from "./components/TokenRowSkeleton"
 
 const TOKENS_PER_PAGE = 10
 const SKELETON_ROWS = 5
+/* RPC fallback có thể trả về node chưa kịp đồng bộ block mới -> refetch thêm 1 lần sau mint */
+const POST_MINT_REFETCH_DELAY_MS = 4000
 
 const TokenList = () => {
     const [page, setPage] = React.useState(1)
@@ -22,8 +24,15 @@ const TokenList = () => {
 
     const { items, pagination, loading, error, reload } = usePaginatedTokens(getTokens, page, TOKENS_PER_PAGE)
 
-    /* Dữ liệu on-chain của car trang trong 2 multicall (totalSupply + balanceOf) */
+    /* Dữ liệu on-chain của cả trang trong 2 multicall (totalSupply + balanceOf) */
     const onchain = useTokenOnchainData(items)
+    const { refetch: refetchOnchain } = onchain
+
+    /* Mint xong: tải lại totalSupply + balanceOf để Mint Progress / Balance / % of Supply cập nhật ngay */
+    const handleMinted = React.useCallback(() => {
+        void refetchOnchain()
+        window.setTimeout(() => void refetchOnchain(), POST_MINT_REFETCH_DELAY_MS)
+    }, [refetchOnchain])
 
     const handlePageChange = (nextPage: number) => {
         setPage(nextPage)
@@ -101,7 +110,12 @@ const TokenList = () => {
             />
 
             <TokenDetailModal tokenAddress={detailTokenAddress} onClose={() => setDetailTokenAddress(null)} />
-            <MintModal token={mintingToken} onClose={() => setMintingToken(null)} />
+            <MintModal
+                token={mintingToken}
+                onchain={mintingToken ? onchain.byAddress[mintingToken.tokenAddress.toLowerCase()] : undefined}
+                onClose={() => setMintingToken(null)}
+                onMinted={handleMinted}
+            />
         </>
     )
 }

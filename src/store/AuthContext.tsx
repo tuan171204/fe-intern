@@ -7,6 +7,8 @@ import { useToast } from "./ToastContext"
 
 export interface AuthUser {
     address: string
+    /** Thời điểm JWT hết hạn (ms) */
+    expiresAt?: number
 }
 
 interface AuthContextValue {
@@ -29,6 +31,9 @@ interface JwtPayload {
     exp?: number
 }
 
+/* Giới hạn của setTimeout (~24.8 ngày) */
+const MAX_TIMEOUT_MS = 2_147_483_647
+
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
 
 const decodeJwt = (token: string): JwtPayload | null => {
@@ -45,7 +50,7 @@ const parseUser = (token: string): AuthUser | null => {
     const payload = decodeJwt(token)
     if (!payload?.walletAddress) return null
     if (payload.exp && payload.exp * 1000 <= Date.now()) return null
-    return { address: payload.walletAddress }
+    return { address: payload.walletAddress, expiresAt: payload.exp ? payload.exp * 1000 : undefined }
 }
 
 const readSession = (): AuthUser | null => {
@@ -100,6 +105,21 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setProfileError(null)
         }
     }, [isLogged, fetchProfile])
+
+    /* JWT hết hạn khi app đang mở -> tự logout đúng lúc, không chờ API trả 401 */
+    const expiresAt = user?.expiresAt
+    React.useEffect(() => {
+        if (!expiresAt) return
+        const delay = Math.max(expiresAt - Date.now(), 0)
+        if (delay > MAX_TIMEOUT_MS) return
+
+        const timer = window.setTimeout(() => {
+            clearToken()
+            setUser(null)
+            error("Your session has expired. Please sign in again.")
+        }, delay)
+        return () => window.clearTimeout(timer)
+    }, [expiresAt, error])
 
     /* Token bị server từ chối (hết hạn/không hợp lệ): interceptor đã xoá token, ở đây reset state */
     React.useEffect(() => {

@@ -1,6 +1,8 @@
 import * as React from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import type { Address } from "viem"
 
+import { useEthBalance } from "../../hooks/useEthBalance"
 import cn from "../../utils/cn"
 import { getPageTitle } from "../left-menu/nav-config"
 import { shortenAddress } from "../ui/copy-address"
@@ -23,13 +25,17 @@ const menuItemClass = (active: boolean) =>
         active ? "bg-teal-50 font-medium text-teal-600" : "hover:bg-accent"
     )
 
-const DashboardHeader = ({ onMenuClick, address: addressProp, balance = "200 ZKN" }: DashboardHeaderProps) => {
+const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balanceProp }: DashboardHeaderProps) => {
     const { pathname } = useLocation()
     const navigate = useNavigate()
     const { user } = useAuth()
     /* Logout = xoá JWT + ngắt kết nối ví */
     const { logout } = useWalletAuth()
     const address = addressProp ?? user?.address ?? DEMO_ADDRESS
+
+    /* Số dư Sepolia ETH thật của ví đăng nhập (dùng chung cache với WalletButton) */
+    const { formatted: ethBalance } = useEthBalance(user?.address as Address | undefined)
+    const balance = balanceProp ?? ethBalance ?? "-"
 
     const [menuOpen, setMenuOpen] = React.useState(false)
     const menuRef = React.useRef<HTMLDivElement>(null)

@@ -4,7 +4,6 @@ import { useAccount, useConnect, useDisconnect, type Connector } from "wagmi"
 import { useToast } from "../store/ToastContext"
 import { getWalletErrorMessage } from "../utils/web3-errors"
 
-/** Bỏ connector trùng tên (MetaMask có thể xuất hiện 2 lần: cấu hình sẵn + tự phát hiện qua EIP-6963). */
 const uniqueByName = (list: readonly Connector[]): Connector[] => {
     const seen = new Set<string>()
     return list.filter((c) => {
@@ -33,11 +32,11 @@ export function useWalletConnection() {
                 { connector: target },
                 {
                     onSuccess: () => {
-                        success("Kết nối ví thành công")
+                        success("Wallet connected successfully")
                         onConnected?.()
                     },
                     onError: (err) =>
-                        showError(getWalletErrorMessage(err, "Bạn đã từ chối yêu cầu kết nối trong MetaMask.")),
+                        showError(getWalletErrorMessage(err, "You rejected the connection request in MetaMask.")),
                 }
             )
         },
@@ -45,7 +44,7 @@ export function useWalletConnection() {
     )
 
     const disconnectWallet = React.useCallback(() => {
-        disconnect(undefined, { onSuccess: () => success("Đã ngắt kết nối ví") })
+        disconnect(undefined, { onSuccess: () => success("Wallet disconnected") })
     }, [disconnect, success])
 
     return {

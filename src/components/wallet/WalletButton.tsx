@@ -150,14 +150,14 @@ const WalletButton = () => {
                             role="alert"
                             className="mb-2 flex flex-col gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-xs text-amber-800"
                         >
-                            <p>Ví đang ở sai mạng. Ứng dụng chỉ hoạt động trên Sepolia Testnet.</p>
+                            <p>Your wallet is on the wrong network. This app only works on Sepolia Testnet.</p>
                             <Button
                                 size="sm"
                                 loading={isSwitching}
                                 onClick={switchToSepolia}
                                 className="w-full rounded-full bg-teal-600 text-white hover:bg-teal-700"
                             >
-                                {isSwitching ? "Đang chuyển…" : "Switch to Sepolia"}
+                                {isSwitching ? "Switching network…" : "Switch to Sepolia"}
                             </Button>
                         </div>
                     ) : (
@@ -166,7 +166,7 @@ const WalletButton = () => {
                             {isBalanceLoading ? (
                                 <Skeleton className="mt-1.5 h-5 w-28" />
                             ) : isBalanceError ? (
-                                <p className="mt-1 text-xs text-destructive">Không tải được số dư</p>
+                                <p className="mt-1 text-xs text-destructive">Could not load balance</p>
                             ) : (
                                 <p className="mt-1 text-base font-semibold tabular-nums">{formatted ?? "0 ETH"}</p>
                             )}

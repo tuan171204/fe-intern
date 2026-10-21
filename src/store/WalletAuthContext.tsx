@@ -1,14 +1,23 @@
 import * as React from "react"
 import { isAxiosError } from "axios"
-import { useAccount, useConnect, useDisconnect, useSignMessage, type Connector } from "wagmi"
+import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, type Connector } from "wagmi"
 
 import { loginWithSignature, requestMessage } from "../api/auth"
+import { SEPOLIA_CHAIN_ID } from "../config/network"
 import { getErrorMessage } from "../utils/api"
 import { getWalletErrorMessage } from "../utils/web3-errors"
 import { useAuth } from "./AuthContext"
 import { useToast } from "./ToastContext"
 
-export type SiweStep = "idle" | "connecting" | "requesting" | "signing" | "authenticating" | "success" | "error"
+export type SiweStep =
+    | "idle"
+    | "connecting"
+    | "switching"
+    | "requesting"
+    | "signing"
+    | "authenticating"
+    | "success"
+    | "error"
 
 interface WalletAuthContextValue {
     step: SiweStep
@@ -16,9 +25,9 @@ interface WalletAuthContextValue {
     isBusy: boolean
     /** id connector đang chờ xác nhận trong ví */
     pendingConnectorId: string | undefined
-    /** Toàn bộ flow: connect ví -> request message -> ký -> login */
+    /** Toàn bộ flow: connect ví -> (chuyển Sepolia) -> request message -> ký -> login */
     connectAndSignIn: (connector: Connector, onConnected?: () => void) => Promise<void>
-    /** Chạy lại phần request -> ký -> login khi ví đã kết nối (retry sau lỗi) */
+    /** Chạy lại phần (chuyển Sepolia) -> request -> ký -> login khi ví đã kết nối (retry sau lỗi) */
     signIn: () => Promise<void>
     /** Xoá phiên đăng nhập và ngắt kết nối ví */
     logout: () => void
@@ -32,10 +41,11 @@ const toErrorMessage = (err: unknown) =>
         : getWalletErrorMessage(err, "You rejected the request in MetaMask.")
 
 const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const { address, status } = useAccount()
+    const { address, chainId, status } = useAccount()
     const { connectAsync } = useConnect()
     const { disconnect } = useDisconnect()
     const { signMessageAsync } = useSignMessage()
+    const { switchChainAsync } = useSwitchChain()
     const { isLogged, user, login, logout: clearSession } = useAuth()
     const { success, error: toastError } = useToast()
 
@@ -45,8 +55,21 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     /* Chặn chạy trùng flow (double click, StrictMode, bấm retry khi đang chạy) */
     const inFlight = React.useRef(false)
 
+    /* Phải ở đúng mạng TRƯỚC khi xin chữ ký: switch xong (hoặc bị từ chối) mới sang bước ký,
+       nên MetaMask không bao giờ có 2 popup cùng lúc. NetworkGuard bị tắt trong lúc flow này chạy. */
+    const ensureSepolia = React.useCallback(
+        async (currentChainId: number | undefined) => {
+            if (currentChainId === SEPOLIA_CHAIN_ID) return
+            setStep("switching")
+            await switchChainAsync({ chainId: SEPOLIA_CHAIN_ID })
+        },
+        [switchChainAsync]
+    )
+
     const authenticate = React.useCallback(
-        async (walletAddress: string) => {
+        async (walletAddress: string, currentChainId: number | undefined) => {
+            await ensureSepolia(currentChainId)
+
             setStep("requesting")
             const message = await requestMessage({ walletAddress })
 
@@ -60,7 +83,7 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
             setStep("success")
             success("Signed in successfully")
         },
-        [signMessageAsync, login, success]
+        [ensureSepolia, signMessageAsync, login, success]
     )
 
     const connectAndSignIn = React.useCallback(
@@ -71,11 +94,11 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 setStep("connecting")
                 setPendingConnectorId(connector.id)
-                const { accounts } = await connectAsync({ connector })
+                const { accounts, chainId: connectedChainId } = await connectAsync({ connector })
 
                 setPendingConnectorId(undefined)
                 onConnected?.()
-                await authenticate(accounts[0])
+                await authenticate(accounts[0], connectedChainId)
             } catch (err) {
                 setStep("error")
                 toastError(toErrorMessage(err))
@@ -92,14 +115,14 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
         inFlight.current = true
 
         try {
-            await authenticate(address)
+            await authenticate(address, chainId)
         } catch (err) {
             setStep("error")
             toastError(toErrorMessage(err))
         } finally {
             inFlight.current = false
         }
-    }, [address, authenticate, toastError])
+    }, [address, chainId, authenticate, toastError])
 
     const logout = React.useCallback(() => {
         clearSession()
@@ -107,16 +130,16 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
         setStep("idle")
     }, [clearSession, disconnect])
 
-    /* Ví ngắt kết nối (sau khi đã từng connected trong phiên này) -> xoá phiên đăng nhập.
-       Dùng ref để không logout nhầm lúc wagmi đang khôi phục kết nối khi tải trang. */
-    const wasConnected = React.useRef(false)
+    /* Ví ngắt kết nối -> xoá phiên đăng nhập. Tính cả trường hợp reload trang: wagmi đi qua
+       "connecting"/"reconnecting" rồi về "disconnected" khi MetaMask không còn cấp quyền cho site. */
+    const walletWasActive = React.useRef(false)
     React.useEffect(() => {
-        if (status === "connected") {
-            wasConnected.current = true
+        if (status === "connected" || status === "connecting" || status === "reconnecting") {
+            walletWasActive.current = true
             return
         }
-        if (status === "disconnected" && wasConnected.current) {
-            wasConnected.current = false
+        if (status === "disconnected" && walletWasActive.current) {
+            walletWasActive.current = false
             if (isLogged) clearSession()
         }
     }, [status, isLogged, clearSession])
@@ -138,7 +161,12 @@ const WalletAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const value = React.useMemo<WalletAuthContextValue>(
         () => ({
             step,
-            isBusy: step === "connecting" || step === "requesting" || step === "signing" || step === "authenticating",
+            isBusy:
+                step === "connecting" ||
+                step === "switching" ||
+                step === "requesting" ||
+                step === "signing" ||
+                step === "authenticating",
             pendingConnectorId,
             connectAndSignIn,
             signIn,
