@@ -1,23 +1,34 @@
+import { useTranslation } from "react-i18next"
+
 import cn from "../../../utils/cn"
 import { TOKEN_GRID_COLS } from "./grid"
 
-const CENTERED = ["Balance", "% of Supply", "Mint Progress", "Action"]
+const CENTERED_KEYS = [
+    "tokenList.balance",
+    "tokenList.supplyPercent",
+    "tokenList.mintProgress",
+    "tokenList.action",
+] as const
 
-/* Chỉ hiện từ Tablet; mobile mỗi ô tự có nhãn riêng */
-const TokenListHeader = () => (
-    <div role="rowgroup" className="hidden md:block">
-        <div
-            role="row"
-            className={cn("grid items-center gap-4 rounded-lg bg-background px-4 py-4 text-sm", TOKEN_GRID_COLS)}
-        >
-            <span role="columnheader">Tokens</span>
-            {CENTERED.map((label) => (
-                <span key={label} role="columnheader" className="text-center">
-                    {label}
-                </span>
-            ))}
+/* Only shown from Tablet up; on mobile each cell has its own label */
+const TokenListHeader = () => {
+    const { t } = useTranslation()
+
+    return (
+        <div role="rowgroup" className="hidden md:block">
+            <div
+                role="row"
+                className={cn("grid items-center gap-4 rounded-lg bg-background px-4 py-4 text-sm", TOKEN_GRID_COLS)}
+            >
+                <span role="columnheader">{t("tokenList.token")}</span>
+                {CENTERED_KEYS.map((key) => (
+                    <span key={key} role="columnheader" className="text-center">
+                        {t(key)}
+                    </span>
+                ))}
+            </div>
         </div>
-    </div>
-)
+    )
+}
 
 export default TokenListHeader

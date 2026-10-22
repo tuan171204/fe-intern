@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import { Dialog } from "../../../components/ui/dialog"
 import { Dropzone } from "../../../components/ui/dropzone"
@@ -13,21 +14,23 @@ export interface MintNftModalProps {
 }
 
 const MintNftModal = ({ nft, onClose }: MintNftModalProps) => {
+    const { t } = useTranslation()
     const [file, setFile] = React.useState<File | null>(null)
     const [touched, setTouched] = React.useState(false)
-    const [feeWarning, setFeeWarning] = React.useState<string | undefined>(undefined)
+    /* Flag instead of a message so the warning follows the language switch */
+    const [feeLocked, setFeeLocked] = React.useState(false)
     const [submitting, setSubmitting] = React.useState(false)
     const { success } = useToast()
 
     const handleClose = () => {
         setFile(null)
         setTouched(false)
-        setFeeWarning(undefined)
+        setFeeLocked(false)
         setSubmitting(false)
         onClose()
     }
 
-    const fileError = touched && !file ? "Please select a .csv file containing the mint list" : undefined
+    const fileError = touched && !file ? t("nftList.modal.fileRequired") : undefined
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -35,21 +38,25 @@ const MintNftModal = ({ nft, onClose }: MintNftModalProps) => {
         if (!file || !nft) return
 
         setSubmitting(true)
-        // Giả lập gọi API mint (chưa nối API thật)
+        // Simulated mint call (real API not connected yet)
         window.setTimeout(() => {
             setSubmitting(false)
-            success(`Minted ${nft.name} successfully`)
+            success(t("nftList.modal.success", { name: nft.name }))
             handleClose()
         }, 600)
     }
 
     return (
-        <Dialog isOpen={!!nft} onClose={handleClose} title={nft ? `${nft.name} NFT` : undefined}>
+        <Dialog
+            isOpen={!!nft}
+            onClose={handleClose}
+            title={nft ? t("nftList.modal.title", { name: nft.name }) : undefined}
+        >
             {nft && (
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
                     <Dropzone
                         accept=".csv,text/csv"
-                        label={file?.name ?? "Drag and drop your files to upload"}
+                        label={file?.name ?? t("nftList.modal.dropLabel")}
                         hint=".csv"
                         error={fileError}
                         onFilesSelected={([selected]) => {
@@ -59,17 +66,17 @@ const MintNftModal = ({ nft, onClose }: MintNftModalProps) => {
                         className="py-8"
                     />
                     <Input
-                        label="Mint Fee"
+                        label={t("nftList.modal.mintFee")}
                         readOnly
                         value={nft.mintFee}
                         className="text-muted-foreground read-only:hover:border-transparent cursor-not-allowed"
                         endAdornment={<span className="text-xs text-muted-foreground">ZKN</span>}
-                        onClick={() => setFeeWarning("You are not allowed to change the mint fee")}
-                        onFocus={() => setFeeWarning("You are not allowed to change the mint fee")}
-                        error={feeWarning}
+                        onClick={() => setFeeLocked(true)}
+                        onFocus={() => setFeeLocked(true)}
+                        error={feeLocked ? t("nftList.modal.feeLocked") : undefined}
                     />
                     <SubmitButton loading={submitting} disabled={submitting} className="mt-2">
-                        Mint
+                        {t("nftList.modal.button")}
                     </SubmitButton>
                 </form>
             )}

@@ -1,15 +1,29 @@
+import { useTranslation } from "react-i18next"
+
 import Icon from "../../../components/ui/icon"
 import { Loading } from "../../../components/ui/loading"
 import type { CreateTokenStep } from "../../../hooks/useCreateToken"
 import cn from "../../../utils/cn"
 
 const STAGES = [
-    { step: "submitting", label: "Submitting Transaction", hint: "Confirm the transaction in MetaMask" },
-    { step: "confirming", label: "Confirming on Chain", hint: "Waiting for the block confirmation" },
-    { step: "saving", label: "Saving Metadata", hint: "Uploading image and token info" },
+    {
+        step: "submitting",
+        labelKey: "tokenCreator.progress.submittingLabel",
+        hintKey: "tokenCreator.progress.submittingHint",
+    },
+    {
+        step: "confirming",
+        labelKey: "tokenCreator.progress.confirmingLabel",
+        hintKey: "tokenCreator.progress.confirmingHint",
+    },
+    {
+        step: "saving",
+        labelKey: "tokenCreator.progress.savingLabel",
+        hintKey: "tokenCreator.progress.savingHint",
+    },
 ] as const
 
-/** Vị trí giai đoạn đang chạy; save-failed = lỗi ở giai đoạn lưu metadata */
+/** Index of the running stage; save-failed means the metadata stage failed */
 const activeIndex = (step: CreateTokenStep) => {
     if (step === "submitting") return 0
     if (step === "confirming") return 1
@@ -23,6 +37,7 @@ export interface CreateTokenProgressProps {
 }
 
 const CreateTokenProgress = ({ step, txUrl }: CreateTokenProgressProps) => {
+    const { t } = useTranslation()
     const current = activeIndex(step)
     if (current < 0) return null
 
@@ -53,10 +68,10 @@ const CreateTokenProgress = ({ step, txUrl }: CreateTokenProgressProps) => {
                             </span>
                             <div className="min-w-0">
                                 <p className={cn("text-sm font-medium", !done && !active && "text-muted-foreground")}>
-                                    {stage.label}
+                                    {t(stage.labelKey)}
                                 </p>
                                 {active && !stageFailed && (
-                                    <p className="text-xs text-muted-foreground">{stage.hint}</p>
+                                    <p className="text-xs text-muted-foreground">{t(stage.hintKey)}</p>
                                 )}
                             </div>
                         </li>
@@ -71,7 +86,7 @@ const CreateTokenProgress = ({ step, txUrl }: CreateTokenProgressProps) => {
                     rel="noreferrer"
                     className="mt-3 inline-block text-xs font-medium text-teal-600 underline underline-offset-2 hover:text-teal-700"
                 >
-                    View transaction on Etherscan
+                    {t("common.viewOnEtherscan")}
                 </a>
             )}
         </div>

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import { getTokens } from "../../api/token"
 import { Button } from "../../components/ui/button"
@@ -14,21 +15,22 @@ import TokenRowSkeleton from "./components/TokenRowSkeleton"
 
 const TOKENS_PER_PAGE = 10
 const SKELETON_ROWS = 5
-/* RPC fallback có thể trả về node chưa kịp đồng bộ block mới -> refetch thêm 1 lần sau mint */
+/* A fallback RPC node may lag behind the latest block, so refetch once more after a mint */
 const POST_MINT_REFETCH_DELAY_MS = 4000
 
 const TokenList = () => {
+    const { t } = useTranslation()
     const [page, setPage] = React.useState(1)
     const [detailTokenAddress, setDetailTokenAddress] = React.useState<string | null>(null)
     const [mintingToken, setMintingToken] = React.useState<Token | null>(null)
 
     const { items, pagination, loading, error, reload } = usePaginatedTokens(getTokens, page, TOKENS_PER_PAGE)
 
-    /* Dữ liệu on-chain của cả trang trong 2 multicall (totalSupply + balanceOf) */
+    /* On-chain data for the whole page in 2 multicalls (totalSupply + balanceOf) */
     const onchain = useTokenOnchainData(items)
     const { refetch: refetchOnchain } = onchain
 
-    /* Mint xong: tải lại totalSupply + balanceOf để Mint Progress / Balance / % of Supply cập nhật ngay */
+    /* After a mint, reload totalSupply + balanceOf so Mint Progress / Balance / % of Supply update right away */
     const handleMinted = React.useCallback(() => {
         void refetchOnchain()
         window.setTimeout(() => void refetchOnchain(), POST_MINT_REFETCH_DELAY_MS)
@@ -51,7 +53,7 @@ const TokenList = () => {
                         {error}
                     </p>
                     <Button variant="outline" size="sm" onClick={reload}>
-                        Retry
+                        {t("common.retry")}
                     </Button>
                 </div>
             )
@@ -60,7 +62,7 @@ const TokenList = () => {
         if (items.length === 0) {
             return (
                 <div role="row" className="p-8 text-center text-sm text-muted-foreground">
-                    <span role="cell">No tokens have been created yet.</span>
+                    <span role="cell">{t("tokenList.empty")}</span>
                 </div>
             )
         }
@@ -84,16 +86,16 @@ const TokenList = () => {
             {onchain.isError && !loading && !error && (
                 <div
                     role="alert"
-                    className="mb-2.5 flex items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-xs text-amber-800"
+                    className="mb-2.5 flex items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
                 >
-                    <span>Could not load on-chain data (balance, mint progress).</span>
+                    <span>{t("tokenList.onchainError")}</span>
                     <Button variant="outline" size="sm" onClick={() => void onchain.refetch()}>
-                        Retry
+                        {t("common.retry")}
                     </Button>
                 </div>
             )}
 
-            <div role="table" aria-label="Tokens" className="flex w-full flex-col gap-2.5">
+            <div role="table" aria-label={t("tokenList.tableLabel")} className="flex w-full flex-col gap-2.5">
                 <TokenListHeader />
                 <div role="rowgroup" className="divide-y divide-border/60 overflow-hidden rounded-lg bg-background">
                     {renderRows()}

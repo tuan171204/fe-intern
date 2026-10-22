@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import { Avatar } from "../../../components/ui/avatar"
 import { Button } from "../../../components/ui/button"
 import { CopyAddress } from "../../../components/ui/copy-address"
@@ -18,18 +20,19 @@ const MobileLabel = ({ children }: { children: string }) => (
 
 export interface TokenRowProps {
     token: Token
-    /** Dữ liệu on-chain của token này (undefined nếu chưa có) */
+    /** On-chain data of this token (undefined if not available yet) */
     onchain?: TokenOnchainInfo
     isConnected: boolean
     supplyLoading: boolean
     balanceLoading: boolean
-    /** Click vào row: mở popup chi tiết token (GET /tokens/:address) */
+    /** Row click: open the token detail popup (GET /tokens/:address) */
     onSelect: (tokenAddress: string) => void
-    /** Click nút Mint: mở popup mint */
+    /** Mint button click: open the mint popup */
     onMint: (token: Token) => void
 }
 
 const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, onSelect, onMint }: TokenRowProps) => {
+    const { t } = useTranslation()
     const maxSupply = toBigInt(token.maxSupply)
     const totalSupply = onchain?.totalSupply
     const balance = onchain?.balance
@@ -41,7 +44,7 @@ const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, 
     const balanceText = balance !== undefined ? formatTokenAmount(balance, TOKEN_DECIMALS, 4) : "-"
     const holdPercentText = holdPercent !== undefined ? formatPercent(holdPercent) : "-"
     const mintPercentText = mintPercent !== undefined ? formatPercent(mintPercent) : "-"
-    const walletHint = !isConnected ? "Connect your wallet to see this value" : undefined
+    const walletHint = !isConnected ? t("tokenList.walletHint") : undefined
 
     return (
         <div
@@ -56,7 +59,7 @@ const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, 
                         <span className="text-base font-semibold">{token.name}</span>{" "}
                         <span className="text-sm text-muted-foreground">{token.symbol}</span>
                     </p>
-                    {/* Tránh click vào nút copy làm mở popup */}
+                    {/* Prevent the copy button click from opening the popup */}
                     <div onClick={(e) => e.stopPropagation()} className="w-fit max-w-full">
                         <CopyAddress address={token.tokenAddress} head={8} tail={6} className="text-xs text-foreground" />
                     </div>
@@ -64,7 +67,7 @@ const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, 
             </div>
 
             <div role="cell" className="flex flex-col gap-0.5 md:items-center">
-                <MobileLabel>Balance</MobileLabel>
+                <MobileLabel>{t("tokenList.balance")}</MobileLabel>
                 {balanceLoading ? (
                     <Skeleton className="h-5 w-16" />
                 ) : (
@@ -75,7 +78,7 @@ const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, 
             </div>
 
             <div role="cell" className="flex flex-col gap-0.5 md:items-center">
-                <MobileLabel>% of Supply</MobileLabel>
+                <MobileLabel>{t("tokenList.supplyPercent")}</MobileLabel>
                 {balanceLoading ? (
                     <Skeleton className="h-5 w-12" />
                 ) : (
@@ -86,14 +89,14 @@ const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, 
             </div>
 
             <div role="cell" className="col-span-2 flex flex-col gap-1.5 md:col-span-1">
-                <MobileLabel>Mint Progress</MobileLabel>
+                <MobileLabel>{t("tokenList.mintProgress")}</MobileLabel>
                 {supplyLoading ? (
                     <Skeleton className="h-2 w-full rounded-full" />
                 ) : (
                     <div className="flex items-center gap-2">
                         <Progress
                             value={mintPercent ?? 0}
-                            aria-label={`Mint progress of ${token.name}`}
+                            aria-label={t("tokenList.progressAria", { name: token.name })}
                             className="h-2 flex-1 bg-teal-50"
                         />
                         <span className="w-14 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
@@ -107,14 +110,18 @@ const TokenRow = ({ token, onchain, isConnected, supplyLoading, balanceLoading, 
                 <Button
                     variant="outline"
                     disabled={fullyMinted}
-                    aria-label={fullyMinted ? `${token.name} is fully minted` : `Mint ${token.name}`}
+                    aria-label={
+                        fullyMinted
+                            ? t("tokenList.mintedAria", { name: token.name })
+                            : t("tokenList.mintAria", { name: token.name })
+                    }
                     onClick={(e) => {
                         e.stopPropagation()
                         onMint(token)
                     }}
                     className="h-9 w-full rounded-full border-teal-600 px-8 text-teal-600 shadow-none hover:bg-teal-50 hover:text-teal-700 md:w-auto"
                 >
-                    {fullyMinted ? "Minted" : "Mint"}
+                    {fullyMinted ? t("tokenList.minted") : t("tokenList.mint")}
                 </Button>
             </div>
         </div>

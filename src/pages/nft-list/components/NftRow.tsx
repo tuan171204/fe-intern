@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import { Avatar } from "../../../components/ui/avatar"
 import { Button } from "../../../components/ui/button"
 import { CopyAddress } from "../../../components/ui/copy-address"
@@ -10,38 +12,51 @@ const MobileLabel = ({ children }: { children: string }) => (
     <span className="text-xs text-muted-foreground md:hidden">{children}</span>
 )
 
-const NftRow = ({ nft, onMint }: { nft: NftItem; onMint: (nft: NftItem) => void }) => (
-    <div role="row" className={cn("grid grid-cols-2 items-center gap-3 p-4 md:gap-4", NFT_GRID_COLS)}>
-        <div role="cell" className="col-span-2 flex min-w-0 items-center gap-3 md:col-span-1">
-            <Avatar src={nft.avatar} fallback={nft.name} alt={nft.name} size="lg" className="size-10" />
-            <div className="flex min-w-0 flex-col gap-0.5">
-                <p className="truncate text-sm font-semibold">{nft.name}</p>
-                <CopyAddress address={nft.address} head={8} tail={6} className="text-xs text-foreground" />
+const NftRow = ({ nft, onMint }: { nft: NftItem; onMint: (nft: NftItem) => void }) => {
+    const { t } = useTranslation()
+    const fullyMinted = nft.mintProgress >= 100
+
+    return (
+        <div role="row" className={cn("grid grid-cols-2 items-center gap-3 p-4 md:gap-4", NFT_GRID_COLS)}>
+            <div role="cell" className="col-span-2 flex min-w-0 items-center gap-3 md:col-span-1">
+                <Avatar src={nft.avatar} fallback={nft.name} alt={nft.name} size="lg" className="size-10" />
+                <div className="flex min-w-0 flex-col gap-0.5">
+                    <p className="truncate text-sm font-semibold">{nft.name}</p>
+                    <CopyAddress address={nft.address} head={8} tail={6} className="text-xs text-foreground" />
+                </div>
+            </div>
+
+            <div role="cell" className="col-span-2 flex flex-col gap-0.5 md:col-span-1 md:items-center">
+                <MobileLabel>{t("nftList.supplyPercent")}</MobileLabel>
+                <span className="text-sm font-semibold">{nft.supplyPercent}%</span>
+            </div>
+
+            <div role="cell" className="col-span-2 flex flex-col gap-1.5 md:col-span-1">
+                <MobileLabel>{t("nftList.mintProgress")}</MobileLabel>
+                <Progress
+                    value={nft.mintProgress}
+                    aria-label={t("nftList.progressAria", { name: nft.name })}
+                    className="h-2 bg-teal-50"
+                />
+            </div>
+
+            <div role="cell" className="col-span-2 md:col-span-1 md:flex md:justify-center">
+                <Button
+                    variant="outline"
+                    disabled={fullyMinted}
+                    aria-label={
+                        fullyMinted
+                            ? t("nftList.mintedAria", { name: nft.name })
+                            : t("nftList.mintAria", { name: nft.name })
+                    }
+                    onClick={() => onMint(nft)}
+                    className="h-9 w-full rounded-full border-teal-600 px-8 text-teal-600 shadow-none hover:bg-teal-50 hover:text-teal-700 md:w-auto"
+                >
+                    {fullyMinted ? t("nftList.minted") : t("nftList.mint")}
+                </Button>
             </div>
         </div>
-
-        <div role="cell" className="col-span-2 flex flex-col gap-0.5 md:col-span-1 md:items-center">
-            <MobileLabel>% of Supply</MobileLabel>
-            <span className="text-sm font-semibold">{nft.supplyPercent}%</span>
-        </div>
-
-        <div role="cell" className="col-span-2 flex flex-col gap-1.5 md:col-span-1">
-            <MobileLabel>Mint Progress</MobileLabel>
-            <Progress value={nft.mintProgress} aria-label={`Mint progress of ${nft.name}`} className="h-2 bg-teal-50" />
-        </div>
-
-        <div role="cell" className="col-span-2 md:col-span-1 md:flex md:justify-center">
-            <Button
-                variant="outline"
-                disabled={nft.mintProgress >= 100}
-                aria-label={nft.mintProgress >= 100 ? `${nft.name} is fully minted` : `Mint ${nft.name}`}
-                onClick={() => onMint(nft)}
-                className="h-9 w-full rounded-full border-teal-600 px-8 text-teal-600 shadow-none hover:bg-teal-50 hover:text-teal-700 md:w-auto"
-            >
-                {nft.mintProgress >= 100 ? "Minted" : "Mint"}
-            </Button>
-        </div>
-    </div>
-)
+    )
+}
 
 export default NftRow
