@@ -5,7 +5,7 @@ import cn from "../../utils/cn"
 export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   src?: string
   alt?: string
-  /** Chữ hiển thị khi không có ảnh / ảnh lỗi (vd: ký tự đầu của tên token) */
+  /** Text shown when there is no image / the image fails to load (e.g. first letters of a token name) */
   fallback?: string
   size?: "sm" | "md" | "lg"
 }
@@ -19,7 +19,7 @@ const Avatar = ({ src, alt = "", fallback, size = "md", className, ...props }: A
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-100 font-medium text-teal-700",
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-100 font-medium text-teal-700 dark:text-teal-300",
         sizes[size],
         className
       )}

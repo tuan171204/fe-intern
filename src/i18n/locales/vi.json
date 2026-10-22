@@ -1,0 +1,368 @@
+{
+    "common": {
+        "retry": "Thử lại",
+        "close": "Đóng",
+        "loading": "Đang tải...",
+        "none": "Chưa có",
+        "copyAddress": "Sao chép địa chỉ",
+        "viewOnEtherscan": "Xem giao dịch trên Etherscan"
+    },
+    "theme": {
+        "switchToLight": "Chuyển sang giao diện sáng",
+        "switchToDark": "Chuyển sang giao diện tối"
+    },
+    "language": {
+        "label": "Ngôn ngữ",
+        "en": "English",
+        "vi": "Tiếng Việt"
+    },
+    "nav": {
+        "appName": "ACW3",
+        "dashboard": "Bảng điều khiển",
+        "token": "Token",
+        "tokenCreator": "Tạo Token",
+        "tokenList": "Danh sách Token",
+        "nft": "NFT",
+        "nftCollection": "Bộ sưu tập NFT",
+        "nftCreator": "Tạo NFT",
+        "nftList": "Danh sách NFT",
+        "profile": "Hồ sơ",
+        "leaderboard": "Bảng xếp hạng",
+        "menu": "Menu",
+        "openMenu": "Mở menu",
+        "closeMenu": "Đóng menu",
+        "mainNavigation": "Điều hướng chính",
+        "accountMenu": "Menu tài khoản",
+        "logOut": "Đăng xuất"
+    },
+    "footer": {
+        "featureRequest": "Đề xuất tính năng",
+        "contactUs": "Liên hệ"
+    },
+    "connect": {
+        "title": "Token & NFT thật dễ dàng",
+        "subtitleLine1": "Phát hành Token, thanh khoản, airdrop và nhiều hơn nữa.",
+        "subtitleLine2": "Đơn giản và không cần viết code.",
+        "cta": "Kết nối ví của bạn"
+    },
+    "ui": {
+        "dialogClose": "Đóng",
+        "notifications": "Thông báo",
+        "dismissNotification": "Đóng thông báo",
+        "dropzoneLabel": "Kéo và thả tệp vào đây để tải lên",
+        "dropzoneHint": "png, .jpg, 1000x1000px",
+        "uploadedPreview": "Ảnh xem trước đã tải lên",
+        "changeImage": "Đổi ảnh",
+        "removeImage": "Xóa ảnh",
+        "pagination": "Phân trang",
+        "previousPage": "Trang trước",
+        "nextPage": "Trang sau",
+        "page": "Trang {{page}}"
+    },
+    "wallet": {
+        "connectWallet": "Kết nối ví",
+        "connect": "Kết nối",
+        "connecting": "Đang kết nối…",
+        "disconnect": "Ngắt kết nối",
+        "switchToSepolia": "Chuyển sang Sepolia",
+        "switchingNetwork": "Đang chuyển mạng...",
+        "signIn": "Đăng nhập",
+        "retrySignIn": "Thử đăng nhập lại",
+        "followPrompts": "Vui lòng làm theo hướng dẫn trong MetaMask",
+        "steps": {
+            "connecting": "Đang kết nối...",
+            "switching": "Đang chuyển mạng...",
+            "requesting": "Đang yêu cầu thông điệp...",
+            "signing": "Đang chờ chữ ký...",
+            "authenticating": "Đang xác thực..."
+        },
+        "wrongNetwork": "Sai mạng",
+        "wrongNetworkNotice": "Ví của bạn đang ở sai mạng. Ứng dụng này chỉ hoạt động trên Sepolia Testnet.",
+        "walletMenu": "Menu ví",
+        "connectedWallet": "Ví đã kết nối",
+        "ethBalance": "Số dư Sepolia ETH",
+        "balanceError": "Không thể tải số dư",
+        "copyAddress": "Sao chép địa chỉ",
+        "copied": "Đã sao chép!",
+        "modal": {
+            "title": "Kết nối ví",
+            "choose": "Chọn một ví để kết nối. Ứng dụng này chạy trên Sepolia Testnet.",
+            "waiting": "Đang chờ xác nhận…",
+            "openMetaMask": "Mở MetaMask và xác nhận yêu cầu kết nối.",
+            "noWallet": "Chưa có ví?",
+            "install": "Cài đặt MetaMask"
+        },
+        "toast": {
+            "connected": "Kết nối ví thành công",
+            "disconnected": "Đã ngắt kết nối ví",
+            "switched": "Đã chuyển sang Sepolia Testnet"
+        }
+    },
+    "auth": {
+        "signedIn": "Đăng nhập thành công",
+        "sessionExpired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+        "accountChanged": "Tài khoản ví đã thay đổi. Vui lòng đăng nhập lại.",
+        "sessionExpiring": "Phiên đăng nhập sắp hết hạn. Vui lòng đăng nhập lại trước khi tạo token.",
+        "invalidToken": "Token nhận từ máy chủ không hợp lệ."
+    },
+    "errors": {
+        "generic": "Đã có lỗi xảy ra. Vui lòng thử lại.",
+        "network": "Không thể kết nối tới máy chủ. Vui lòng thử lại sau.",
+        "authFailed": "Xác thực thất bại",
+        "loadProfile": "Không thể tải hồ sơ",
+        "loadTokens": "Không thể tải danh sách token",
+        "loadTokenDetail": "Không thể tải chi tiết token",
+        "updateProfile": "Cập nhật hồ sơ thất bại",
+        "saveMetadata": "Không thể lưu metadata của token",
+        "providerNotFound": "Không tìm thấy MetaMask. Vui lòng cài tiện ích MetaMask và tải lại trang.",
+        "requestPending": "MetaMask đang có một yêu cầu chờ xử lý. Hãy mở tiện ích MetaMask để xác nhận hoặc hủy.",
+        "rejectedRequest": "Bạn đã từ chối yêu cầu trong MetaMask.",
+        "rejectedConnection": "Bạn đã từ chối yêu cầu kết nối trong MetaMask.",
+        "rejectedSwitch": "Bạn đã từ chối chuyển mạng trong MetaMask.",
+        "rejectedTx": "Bạn đã từ chối giao dịch trong MetaMask.",
+        "rateLimit": "Node RPC đang giới hạn số lượng yêu cầu. Vui lòng đợi vài giây rồi thử lại.",
+        "rpcUnreachable": "Không thể kết nối tới node RPC. Hãy kiểm tra kết nối mạng và thử lại.",
+        "receiptUnconfirmed": "Không thể xác nhận giao dịch (lỗi RPC/mạng). Giao dịch vẫn có thể thành công. Hãy kiểm tra liên kết Etherscan trước khi thử lại.",
+        "insufficientEthCreate": "Không đủ Sepolia ETH để trả phí gas. Hãy lấy thêm từ faucet rồi thử lại.",
+        "insufficientEthMint": "Không đủ Sepolia ETH để trả phí mint và phí gas. Hãy lấy thêm từ faucet rồi thử lại.",
+        "gasTooLow": "Gas quá thấp hoặc ước tính gas thất bại. Hãy tăng giới hạn gas trong MetaMask rồi thử lại.",
+        "chainMismatch": "Ví của bạn đang ở sai mạng. Vui lòng chuyển sang Sepolia.",
+        "createReverted": "Hợp đồng đã từ chối giao dịch này. Hãy kiểm tra tên, ký hiệu, nguồn cung và phí mint.",
+        "mintReverted": "Hợp đồng đã từ chối lần mint này. Có thể đã đạt nguồn cung tối đa hoặc phí không chính xác.",
+        "feeMismatch": "Phí mint đã gửi không khớp với yêu cầu của hợp đồng.",
+        "maxSupplyReached": "Đã đạt nguồn cung tối đa. Token này không thể mint thêm."
+    },
+    "validation": {
+        "maxChars": "Tối đa {{max}} ký tự",
+        "invalidUrl": "URL không hợp lệ (phải bắt đầu bằng http:// hoặc https://)",
+        "invalidImageType": "Chỉ cho phép ảnh PNG, JPG hoặc SVG",
+        "imageTooLarge": "Ảnh phải nhỏ hơn {{size}}MB"
+    },
+    "tokenCreator": {
+        "title": "Tạo Token",
+        "subtitle": "Dễ dàng tạo token của riêng bạn chỉ với 7+1 bước, không cần viết code.",
+        "form": {
+            "name": "Tên",
+            "namePlaceholder": "VD: Zoken",
+            "nameHint": "Tối đa 32 ký tự cho tên",
+            "symbol": "Ký hiệu",
+            "symbolPlaceholder": "VD: ZKN",
+            "symbolHint": "Tối đa 8 ký tự cho ký hiệu",
+            "maxSupply": "Nguồn cung tối đa",
+            "maxSupplyHint": "Giới hạn cứng của token (18 chữ số thập phân)",
+            "initialSupply": "Nguồn cung ban đầu",
+            "initialSupplyHint": "Được mint vào ví của bạn khi triển khai (cho phép bằng 0)",
+            "amountPerMint": "Số lượng mỗi lần mint",
+            "mintFee": "Phí mint (ETH)",
+            "mintFeeHint": "Phí người mint trả cho mỗi lần mint, tính bằng Sepolia ETH",
+            "image": "Hình ảnh",
+            "imageHint": "png, .jpg, .svg, tối đa {{size}}MB",
+            "description": "Mô tả",
+            "descriptionPlaceholder": "VD: Token cộng đồng đầu tiên trên Zoken...",
+            "create": "Tạo"
+        },
+        "errors": {
+            "nameRequired": "Vui lòng nhập tên token",
+            "symbolRequired": "Vui lòng nhập ký hiệu",
+            "amountFormat": "Chỉ dùng chữ số, tối đa {{decimals}} chữ số thập phân (VD: 1000000)",
+            "maxSupplyRequired": "Vui lòng nhập nguồn cung tối đa",
+            "maxSupplyPositive": "Nguồn cung tối đa phải lớn hơn 0",
+            "initialSupplyRequired": "Vui lòng nhập nguồn cung ban đầu (nhập 0 nếu không có)",
+            "exceedsMaxSupply": "Không được vượt quá nguồn cung tối đa",
+            "amountPerMintRequired": "Vui lòng nhập số lượng mỗi lần mint",
+            "amountPerMintPositive": "Số lượng mỗi lần mint phải lớn hơn 0",
+            "mintFeeRequired": "Vui lòng nhập phí mint (nhập 0 nếu miễn phí)",
+            "descriptionRequired": "Vui lòng nhập mô tả",
+            "imageRequired": "Vui lòng chọn một hình ảnh"
+        },
+        "submit": {
+            "submitting": "Đang gửi giao dịch...",
+            "confirming": "Đang xác nhận trên chuỗi...",
+            "saving": "Đang lưu metadata..."
+        },
+        "progress": {
+            "submittingLabel": "Gửi giao dịch",
+            "submittingHint": "Hãy xác nhận giao dịch trong MetaMask",
+            "confirmingLabel": "Xác nhận trên chuỗi",
+            "confirmingHint": "Đang chờ block xác nhận",
+            "savingLabel": "Lưu metadata",
+            "savingHint": "Đang tải lên hình ảnh và thông tin token"
+        },
+        "notices": {
+            "connect": "Hãy kết nối ví trên Sepolia Testnet để tạo token.",
+            "connectToast": "Vui lòng kết nối ví trên Sepolia để tạo token",
+            "onChainSaved": "Token của bạn đã được triển khai on-chain. Hãy thử lưu lại thay vì tạo mới.",
+            "retrySaving": "Thử lưu lại",
+            "discard": "Bỏ qua",
+            "imageUploaded": "Tải ảnh token lên thành công",
+            "created": "Tạo token thành công",
+            "reverted": "Giao dịch đã bị hoàn tác on-chain. Không có token nào được tạo.",
+            "saveFailed": "Giao dịch đã được xác nhận on-chain nhưng lưu metadata thất bại: {{message}}"
+        },
+        "social": {
+            "title": "Thêm liên kết mạng xã hội & thẻ",
+            "hint": "Tối đa 32 ký tự cho tên",
+            "website": "Trang web"
+        },
+        "success": {
+            "title": "Đã tạo Token",
+            "body": "<b>{{name}}</b> <muted>({{symbol}})</muted> đã được triển khai và lưu thành công.",
+            "createAnother": "Tạo token khác",
+            "viewTokens": "Xem token của tôi"
+        }
+    },
+    "tokenList": {
+        "tableLabel": "Token",
+        "token": "Token",
+        "balance": "Số dư",
+        "supplyPercent": "% nguồn cung",
+        "mintProgress": "Tiến độ mint",
+        "action": "Thao tác",
+        "empty": "Chưa có token nào được tạo.",
+        "onchainError": "Không thể tải dữ liệu on-chain (số dư, tiến độ mint).",
+        "walletHint": "Hãy kết nối ví để xem giá trị này",
+        "mint": "Mint",
+        "minted": "Đã mint hết",
+        "mintAria": "Mint {{name}}",
+        "mintedAria": "{{name}} đã được mint hết",
+        "progressAria": "Tiến độ mint của {{name}}"
+    },
+    "tokenDetail": {
+        "title": "Chi tiết Token",
+        "titleNamed": "Chi tiết {{name}}",
+        "maxSupply": "Nguồn cung tối đa",
+        "amountPerMint": "Số lượng mỗi lần mint",
+        "mintFee": "Phí mint",
+        "description": "Mô tả",
+        "website": "Trang web"
+    },
+    "mint": {
+        "title": "Token {{name}}",
+        "amountPerMint": "Số lượng mỗi lần mint",
+        "mintFee": "Phí mint",
+        "remainingSupply": "Nguồn cung còn lại",
+        "soldOut": "Đã đạt nguồn cung tối đa. Token này không thể mint thêm.",
+        "remainingTooLow": "Nguồn cung còn lại nhỏ hơn số lượng mỗi lần mint.",
+        "connectNotice": "Hãy kết nối ví trên Sepolia Testnet để mint.",
+        "connectToast": "Vui lòng kết nối ví trên Sepolia để mint",
+        "insufficientEth": "Không đủ Sepolia ETH. Mint cần {{fee}} ETH cộng phí gas, nhưng số dư của bạn là {{balance}} ETH.",
+        "statusSubmitting": "Đang kiểm tra nguồn cung và chờ bạn xác nhận trong MetaMask",
+        "statusConfirming": "Đã gửi giao dịch. Đang chờ block xác nhận",
+        "button": "Mint",
+        "confirmInWallet": "Xác nhận trong MetaMask...",
+        "confirming": "Đang xác nhận trên chuỗi...",
+        "retry": "Thử mint lại",
+        "success": "Đã mint thành công <b>{{amount}} {{symbol}}</b>.",
+        "done": "Xong",
+        "toastSuccess": "Mint thành công",
+        "reverted": "Giao dịch mint đã bị hoàn tác on-chain. Không có token nào được mint."
+    },
+    "nftCreator": {
+        "title": "Tạo bộ sưu tập NFT",
+        "name": "Tên",
+        "namePlaceholder": "VD: Zoken",
+        "nameHint": "Tối đa 32 ký tự cho tên",
+        "symbol": "Ký hiệu",
+        "symbolPlaceholder": "VD: ZKN",
+        "symbolHint": "Tối đa 8 ký tự cho ký hiệu",
+        "totalSupply": "Tổng nguồn cung",
+        "totalSupplyHint": "Hầu hết token dùng 10B",
+        "create": "Tạo",
+        "created": "Tạo bộ sưu tập NFT thành công",
+        "errors": {
+            "nameRequired": "Vui lòng nhập tên bộ sưu tập",
+            "symbolRequired": "Vui lòng nhập ký hiệu",
+            "totalSupplyRequired": "Vui lòng nhập tổng nguồn cung",
+            "totalSupplyInvalid": "Tổng nguồn cung phải là số nguyên dương"
+        }
+    },
+    "nftList": {
+        "tableLabel": "Danh sách NFT",
+        "nft": "NFT",
+        "supplyPercent": "% nguồn cung",
+        "mintProgress": "Tiến độ mint",
+        "action": "Thao tác",
+        "mint": "Mint",
+        "minted": "Đã mint hết",
+        "mintAria": "Mint {{name}}",
+        "mintedAria": "{{name}} đã được mint hết",
+        "progressAria": "Tiến độ mint của {{name}}",
+        "modal": {
+            "title": "NFT {{name}}",
+            "dropLabel": "Kéo và thả tệp của bạn để tải lên",
+            "fileRequired": "Vui lòng chọn tệp .csv chứa danh sách mint",
+            "mintFee": "Phí mint",
+            "feeLocked": "Bạn không được phép thay đổi phí mint",
+            "button": "Mint",
+            "success": "Mint {{name}} thành công"
+        }
+    },
+    "profile": {
+        "totalTokens": "Tổng số Token",
+        "totalNfts": "Tổng số NFT",
+        "unnamed": "Chưa đặt tên",
+        "balance": "Số dư",
+        "balanceLoading": "Đang tải...",
+        "balanceUnavailable": "Không khả dụng",
+        "biography": "Tiểu sử",
+        "socialLinks": "Liên kết mạng xã hội",
+        "editProfile": "Chỉnh sửa hồ sơ",
+        "loadingProfile": "Đang tải hồ sơ",
+        "assets": "Tài sản",
+        "tabs": {
+            "tokens": "Token",
+            "nfts": "NFT"
+        },
+        "tokensTable": {
+            "token": "Token",
+            "balance": "Số dư",
+            "supplyPercent": "% nguồn cung",
+            "totalSupply": "Tổng nguồn cung",
+            "empty": "Bạn chưa tạo token nào."
+        },
+        "nftsTable": {
+            "nft": "NFT",
+            "supplyPercent": "% nguồn cung",
+            "totalSupply": "Tổng nguồn cung"
+        },
+        "edit": {
+            "title": "Chỉnh sửa hồ sơ",
+            "name": "Tên",
+            "namePlaceholder": "Nguyễn Văn A",
+            "bio": "Tiểu sử",
+            "bioPlaceholder": "Viết tiểu sử của bạn tại đây!",
+            "socialLinks": "Liên kết mạng xã hội",
+            "linkAria": "Liên kết {{label}}",
+            "save": "Lưu",
+            "updated": "Cập nhật hồ sơ thành công",
+            "nameRequired": "Vui lòng nhập tên",
+            "invalidLink": "Liên kết {{label}} không hợp lệ (phải bắt đầu bằng http:// hoặc https://)"
+        }
+    },
+    "leaderboard": {
+        "title": "Bảng xếp hạng ACW3",
+        "subtitle": "Khám phá các cult hàng đầu trên <b>ACW3</b>",
+        "madeBy": "Tạo bởi ACW3",
+        "coined": "Bảng điều khiển này đã được phát hành dưới dạng coin",
+        "topCreators": "Top 50 nhà sáng tạo",
+        "stats": {
+            "mc": "MC",
+            "change1h": "1h",
+            "volume24h": "KL 24h"
+        },
+        "columns": {
+            "rank": "Hạng",
+            "token": "Token",
+            "creator": "Người tạo",
+            "change": "Biến động 24h",
+            "marketCap": "Vốn hóa",
+            "volume": "Khối lượng (24h)",
+            "price": "Giá token"
+        },
+        "card": {
+            "volume24h": "KL 24h",
+            "price": "Giá",
+            "creator": "Người tạo"
+        }
+    }
+}

@@ -5,11 +5,11 @@ import cn from "../../utils/cn"
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
-  /** Dòng gợi ý nhỏ dưới ô nhập (ẩn khi có lỗi) */
+  /** Small hint line under the input (hidden while an error is shown) */
   hint?: string
-  /** Phần tử đặt bên trái trong ô nhập (vd: icon) */
+  /** Element rendered inside the input on the left (e.g. an icon) */
   startAdornment?: React.ReactNode
-  /** Phần tử đặt bên phải trong ô nhập (vd: nút hiện/ẩn mật khẩu) */
+  /** Element rendered inside the input on the right (e.g. a show/hide button) */
   endAdornment?: React.ReactNode
 }
 
@@ -42,7 +42,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={!!error}
             aria-describedby={error ? errorId : hint ? hintId : undefined}
             className={cn(
-              "h-12 w-full rounded-lg border-[1.75px] border-transparent bg-[#F5FBFB] px-3 py-6 text-sm text-foreground transition-colors",
+              "h-12 w-full rounded-lg border-[1.75px] border-transparent bg-field px-3 py-6 text-sm text-foreground transition-colors",
               "placeholder:text-muted-foreground",
               "hover:border-teal-600/50 focus-visible:border-teal-600 focus-visible:outline-none",
               "disabled:cursor-not-allowed disabled:opacity-50",
