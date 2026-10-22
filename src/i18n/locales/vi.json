@@ -18,7 +18,7 @@
     },
     "nav": {
         "appName": "ACW3",
-        "dashboard": "Bảng điều khiển",
+        "dashboard": "Trang chủ",
         "token": "Token",
         "tokenCreator": "Tạo Token",
         "tokenList": "Danh sách Token",
@@ -343,7 +343,7 @@
         "title": "Bảng xếp hạng ACW3",
         "subtitle": "Khám phá các cult hàng đầu trên <b>ACW3</b>",
         "madeBy": "Tạo bởi ACW3",
-        "coined": "Bảng điều khiển này đã được phát hành dưới dạng coin",
+        "coined": "Trang chủ này đã được phát hành dưới dạng coin",
         "topCreators": "Top 50 nhà sáng tạo",
         "stats": {
             "mc": "MC",
