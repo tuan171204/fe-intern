@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import cn from "../../utils/cn"
 import Icon from "./icon"
 
@@ -14,7 +16,7 @@ type PageItem = number | "start-ellipsis" | "end-ellipsis"
 
 const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => from + i)
 
-/** Vd: [1, "start-ellipsis", 4, 5, 6, "end-ellipsis", 20] */
+/** e.g. [1, "start-ellipsis", 4, 5, 6, "end-ellipsis", 20] */
 const getPageItems = (page: number, totalPages: number): PageItem[] => {
     if (totalPages <= 7) return range(1, totalPages)
     if (page <= 4) return [...range(1, 5), "end-ellipsis", totalPages]
@@ -25,16 +27,17 @@ const getPageItems = (page: number, totalPages: number): PageItem[] => {
 const buttonClass =
     "inline-flex size-8 items-center justify-center rounded-md text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
 
-/** Ẩn khi chỉ có 1 trang.  */
+/** Hidden when there is only one page */
 const Pagination = ({ page, limit, total, onPageChange, disabled = false, className }: PaginationProps) => {
+    const { t } = useTranslation()
     const totalPages = Math.max(1, Math.ceil(total / limit))
     if (totalPages <= 1) return null
 
     return (
-        <nav aria-label="Pagination" className={cn("flex items-center justify-center gap-1", className)}>
+        <nav aria-label={t("ui.pagination")} className={cn("flex items-center justify-center gap-1", className)}>
             <button
                 type="button"
-                aria-label="Previous page"
+                aria-label={t("ui.previousPage")}
                 disabled={disabled || page <= 1}
                 onClick={() => onPageChange(page - 1)}
                 className={cn(buttonClass, "text-muted-foreground hover:bg-accent")}
@@ -47,7 +50,7 @@ const Pagination = ({ page, limit, total, onPageChange, disabled = false, classN
                     <button
                         key={item}
                         type="button"
-                        aria-label={`Page ${item}`}
+                        aria-label={t("ui.page", { page: item })}
                         aria-current={item === page ? "page" : undefined}
                         disabled={disabled}
                         onClick={() => onPageChange(item)}
@@ -67,7 +70,7 @@ const Pagination = ({ page, limit, total, onPageChange, disabled = false, classN
 
             <button
                 type="button"
-                aria-label="Next page"
+                aria-label={t("ui.nextPage")}
                 disabled={disabled || page >= totalPages}
                 onClick={() => onPageChange(page + 1)}
                 className={cn(buttonClass, "text-muted-foreground hover:bg-accent")}

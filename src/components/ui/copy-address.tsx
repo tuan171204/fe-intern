@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import cn from "../../utils/cn"
 import Icon from "./icon"
@@ -14,6 +15,7 @@ export interface CopyAddressProps extends React.HTMLAttributes<HTMLSpanElement> 
 }
 
 const CopyAddress = ({ address, short = true, head, tail, className, ...props }: CopyAddressProps) => {
+  const { t } = useTranslation()
   const [copied, setCopied] = React.useState(false)
 
   const handleCopy = async () => {
@@ -22,7 +24,7 @@ const CopyAddress = ({ address, short = true, head, tail, className, ...props }:
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     } catch {
-      /* clipboard bị chặn: bỏ qua */
+      /* Clipboard blocked: ignore */
     }
   }
 
@@ -32,7 +34,7 @@ const CopyAddress = ({ address, short = true, head, tail, className, ...props }:
       <button
         type="button"
         onClick={handleCopy}
-        aria-label="Copy address"
+        aria-label={t("common.copyAddress")}
         className="rounded p-0.5 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
         <Icon name={copied ? "check" : "copy"} size="xs" className={copied ? "text-teal-600" : undefined} />

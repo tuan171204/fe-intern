@@ -7,7 +7,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   error?: string
 }
 
-/** Có bộ đếm "0/500" khi truyền `maxLength` + `value` (controlled) */
+/** Shows a "0/500" counter when `maxLength` and a controlled `value` are provided */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, id, required, maxLength, value, ...props }, ref) => {
     const autoId = React.useId()
@@ -40,7 +40,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           required={required}
           aria-invalid={!!error}
           className={cn(
-            "min-h-24 w-full resize-none rounded-lg border border-transparent bg-muted px-3 py-2 text-sm transition-colors",
+            /* bg-field is theme-aware, same token as Input */
+            "min-h-24 w-full resize-none rounded-lg border border-transparent bg-field px-3 py-2 text-sm text-foreground transition-colors",
             "placeholder:text-muted-foreground hover:border-teal-600/50",
             "focus-visible:border-teal-600 focus-visible:bg-background focus-visible:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50",
