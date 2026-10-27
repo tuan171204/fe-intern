@@ -1,16 +1,15 @@
-import * as React from "react"
 import { useTranslation } from "react-i18next"
 
 import { getUserTokens } from "../../api/profile"
 import { Button } from "../../components/ui/button"
-import { usePaginatedTokens } from "../../hooks/usePaginatedTokens"
+import { useInfiniteTokens } from "../../hooks/useInfiniteTokens"
 import { PROFILE_NFTS } from "../../mocks/profile"
 import { useAuth } from "../../store/AuthContext"
 import ProfileAssets from "./components/ProfileAssets"
 import ProfileCard from "./components/ProfileCard"
 import ProfileCardSkeleton from "./components/ProfileCardSkeleton"
 
-const TOKENS_PER_PAGE = 10
+const TOKENS_PER_PAGE = 2 // temporary, for testing only
 
 const StatCard = ({ label, value }: { label: string; value: number }) => (
     <div className="rounded-lg bg-background p-4">
@@ -23,8 +22,8 @@ const Profile = () => {
     const { t } = useTranslation()
     /* The profile is loaded by AuthContext on app start / sign-in; after Edit Profile saves, the context is updated */
     const { profile, profileError, fetchProfile, setProfile } = useAuth()
-    const [page, setPage] = React.useState(1)
-    const userTokens = usePaginatedTokens(getUserTokens, page, TOKENS_PER_PAGE)
+    /* Infinite scroll: pages are appended as the user scrolls to the end of the table */
+    const userTokens = useInfiniteTokens(getUserTokens, TOKENS_PER_PAGE)
 
     return (
         <div className="grid gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
@@ -43,18 +42,19 @@ const Profile = () => {
 
             <div className="flex min-w-0 flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <StatCard label={t("profile.totalTokens")} value={userTokens.pagination.total} />
+                    <StatCard label={t("profile.totalTokens")} value={userTokens.total} />
                     <StatCard label={t("profile.totalNfts")} value={PROFILE_NFTS.length} />
                 </div>
                 <ProfileAssets
                     tokensTable={{
-                        tokens: userTokens.items,
-                        page,
-                        pagination: userTokens.pagination,
+                        pages: userTokens.pages,
                         loading: userTokens.loading,
                         error: userTokens.error,
                         onRetry: userTokens.reload,
-                        onPageChange: setPage,
+                        hasMore: userTokens.hasMore,
+                        loadingMore: userTokens.loadingMore,
+                        loadMoreError: userTokens.loadMoreError,
+                        onLoadMore: userTokens.loadMore,
                     }}
                 />
             </div>
