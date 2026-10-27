@@ -1,15 +1,18 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import type { Address } from "viem"
 
 import { useEthBalance } from "../../hooks/useEthBalance"
-import cn from "../../utils/cn"
-import { getPageTitle } from "../left-menu/nav-config"
-import { shortenAddress } from "../ui/copy-address"
-import Icon from "../ui/icon"
-import WalletButton from "../wallet/WalletButton"
 import { useAuth } from "../../store/AuthContext"
 import { useWalletAuth } from "../../store/WalletAuthContext"
+import cn from "../../utils/cn"
+import { getPageTitleKey } from "../left-menu/nav-config"
+import { shortenAddress } from "../ui/copy-address"
+import Icon from "../ui/icon"
+import { LanguageSwitcher } from "../ui/language-switcher"
+import { ThemeToggle } from "../ui/theme-toggle"
+import WalletButton from "../wallet/WalletButton"
 
 export interface DashboardHeaderProps {
     onMenuClick: () => void
@@ -26,14 +29,15 @@ const menuItemClass = (active: boolean) =>
     )
 
 const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balanceProp }: DashboardHeaderProps) => {
+    const { t } = useTranslation()
     const { pathname } = useLocation()
     const navigate = useNavigate()
     const { user } = useAuth()
-    /* Logout = xoá JWT + ngắt kết nối ví */
+    /* Logout = clear the JWT + disconnect the wallet */
     const { logout } = useWalletAuth()
     const address = addressProp ?? user?.address ?? DEMO_ADDRESS
 
-    /* Số dư Sepolia ETH thật của ví đăng nhập (dùng chung cache với WalletButton) */
+    /* Real Sepolia ETH balance of the signed-in wallet (shares its cache with WalletButton) */
     const { formatted: ethBalance } = useEthBalance(user?.address as Address | undefined)
     const balance = balanceProp ?? ethBalance ?? "-"
 
@@ -68,15 +72,18 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balancePr
                 <button
                     type="button"
                     onClick={onMenuClick}
-                    aria-label="Open menu"
+                    aria-label={t("nav.openMenu")}
                     className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring lg:hidden"
                 >
                     <Icon name="menu" size="lg" />
                 </button>
-                <p className="truncate text-lg font-semibold">{getPageTitle(pathname)}</p>
+                <p className="truncate text-lg font-semibold">{t(getPageTitleKey(pathname))}</p>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
+                {/* On small screens the language switcher lives inside the account menu */}
+                <LanguageSwitcher className="hidden sm:inline-flex" />
+                <ThemeToggle />
                 <WalletButton />
 
                 <div ref={menuRef} className="relative">
@@ -85,7 +92,7 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balancePr
                         onClick={() => setMenuOpen((v) => !v)}
                         aria-haspopup="menu"
                         aria-expanded={menuOpen}
-                        aria-label="Account menu"
+                        aria-label={t("nav.accountMenu")}
                         className={cn(
                             "flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             menuOpen && "bg-accent"
@@ -111,6 +118,9 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balancePr
                             role="menu"
                             className="absolute right-0 top-full z-40 mt-2 w-44 rounded-lg border border-border bg-background p-1 shadow-lg animate-in fade-in-0 zoom-in-95 duration-150"
                         >
+                            <li role="none" className="px-3 py-2 sm:hidden">
+                                <LanguageSwitcher />
+                            </li>
                             <li role="none">
                                 <Link
                                     role="menuitem"
@@ -120,7 +130,7 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balancePr
                                     className={menuItemClass(pathname === "/profile")}
                                 >
                                     <Icon name="user" size="md" aria-hidden="true" />
-                                    Profile
+                                    {t("nav.profile")}
                                 </Link>
                             </li>
                             <li role="none">
@@ -131,7 +141,7 @@ const DashboardHeader = ({ onMenuClick, address: addressProp, balance: balancePr
                                     className={cn(menuItemClass(false), "w-full text-left")}
                                 >
                                     <Icon name="logout" size="md" aria-hidden="true" />
-                                    Log out
+                                    {t("nav.logOut")}
                                 </button>
                             </li>
                         </ul>

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import cn from "../../utils/cn"
 import Icon from "./icon"
@@ -7,13 +8,15 @@ export interface DropzoneProps {
   onFilesSelected: (files: File[]) => void
   accept?: string
   multiple?: boolean
+  /** Falls back to the localized default when omitted */
   label?: string
+  /** Falls back to the localized default when omitted */
   hint?: string
   error?: string
   className?: string
-  /** URL xem trước (vd: ảnh token/NFT vừa chọn) - hiện thay cho vùng kéo-thả */
+  /** Preview URL (e.g. the selected token/NFT image), shown in place of the drop area */
   previewUrl?: string
-  /** Cho phép xoá ảnh đã chọn (nút "x" góc trên phải preview) */
+  /** Enables the "x" button on the preview to remove the selected image */
   onRemove?: () => void
 }
 
@@ -21,15 +24,19 @@ const Dropzone = ({
   onFilesSelected,
   accept = "image/png,image/jpeg",
   multiple = false,
-  label = "Drag and drop here to upload",
-  hint = "png, .jpg, 1000x1000px",
+  label,
+  hint,
   error,
   className,
   previewUrl,
   onRemove,
 }: DropzoneProps) => {
+  const { t } = useTranslation()
   const [dragging, setDragging] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)
+
+  const resolvedLabel = label ?? t("ui.dropzoneLabel")
+  const resolvedHint = hint ?? t("ui.dropzoneHint")
 
   const handleFiles = (list: FileList | null) => {
     if (list && list.length > 0) onFilesSelected(Array.from(list))
@@ -44,7 +51,7 @@ const Dropzone = ({
             className
           )}
         >
-          <img src={previewUrl} alt="Uploaded preview" className="max-h-full w-full object-cover" />
+          <img src={previewUrl} alt={t("ui.uploadedPreview")} className="max-h-full w-full object-cover" />
 
           <button
             type="button"
@@ -52,7 +59,7 @@ const Dropzone = ({
             className="absolute inset-0 flex items-center justify-center gap-1.5 bg-black/0 text-transparent transition-colors hover:bg-black/40 hover:text-white focus-visible:bg-black/40 focus-visible:text-white focus-visible:outline-none"
           >
             <Icon name="upload" size="sm" />
-            <span className="text-xs font-medium">Change image</span>
+            <span className="text-xs font-medium">{t("ui.changeImage")}</span>
           </button>
 
           {onRemove && (
@@ -62,7 +69,7 @@ const Dropzone = ({
                 e.stopPropagation()
                 onRemove()
               }}
-              aria-label="Remove image"
+              aria-label={t("ui.removeImage")}
               className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <Icon name="close" size="xs" />
@@ -108,8 +115,8 @@ const Dropzone = ({
         )}
       >
         <Icon name="upload" size="md" className="text-muted-foreground" />
-        <span className="text-xs font-medium">{label}</span>
-        <span className="text-[10px] text-muted-foreground">{hint}</span>
+        <span className="text-xs font-medium">{resolvedLabel}</span>
+        <span className="text-[10px] text-muted-foreground">{resolvedHint}</span>
         <input
           type="file"
           accept={accept}

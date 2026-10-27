@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import { formatEther } from "viem"
 
 import { getTokenByAddress } from "../../../api/token"
@@ -15,11 +16,12 @@ import { toBigInt } from "../../../utils/token-math"
 import { formatTokenAmount } from "../../../utils/web3-format"
 
 export interface TokenDetailModalProps {
-    /** Địa chỉ contract token đang xem; null = đóng popup */
+    /** Contract address of the token being viewed; null = popup closed */
     tokenAddress: string | null
     onClose: () => void
 }
 
+/* Brand labels are not translated; only "website" is localized at render time */
 const LINKS: { key: "websiteUrl" | "telegramUrl" | "discordUrl" | "xUrl"; label: string; icon: IconName }[] = [
     { key: "websiteUrl", label: "Website", icon: "globe" },
     { key: "telegramUrl", label: "Telegram", icon: "telegram" },
@@ -30,12 +32,16 @@ const LINKS: { key: "websiteUrl" | "telegramUrl" | "discordUrl" | "xUrl"; label:
 const toHref = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 
 const TokenDetail = ({ token }: { token: Token }) => {
+    const { t } = useTranslation()
     const links = LINKS.filter(({ key }) => !!token[key])
 
     const stats = [
-        { label: "Max Supply", value: formatTokenAmount(toBigInt(token.maxSupply), TOKEN_DECIMALS, 4) },
-        { label: "Amount Per Mint", value: formatTokenAmount(toBigInt(token.amountPerMint), TOKEN_DECIMALS, 4) },
-        { label: "Mint Fee", value: `${formatEther(toBigInt(token.mintFee))} ETH` },
+        { label: t("tokenDetail.maxSupply"), value: formatTokenAmount(toBigInt(token.maxSupply), TOKEN_DECIMALS, 4) },
+        {
+            label: t("tokenDetail.amountPerMint"),
+            value: formatTokenAmount(toBigInt(token.amountPerMint), TOKEN_DECIMALS, 4),
+        },
+        { label: t("tokenDetail.mintFee"), value: `${formatEther(toBigInt(token.mintFee))} ETH` },
     ]
 
     return (
@@ -63,9 +69,9 @@ const TokenDetail = ({ token }: { token: Token }) => {
             </dl>
 
             <div>
-                <h3 className="text-xs font-medium">Description</h3>
+                <h3 className="text-xs font-medium">{t("tokenDetail.description")}</h3>
                 <p className="mt-1 whitespace-pre-line break-words text-xs text-muted-foreground">
-                    {token.description || "None"}
+                    {token.description || t("common.none")}
                 </p>
             </div>
 
@@ -77,7 +83,7 @@ const TokenDetail = ({ token }: { token: Token }) => {
                                 href={toHref(token[key] as string)}
                                 target="_blank"
                                 rel="noreferrer"
-                                aria-label={label}
+                                aria-label={key === "websiteUrl" ? t("tokenDetail.website") : label}
                                 className="transition-colors hover:text-teal-600"
                             >
                                 <Icon name={icon} size="md" />
@@ -110,12 +116,13 @@ const DetailSkeleton = () => (
 )
 
 const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
+    const { t } = useTranslation()
     const [token, setToken] = React.useState<Token | null>(null)
     const [loading, setLoading] = React.useState(false)
     const [loadError, setLoadError] = React.useState<string | null>(null)
     const [reloadKey, setReloadKey] = React.useState(0)
 
-    /* Mỗi lần mở popup (hoặc retry): tải chi tiết token theo địa chỉ contract */
+    /* Each time the popup opens (or on retry): load the token detail by contract address */
     React.useEffect(() => {
         setToken(null)
         setLoadError(null)
@@ -133,7 +140,7 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
                 if (!cancelled) setToken(res.data)
             })
             .catch((err: unknown) => {
-                if (!cancelled) setLoadError(getErrorMessage(err, "Failed to load token detail"))
+                if (!cancelled) setLoadError(getErrorMessage(err, t("errors.loadTokenDetail")))
             })
             .finally(() => {
                 if (!cancelled) setLoading(false)
@@ -142,7 +149,7 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
         return () => {
             cancelled = true
         }
-    }, [tokenAddress, reloadKey])
+    }, [tokenAddress, reloadKey, t])
 
     const renderBody = () => {
         if (loading) return <DetailSkeleton />
@@ -152,7 +159,7 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
                 <div className="flex flex-col items-center gap-3 py-4 text-center">
                     <p className="text-sm text-destructive">{loadError}</p>
                     <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
-                        Retry
+                        {t("common.retry")}
                     </Button>
                 </div>
             )
@@ -165,7 +172,7 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
         <Dialog
             isOpen={!!tokenAddress}
             onClose={onClose}
-            title={token ? `${token.name} Detail` : "Token Detail"}
+            title={token ? t("tokenDetail.titleNamed", { name: token.name }) : t("tokenDetail.title")}
             className="max-h-[90svh] overflow-y-auto"
         >
             {renderBody()}

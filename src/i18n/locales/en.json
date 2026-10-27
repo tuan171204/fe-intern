@@ -1,0 +1,368 @@
+{
+    "common": {
+        "retry": "Retry",
+        "close": "Close",
+        "loading": "Loading...",
+        "none": "None",
+        "copyAddress": "Copy address",
+        "viewOnEtherscan": "View transaction on Etherscan"
+    },
+    "theme": {
+        "switchToLight": "Switch to light mode",
+        "switchToDark": "Switch to dark mode"
+    },
+    "language": {
+        "label": "Language",
+        "en": "English",
+        "vi": "Tiếng Việt"
+    },
+    "nav": {
+        "appName": "ACW3",
+        "dashboard": "Dashboard",
+        "token": "Token",
+        "tokenCreator": "Token Creator",
+        "tokenList": "Token List",
+        "nft": "NFT",
+        "nftCollection": "NFT Collection",
+        "nftCreator": "NFT Creator",
+        "nftList": "NFT List",
+        "profile": "Profile",
+        "leaderboard": "Leaderboard",
+        "menu": "Menu",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "mainNavigation": "Main navigation",
+        "accountMenu": "Account menu",
+        "logOut": "Log out"
+    },
+    "footer": {
+        "featureRequest": "Feature Request",
+        "contactUs": "Contact Us"
+    },
+    "connect": {
+        "title": "Tokens & NFT with Ease",
+        "subtitleLine1": "Launch Token, Liquidity, Airdrops and much more.",
+        "subtitleLine2": "Effortless and without coding.",
+        "cta": "Connect Your Wallet"
+    },
+    "ui": {
+        "dialogClose": "Close",
+        "notifications": "Notifications",
+        "dismissNotification": "Dismiss notification",
+        "dropzoneLabel": "Drag and drop here to upload",
+        "dropzoneHint": "png, .jpg, 1000x1000px",
+        "uploadedPreview": "Uploaded preview",
+        "changeImage": "Change image",
+        "removeImage": "Remove image",
+        "pagination": "Pagination",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "page": "Page {{page}}"
+    },
+    "wallet": {
+        "connectWallet": "Connect Wallet",
+        "connect": "Connect",
+        "connecting": "Connecting…",
+        "disconnect": "Disconnect",
+        "switchToSepolia": "Switch to Sepolia",
+        "switchingNetwork": "Switching Network...",
+        "signIn": "Sign In",
+        "retrySignIn": "Retry Sign In",
+        "followPrompts": "Please follow the prompts in MetaMask",
+        "steps": {
+            "connecting": "Connecting...",
+            "switching": "Switching Network...",
+            "requesting": "Requesting Message...",
+            "signing": "Waiting for Signature...",
+            "authenticating": "Authenticating..."
+        },
+        "wrongNetwork": "Wrong network",
+        "wrongNetworkNotice": "Your wallet is on the wrong network. This app only works on Sepolia Testnet.",
+        "walletMenu": "Wallet menu",
+        "connectedWallet": "Connected wallet",
+        "ethBalance": "Sepolia ETH balance",
+        "balanceError": "Could not load balance",
+        "copyAddress": "Copy Address",
+        "copied": "Copied!",
+        "modal": {
+            "title": "Connect Wallet",
+            "choose": "Choose a wallet to connect. This app runs on Sepolia Testnet.",
+            "waiting": "Waiting for confirmation…",
+            "openMetaMask": "Open MetaMask and confirm the connection request.",
+            "noWallet": "Don't have a wallet?",
+            "install": "Install MetaMask"
+        },
+        "toast": {
+            "connected": "Wallet connected successfully",
+            "disconnected": "Wallet disconnected",
+            "switched": "Switched to Sepolia Testnet"
+        }
+    },
+    "auth": {
+        "signedIn": "Signed in successfully",
+        "sessionExpired": "Your session has expired. Please sign in again.",
+        "accountChanged": "Wallet account changed. Please sign in again.",
+        "sessionExpiring": "Your session is about to expire. Please sign in again before creating a token.",
+        "invalidToken": "Invalid token received from server."
+    },
+    "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "network": "Cannot connect to the server. Please try again later.",
+        "authFailed": "Authentication failed",
+        "loadProfile": "Failed to load profile",
+        "loadTokens": "Failed to load tokens",
+        "loadTokenDetail": "Failed to load token detail",
+        "updateProfile": "Failed to update profile",
+        "saveMetadata": "Failed to save token metadata",
+        "providerNotFound": "MetaMask not found. Please install the MetaMask extension and reload the page.",
+        "requestPending": "MetaMask already has a pending request. Open the MetaMask extension to confirm or cancel it.",
+        "rejectedRequest": "You rejected the request in MetaMask.",
+        "rejectedConnection": "You rejected the connection request in MetaMask.",
+        "rejectedSwitch": "You rejected the network switch in MetaMask.",
+        "rejectedTx": "You rejected the transaction in MetaMask.",
+        "rateLimit": "The RPC node is rate-limiting requests. Please wait a few seconds and try again.",
+        "rpcUnreachable": "Cannot reach the RPC node. Check your connection and try again.",
+        "receiptUnconfirmed": "We couldn't confirm the transaction (RPC/network issue). It may still go through. Check the Etherscan link before trying again.",
+        "insufficientEthCreate": "Not enough Sepolia ETH to pay gas. Get some from a faucet and try again.",
+        "insufficientEthMint": "Not enough Sepolia ETH to pay the mint fee and gas. Get some from a faucet and try again.",
+        "gasTooLow": "Gas is too low or the gas estimate failed. Raise the gas limit in MetaMask and try again.",
+        "chainMismatch": "Your wallet is on the wrong network. Please switch to Sepolia.",
+        "createReverted": "The contract rejected this transaction. Check name, symbol, supply and mint fee.",
+        "mintReverted": "The contract rejected this mint. The max supply may have been reached or the fee is incorrect.",
+        "feeMismatch": "The mint fee sent doesn't match what the contract requires.",
+        "maxSupplyReached": "Max supply reached. This token can't be minted any further."
+    },
+    "validation": {
+        "maxChars": "Maximum {{max}} characters allowed",
+        "invalidUrl": "Invalid URL (must start with http:// or https://)",
+        "invalidImageType": "Only PNG, JPG or SVG images are allowed",
+        "imageTooLarge": "Image must be smaller than {{size}}MB"
+    },
+    "tokenCreator": {
+        "title": "Token Creator",
+        "subtitle": "Easily Create your own Token in just 7+1 steps without Coding.",
+        "form": {
+            "name": "Name",
+            "namePlaceholder": "Ex: Zoken",
+            "nameHint": "Max 32 characters in your name",
+            "symbol": "Symbol",
+            "symbolPlaceholder": "Ex: ZKN",
+            "symbolHint": "Max 8 characters in your symbol",
+            "maxSupply": "Max Supply",
+            "maxSupplyHint": "Hard cap of the token (18 decimals)",
+            "initialSupply": "Initial Supply",
+            "initialSupplyHint": "Minted to your wallet on deploy (0 allowed)",
+            "amountPerMint": "Amount per mint",
+            "mintFee": "Mint Fee (ETH)",
+            "mintFeeHint": "Fee a minter pays per mint, in Sepolia ETH",
+            "image": "Image",
+            "imageHint": "png, .jpg, .svg, max {{size}}MB",
+            "description": "Description",
+            "descriptionPlaceholder": "Ex: First community token on Zoken...",
+            "create": "Create"
+        },
+        "errors": {
+            "nameRequired": "Token name is required",
+            "symbolRequired": "Symbol is required",
+            "amountFormat": "Use plain digits, up to {{decimals}} decimals (e.g. 1000000)",
+            "maxSupplyRequired": "Max supply is required",
+            "maxSupplyPositive": "Max supply must be greater than 0",
+            "initialSupplyRequired": "Initial supply is required (enter 0 for none)",
+            "exceedsMaxSupply": "Cannot exceed Max Supply",
+            "amountPerMintRequired": "Amount per mint is required",
+            "amountPerMintPositive": "Amount per mint must be greater than 0",
+            "mintFeeRequired": "Mint fee is required (enter 0 for free)",
+            "descriptionRequired": "Description is required",
+            "imageRequired": "Please select an image"
+        },
+        "submit": {
+            "submitting": "Submitting Transaction...",
+            "confirming": "Confirming on Chain...",
+            "saving": "Saving Metadata..."
+        },
+        "progress": {
+            "submittingLabel": "Submitting Transaction",
+            "submittingHint": "Confirm the transaction in MetaMask",
+            "confirmingLabel": "Confirming on Chain",
+            "confirmingHint": "Waiting for the block confirmation",
+            "savingLabel": "Saving Metadata",
+            "savingHint": "Uploading image and token info"
+        },
+        "notices": {
+            "connect": "Connect your wallet on Sepolia Testnet to create a token.",
+            "connectToast": "Please connect your wallet on Sepolia to create a token",
+            "onChainSaved": "Your token is already deployed on-chain. Retry saving instead of creating it again.",
+            "retrySaving": "Retry saving",
+            "discard": "Discard",
+            "imageUploaded": "Token image uploaded successfully",
+            "created": "Token created successfully",
+            "reverted": "The transaction reverted on-chain. No token was created.",
+            "saveFailed": "Transaction confirmed on-chain, but saving metadata failed: {{message}}"
+        },
+        "social": {
+            "title": "Add Social Links & Tags",
+            "hint": "Max 32 characters in your name",
+            "website": "Website"
+        },
+        "success": {
+            "title": "Token Created",
+            "body": "<b>{{name}}</b> <muted>({{symbol}})</muted> has been deployed and saved successfully.",
+            "createAnother": "Create another",
+            "viewTokens": "View my tokens"
+        }
+    },
+    "tokenList": {
+        "tableLabel": "Tokens",
+        "token": "Tokens",
+        "balance": "Balance",
+        "supplyPercent": "% of Supply",
+        "mintProgress": "Mint Progress",
+        "action": "Action",
+        "empty": "No tokens have been created yet.",
+        "onchainError": "Could not load on-chain data (balance, mint progress).",
+        "walletHint": "Connect your wallet to see this value",
+        "mint": "Mint",
+        "minted": "Minted",
+        "mintAria": "Mint {{name}}",
+        "mintedAria": "{{name}} is fully minted",
+        "progressAria": "Mint progress of {{name}}"
+    },
+    "tokenDetail": {
+        "title": "Token Detail",
+        "titleNamed": "{{name}} Detail",
+        "maxSupply": "Max Supply",
+        "amountPerMint": "Amount Per Mint",
+        "mintFee": "Mint Fee",
+        "description": "Description",
+        "website": "Website"
+    },
+    "mint": {
+        "title": "{{name}} Token",
+        "amountPerMint": "Amount Per Mint",
+        "mintFee": "Mint Fee",
+        "remainingSupply": "Remaining Supply",
+        "soldOut": "Max supply reached. This token can't be minted any further.",
+        "remainingTooLow": "The remaining supply is smaller than the amount per mint.",
+        "connectNotice": "Connect your wallet on Sepolia Testnet to mint.",
+        "connectToast": "Please connect your wallet on Sepolia to mint",
+        "insufficientEth": "Not enough Sepolia ETH. Minting needs {{fee}} ETH plus gas, but your balance is {{balance}} ETH.",
+        "statusSubmitting": "Checking supply and waiting for your confirmation in MetaMask",
+        "statusConfirming": "Transaction sent. Waiting for block confirmation",
+        "button": "Mint",
+        "confirmInWallet": "Confirm in MetaMask...",
+        "confirming": "Confirming on Chain...",
+        "retry": "Retry Mint",
+        "success": "Minted <b>{{amount}} {{symbol}}</b> successfully.",
+        "done": "Done",
+        "toastSuccess": "Minted successfully",
+        "reverted": "The mint transaction reverted on-chain. No tokens were minted."
+    },
+    "nftCreator": {
+        "title": "Create NFT Collection",
+        "name": "Name",
+        "namePlaceholder": "Ex: Zoken",
+        "nameHint": "Max 32 characters in your name",
+        "symbol": "Symbol",
+        "symbolPlaceholder": "Ex: ZKN",
+        "symbolHint": "Max 8 characters in your symbol",
+        "totalSupply": "Total Supply",
+        "totalSupplyHint": "Most token use 10B",
+        "create": "Create",
+        "created": "NFT Collection created successfully",
+        "errors": {
+            "nameRequired": "Collection name is required",
+            "symbolRequired": "Symbol is required",
+            "totalSupplyRequired": "Total supply is required",
+            "totalSupplyInvalid": "Total supply must be a positive integer"
+        }
+    },
+    "nftList": {
+        "tableLabel": "NFT list",
+        "nft": "NFT",
+        "supplyPercent": "% of Supply",
+        "mintProgress": "Mint Progress",
+        "action": "Action",
+        "mint": "Mint",
+        "minted": "Minted",
+        "mintAria": "Mint {{name}}",
+        "mintedAria": "{{name}} is fully minted",
+        "progressAria": "Mint progress of {{name}}",
+        "modal": {
+            "title": "{{name}} NFT",
+            "dropLabel": "Drag and drop your files to upload",
+            "fileRequired": "Please select a .csv file containing the mint list",
+            "mintFee": "Mint Fee",
+            "feeLocked": "You are not allowed to change the mint fee",
+            "button": "Mint",
+            "success": "Minted {{name}} successfully"
+        }
+    },
+    "profile": {
+        "totalTokens": "Total Tokens",
+        "totalNfts": "Total NFTs",
+        "unnamed": "Unnamed",
+        "balance": "Balance",
+        "balanceLoading": "Loading...",
+        "balanceUnavailable": "Unavailable",
+        "biography": "Biography",
+        "socialLinks": "Social Links",
+        "editProfile": "Edit Profile",
+        "loadingProfile": "Loading profile",
+        "assets": "Assets",
+        "tabs": {
+            "tokens": "Tokens",
+            "nfts": "NFTs"
+        },
+        "tokensTable": {
+            "token": "Token",
+            "balance": "Balance",
+            "supplyPercent": "% of Supply",
+            "totalSupply": "Total of Supply",
+            "empty": "You haven't created any tokens yet."
+        },
+        "nftsTable": {
+            "nft": "NFT",
+            "supplyPercent": "% of Supply",
+            "totalSupply": "Total of Supply"
+        },
+        "edit": {
+            "title": "Edit Profile",
+            "name": "Name",
+            "namePlaceholder": "John",
+            "bio": "Biography",
+            "bioPlaceholder": "Write your biography here!",
+            "socialLinks": "Social Links",
+            "linkAria": "{{label}} link",
+            "save": "Save",
+            "updated": "Profile updated successfully",
+            "nameRequired": "Name is required",
+            "invalidLink": "Invalid {{label}} link (must start with http:// or https://)"
+        }
+    },
+    "leaderboard": {
+        "title": "ACW3 Leaderboard",
+        "subtitle": "Discover the top cults on <b>ACW3</b>",
+        "madeBy": "Made by ACW3",
+        "coined": "This dashboard has been coined",
+        "topCreators": "Top 50 Creators",
+        "stats": {
+            "mc": "MC",
+            "change1h": "1h",
+            "volume24h": "24h Vol"
+        },
+        "columns": {
+            "rank": "Rank",
+            "token": "Token",
+            "creator": "Creator",
+            "change": "24h Chg",
+            "marketCap": "Market Cap",
+            "volume": "Volume (24h)",
+            "price": "Token Price"
+        },
+        "card": {
+            "volume24h": "Volume 24h",
+            "price": "Price",
+            "creator": "Creator"
+        }
+    }
+}

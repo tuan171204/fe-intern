@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next"
+
 import { Button } from "../../../components/ui/button"
 import Pagination from "../../../components/ui/pagination"
 import { Skeleton } from "../../../components/ui/skeleton"
@@ -12,7 +14,7 @@ import AssetIdentity from "./AssetIdentity"
 
 export interface TokensTableProps {
     tokens: Token[]
-    /** Trang đang chọn */
+    /** Currently selected page */
     page: number
     pagination: PaginationMeta
     loading: boolean
@@ -24,6 +26,7 @@ export interface TokensTableProps {
 const SKELETON_ROWS = 5
 
 const TokensTable = ({ tokens, page, pagination, loading, error, onRetry, onPageChange }: TokensTableProps) => {
+    const { t } = useTranslation()
     const onchain = useTokenOnchainData(tokens)
 
     const renderRows = () => {
@@ -58,7 +61,7 @@ const TokensTable = ({ tokens, page, pagination, loading, error, onRetry, onPage
                     <TableCell colSpan={4} className="py-8 text-center">
                         <p className="text-sm text-destructive">{error}</p>
                         <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
-                            Retry
+                            {t("common.retry")}
                         </Button>
                     </TableCell>
                 </TableRow>
@@ -69,7 +72,7 @@ const TokensTable = ({ tokens, page, pagination, loading, error, onRetry, onPage
             return (
                 <TableRow className="hover:bg-transparent">
                     <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
-                        You haven&apos;t created any tokens yet.
+                        {t("profile.tokensTable.empty")}
                     </TableCell>
                 </TableRow>
             )
@@ -120,10 +123,10 @@ const TokensTable = ({ tokens, page, pagination, loading, error, onRetry, onPage
             <Table className="min-w-[560px]">
                 <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                        <TableHead className="text-sm text-foreground">Token</TableHead>
-                        <TableHead className="text-center text-sm">Balance</TableHead>
-                        <TableHead className="text-center text-sm">% of Supply</TableHead>
-                        <TableHead className="text-right text-sm">Total of Supply</TableHead>
+                        <TableHead className="text-sm text-foreground">{t("profile.tokensTable.token")}</TableHead>
+                        <TableHead className="text-center text-sm">{t("profile.tokensTable.balance")}</TableHead>
+                        <TableHead className="text-center text-sm">{t("profile.tokensTable.supplyPercent")}</TableHead>
+                        <TableHead className="text-right text-sm">{t("profile.tokensTable.totalSupply")}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>{renderRows()}</TableBody>

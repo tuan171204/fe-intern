@@ -1,4 +1,6 @@
 import * as React from "react"
+import type { ParseKeys } from "i18next"
+import { useTranslation } from "react-i18next"
 import { useAccount } from "wagmi"
 
 import { SEPOLIA_CHAIN_ID } from "../../config/network"
@@ -9,28 +11,25 @@ import { Button, type ButtonProps } from "../ui/button"
 import Icon from "../ui/icon"
 import WalletConnectModal from "./WalletConnectModal"
 
-const STEP_LABELS: Partial<Record<SiweStep, string>> = {
-    connecting: "Connecting...",
-    switching: "Switching Network...",
-    requesting: "Requesting Message...",
-    signing: "Waiting for Signature...",
-    authenticating: "Authenticating...",
+const STEP_LABEL_KEYS: Partial<Record<SiweStep, ParseKeys>> = {
+    connecting: "wallet.steps.connecting",
+    switching: "wallet.steps.switching",
+    requesting: "wallet.steps.requesting",
+    signing: "wallet.steps.signing",
+    authenticating: "wallet.steps.authenticating",
 }
 
 export interface ConnectWalletButtonProps {
+    /** Falls back to the localized "Connect Wallet" when omitted */
     label?: string
     size?: ButtonProps["size"]
     className?: string
     secondaryClassName?: string
 }
 
-/** Nút Connect + đăng nhập SIWE cho khu vực guest (chưa có JWT) */
-const ConnectWalletButton = ({
-    label = "Connect Wallet",
-    size,
-    className,
-    secondaryClassName,
-}: ConnectWalletButtonProps) => {
+/** Connect + SIWE sign-in button for the guest area (no JWT yet) */
+const ConnectWalletButton = ({ label, size, className, secondaryClassName }: ConnectWalletButtonProps) => {
+    const { t } = useTranslation()
     const { address, chainId, status } = useAccount()
     const { walletConnectors, isRestoring } = useWalletConnection()
     const { step, isBusy, pendingConnectorId, connectAndSignIn, signIn, logout } = useWalletAuth()
@@ -40,37 +39,39 @@ const ConnectWalletButton = ({
     const isConnected = status === "connected" && !!address
     const isWrongNetwork = isConnected && chainId !== SEPOLIA_CHAIN_ID
 
-    /* Lối thoát khi ví đã kết nối nhưng chưa đăng nhập: đổi ví khác hoặc huỷ kết nối */
+    /* Escape hatch when the wallet is connected but not signed in: switch wallet or disconnect */
     const disconnectButton = (
         <Button type="button" variant="outline" size={size} onClick={logout} className={secondaryClassName}>
-            Disconnect
+            {t("wallet.disconnect")}
         </Button>
     )
+
+    const stepLabelKey = STEP_LABEL_KEYS[step]
 
     let content: React.ReactNode
 
     if (isBusy || isRestoring) {
-        // Đang chạy 1 trong các bước: Connecting -> Switching -> Requesting -> Signing -> Authenticating
+        // One of: Connecting -> Switching -> Requesting -> Signing -> Authenticating
         content = (
-            <Button size={size} disabled loading className={className} title="Please follow the prompts in MetaMask">
-                {STEP_LABELS[step] ?? "Connecting..."}
+            <Button size={size} disabled loading className={className} title={t("wallet.followPrompts")}>
+                {t(stepLabelKey ?? "wallet.steps.connecting")}
             </Button>
         )
     } else if (isWrongNetwork) {
         content = (
             <>
                 <Button size={size} loading={isSwitching} onClick={switchToSepolia} className={className}>
-                    {isSwitching ? "Switching Network..." : "Switch to Sepolia"}
+                    {isSwitching ? t("wallet.switchingNetwork") : t("wallet.switchToSepolia")}
                 </Button>
                 {disconnectButton}
             </>
         )
     } else if (isConnected) {
-        // Ví đã kết nối nhưng chưa có JWT (từ chối ký / API lỗi) -> cho thử lại
+        // Wallet connected but no JWT yet (signature rejected / API error) -> allow retry
         content = (
             <>
                 <Button size={size} onClick={() => void signIn()} className={className}>
-                    {step === "error" ? "Retry Sign In" : "Sign In"}
+                    {step === "error" ? t("wallet.retrySignIn") : t("wallet.signIn")}
                 </Button>
                 {disconnectButton}
             </>
@@ -79,7 +80,7 @@ const ConnectWalletButton = ({
         content = (
             <Button size={size} onClick={() => setModalOpen(true)} className={className}>
                 <Icon name="wallet" size="md" aria-hidden="true" />
-                {label}
+                {label ?? t("wallet.connectWallet")}
             </Button>
         )
     }

@@ -16,6 +16,11 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			colors: {
+				teal: {
+					'50': 'rgb(var(--teal-50) / <alpha-value>)',
+					'100': 'rgb(var(--teal-100) / <alpha-value>)'
+				},
+				field: 'hsl(var(--field))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import { updateProfile } from "../../../api/profile"
 import { Dialog } from "../../../components/ui/dialog"
@@ -23,6 +24,8 @@ export interface EditProfileModalProps {
 const NAME_MAX = 32
 const BIO_MAX = 280
 
+type TFn = ReturnType<typeof useTranslation>["t"]
+
 type EditProfileValues = {
     name: string
     biography: string
@@ -31,18 +34,18 @@ type EditProfileValues = {
     githubUrl: string
 }
 
-const validate = (values: EditProfileValues) => {
+const createValidator = (t: TFn) => (values: EditProfileValues) => {
     const errors: Partial<Record<keyof EditProfileValues, string>> = {}
 
-    if (!values.name.trim()) errors.name = "Name is required"
-    else if (values.name.length > NAME_MAX) errors.name = `Maximum ${NAME_MAX} characters allowed`
+    if (!values.name.trim()) errors.name = t("profile.edit.nameRequired")
+    else if (values.name.length > NAME_MAX) errors.name = t("validation.maxChars", { max: NAME_MAX })
 
-    if (values.biography.length > BIO_MAX) errors.biography = `Maximum ${BIO_MAX} characters allowed`
+    if (values.biography.length > BIO_MAX) errors.biography = t("validation.maxChars", { max: BIO_MAX })
 
     SOCIAL_LINKS.forEach(({ key, label }) => {
         const value = values[key]
         if (value.trim() && !isValidUrl(value)) {
-            errors[key] = `Invalid ${label} link (must start with http:// or https://)`
+            errors[key] = t("profile.edit.invalidLink", { label })
         }
     })
 
@@ -50,6 +53,7 @@ const validate = (values: EditProfileValues) => {
 }
 
 const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModalProps) => {
+    const { t } = useTranslation()
     const initialValues = React.useMemo<EditProfileValues>(
         () => ({
             name: profile.username ?? "",
@@ -61,11 +65,14 @@ const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModal
         [profile]
     )
 
-    const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(initialValues, validate)
+    const { values, setField, fieldError, errors, touchAll, reset } = useFormValidation(
+        initialValues,
+        createValidator(t)
+    )
     const [submitting, setSubmitting] = React.useState(false)
     const { success, error } = useToast()
 
-    /* Mỗi lần mở modal, nạp lại form theo profile mới nhất đã lưu */
+    /* Reload the form from the latest saved profile every time the modal opens */
     React.useEffect(() => {
         if (isOpen) reset()
     }, [isOpen, reset])
@@ -83,7 +90,7 @@ const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModal
 
         setSubmitting(true)
         try {
-            /* Gửi đủ 5 field; chuỗi rỗng = xoá giá trị */
+            /* Send all 5 fields; an empty string clears the value */
             const updated = await updateProfile({
                 username: values.name.trim(),
                 bio: values.biography.trim(),
@@ -92,49 +99,53 @@ const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModal
                 githubUrl: values.githubUrl.trim(),
             })
             onSave(updated)
-            success("Profile updated successfully")
+            success(t("profile.edit.updated"))
             onClose()
         } catch (err) {
-            error(getErrorMessage(err, "Failed to update profile"))
+            error(getErrorMessage(err, t("errors.updateProfile")))
         } finally {
             setSubmitting(false)
         }
     }
 
     return (
-        <Dialog isOpen={isOpen} onClose={handleClose} title="Edit Profile" className="max-h-[90svh] overflow-y-auto">
+        <Dialog
+            isOpen={isOpen}
+            onClose={handleClose}
+            title={t("profile.edit.title")}
+            className="max-h-[90svh] overflow-y-auto"
+        >
             <form
                 onSubmit={handleSubmit}
                 noValidate
                 className="flex flex-col gap-4 [&_label]:text-base [&_label]:font-normal"
             >
                 <Input
-                    label="Name"
+                    label={t("profile.edit.name")}
                     required
                     maxLength={NAME_MAX}
-                    placeholder="John"
+                    placeholder={t("profile.edit.namePlaceholder")}
                     value={values.name}
                     onChange={(e) => setField("name", e.target.value)}
                     error={fieldError("name")}
                 />
 
                 <Textarea
-                    label="Biography"
-                    placeholder="Write your biography here!"
+                    label={t("profile.edit.bio")}
+                    placeholder={t("profile.edit.bioPlaceholder")}
                     maxLength={BIO_MAX}
                     value={values.biography}
                     onChange={(e) => setField("biography", e.target.value)}
                     error={fieldError("biography")}
-                    className="bg-[#F5FBFB] focus-visible:bg-background"
                 />
 
                 <fieldset className="flex flex-col gap-2">
-                    <legend className="mb-2 text-base">Social Links</legend>
+                    <legend className="mb-2 text-base">{t("profile.edit.socialLinks")}</legend>
                     {SOCIAL_LINKS.map(({ key, label, icon }) => (
                         <Input
                             key={key}
                             type="url"
-                            aria-label={`${label} link`}
+                            aria-label={t("profile.edit.linkAria", { label })}
                             placeholder="https://..."
                             startAdornment={<Icon name={icon} size="sm" aria-hidden="true" />}
                             className="h-10 py-0"
@@ -146,7 +157,7 @@ const EditProfileModal = ({ isOpen, profile, onSave, onClose }: EditProfileModal
                 </fieldset>
 
                 <SubmitButton loading={submitting} disabled={submitting} className="text-lg font-light tracking-wide">
-                    Save
+                    {t("profile.edit.save")}
                 </SubmitButton>
             </form>
         </Dialog>

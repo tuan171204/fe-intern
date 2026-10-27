@@ -10,7 +10,7 @@ const badgeVariants = cva(
       variant: {
         default: "border-transparent bg-secondary text-secondary-foreground",
         outline: "border-teal-600 bg-transparent text-teal-600",
-        success: "border-transparent bg-teal-100 text-teal-700",
+        success: "border-transparent bg-teal-100 text-teal-700 dark:text-teal-300",
       },
     },
     defaultVariants: {
@@ -21,7 +21,7 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
+  VariantProps<typeof badgeVariants> { }
 
 const Badge = ({ className, variant, ...props }: BadgeProps) => (
   <span className={cn(badgeVariants({ variant }), className)} {...props} />

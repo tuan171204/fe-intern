@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import { getUserTokens } from "../../api/profile"
 import { Button } from "../../components/ui/button"
@@ -19,7 +20,8 @@ const StatCard = ({ label, value }: { label: string; value: number }) => (
 )
 
 const Profile = () => {
-    /* Profile được AuthContext tải khi app khởi chạy / đăng nhập; Edit Profile lưu xong thì cập nhật lại context */
+    const { t } = useTranslation()
+    /* The profile is loaded by AuthContext on app start / sign-in; after Edit Profile saves, the context is updated */
     const { profile, profileError, fetchProfile, setProfile } = useAuth()
     const [page, setPage] = React.useState(1)
     const userTokens = usePaginatedTokens(getUserTokens, page, TOKENS_PER_PAGE)
@@ -32,7 +34,7 @@ const Profile = () => {
                 <section className="flex flex-col items-center gap-3 rounded-lg bg-background p-4 text-center">
                     <p className="text-sm text-destructive">{profileError}</p>
                     <Button variant="outline" size="sm" onClick={() => void fetchProfile()}>
-                        Retry
+                        {t("common.retry")}
                     </Button>
                 </section>
             ) : (
@@ -41,8 +43,8 @@ const Profile = () => {
 
             <div className="flex min-w-0 flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <StatCard label="Total Tokens" value={userTokens.pagination.total} />
-                    <StatCard label="Total NFTs" value={PROFILE_NFTS.length} />
+                    <StatCard label={t("profile.totalTokens")} value={userTokens.pagination.total} />
+                    <StatCard label={t("profile.totalNfts")} value={PROFILE_NFTS.length} />
                 </div>
                 <ProfileAssets
                     tokensTable={{

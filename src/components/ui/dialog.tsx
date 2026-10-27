@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
 import cn from "../../utils/cn"
 import Icon from "./icon"
@@ -12,6 +13,7 @@ export interface DialogProps {
 }
 
 const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) => {
+  const { t } = useTranslation()
   const titleId = React.useId()
 
   React.useEffect(() => {
@@ -54,7 +56,7 @@ const Dialog = ({ isOpen, onClose, title, children, className }: DialogProps) =>
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t("ui.dialogClose")}
           className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <Icon name="close" size="xl" />

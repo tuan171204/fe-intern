@@ -43,9 +43,11 @@ export const getPasswordStrength = (password: string): PasswordStrengthResult =>
 export const IMAGE_ACCEPT = "image/png,image/jpeg,image/svg+xml"
 export const IMAGE_MAX_SIZE_MB = 5
 
-/** Trả về message lỗi nếu file ảnh không hợp lệ, ngược lại undefined */
-export const validateImageFile = (file: File): string | undefined => {
-    if (!IMAGE_ACCEPT.split(",").includes(file.type)) return "Only PNG, JPG or SVG images are allowed"
-    if (file.size > IMAGE_MAX_SIZE_MB * 1024 * 1024) return `Image must be smaller than ${IMAGE_MAX_SIZE_MB}MB`
+/** Error code instead of a message, so the UI can localize it */
+export type ImageFileError = "invalidType" | "tooLarge"
+
+export const validateImageFile = (file: File): ImageFileError | undefined => {
+    if (!IMAGE_ACCEPT.split(",").includes(file.type)) return "invalidType"
+    if (file.size > IMAGE_MAX_SIZE_MB * 1024 * 1024) return "tooLarge"
     return undefined
 }

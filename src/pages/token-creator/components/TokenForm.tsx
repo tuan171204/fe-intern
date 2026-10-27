@@ -1,4 +1,6 @@
 import * as React from "react"
+import type { ParseKeys } from "i18next"
+import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 import { parseUnits } from "viem"
 
@@ -12,7 +14,12 @@ import { useCreateToken, type CreateTokenStep } from "../../../hooks/useCreateTo
 import { useFormValidation } from "../../../hooks/useFormValidation"
 import { useNetworkGuard } from "../../../hooks/useNetworkGuard"
 import { useToast } from "../../../store/ToastContext"
-import { IMAGE_ACCEPT, IMAGE_MAX_SIZE_MB, validateImageFile } from "../../../utils/validators"
+import {
+    IMAGE_ACCEPT,
+    IMAGE_MAX_SIZE_MB,
+    validateImageFile,
+    type ImageFileError,
+} from "../../../utils/validators"
 import CreateTokenProgress from "./CreateTokenProgress"
 import CreateTokenSuccessModal from "./CreateTokenSuccessModal"
 import SocialLinksSection, {
@@ -25,9 +32,10 @@ const DESCRIPTION_MAX = 500
 const NAME_MAX = 32
 const SYMBOL_MAX = 8
 
-/* Số thập phân thuần (không cho "1e3", dấu âm...) vì sẽ đưa vào parseUnits */
+/* Plain decimals only (no "1e3", no sign) because the value goes into parseUnits */
 const AMOUNT_REGEX = new RegExp(`^\\d+(\\.\\d{1,${TOKEN_DECIMALS}})?$`)
-const AMOUNT_FORMAT_ERROR = `Use plain digits, up to ${TOKEN_DECIMALS} decimals (e.g. 1000000)`
+
+type TFn = ReturnType<typeof useTranslation>["t"]
 
 type TokenFormValues = {
     name: string
@@ -49,59 +57,66 @@ const INITIAL_VALUES: TokenFormValues = {
     description: "",
 }
 
-/** null nếu chuỗi không phải số hợp lệ */
+/** null if the string is not a valid amount */
 const parseAmount = (value: string): bigint | null =>
     AMOUNT_REGEX.test(value.trim()) ? parseUnits(value.trim(), TOKEN_DECIMALS) : null
 
-const validate = (values: TokenFormValues) => {
+const createValidator = (t: TFn) => (values: TokenFormValues) => {
     const errors: Partial<Record<keyof TokenFormValues, string>> = {}
+    const amountFormatError = t("tokenCreator.errors.amountFormat", { decimals: TOKEN_DECIMALS })
 
-    if (!values.name.trim()) errors.name = "Token name is required"
-    else if (values.name.length > NAME_MAX) errors.name = `Maximum ${NAME_MAX} characters allowed`
+    if (!values.name.trim()) errors.name = t("tokenCreator.errors.nameRequired")
+    else if (values.name.length > NAME_MAX) errors.name = t("validation.maxChars", { max: NAME_MAX })
 
-    if (!values.symbol.trim()) errors.symbol = "Symbol is required"
-    else if (values.symbol.length > SYMBOL_MAX) errors.symbol = `Maximum ${SYMBOL_MAX} characters allowed`
+    if (!values.symbol.trim()) errors.symbol = t("tokenCreator.errors.symbolRequired")
+    else if (values.symbol.length > SYMBOL_MAX) errors.symbol = t("validation.maxChars", { max: SYMBOL_MAX })
 
     const maxSupply = parseAmount(values.maxSupply)
-    if (!values.maxSupply.trim()) errors.maxSupply = "Max supply is required"
-    else if (maxSupply === null) errors.maxSupply = AMOUNT_FORMAT_ERROR
-    else if (maxSupply <= 0n) errors.maxSupply = "Max supply must be greater than 0"
+    if (!values.maxSupply.trim()) errors.maxSupply = t("tokenCreator.errors.maxSupplyRequired")
+    else if (maxSupply === null) errors.maxSupply = amountFormatError
+    else if (maxSupply <= 0n) errors.maxSupply = t("tokenCreator.errors.maxSupplyPositive")
 
     const initialSupply = parseAmount(values.initialSupply)
-    if (!values.initialSupply.trim()) errors.initialSupply = "Initial supply is required (enter 0 for none)"
-    else if (initialSupply === null) errors.initialSupply = AMOUNT_FORMAT_ERROR
-    else if (maxSupply !== null && initialSupply > maxSupply) errors.initialSupply = "Cannot exceed Max Supply"
+    if (!values.initialSupply.trim()) errors.initialSupply = t("tokenCreator.errors.initialSupplyRequired")
+    else if (initialSupply === null) errors.initialSupply = amountFormatError
+    else if (maxSupply !== null && initialSupply > maxSupply) {
+        errors.initialSupply = t("tokenCreator.errors.exceedsMaxSupply")
+    }
 
     const amount = parseAmount(values.amountPerMint)
-    if (!values.amountPerMint.trim()) errors.amountPerMint = "Amount per mint is required"
-    else if (amount === null) errors.amountPerMint = AMOUNT_FORMAT_ERROR
-    else if (amount <= 0n) errors.amountPerMint = "Amount per mint must be greater than 0"
-    else if (maxSupply !== null && amount > maxSupply) errors.amountPerMint = "Cannot exceed Max Supply"
+    if (!values.amountPerMint.trim()) errors.amountPerMint = t("tokenCreator.errors.amountPerMintRequired")
+    else if (amount === null) errors.amountPerMint = amountFormatError
+    else if (amount <= 0n) errors.amountPerMint = t("tokenCreator.errors.amountPerMintPositive")
+    else if (maxSupply !== null && amount > maxSupply) errors.amountPerMint = t("tokenCreator.errors.exceedsMaxSupply")
 
-    if (!values.mintFee.trim()) errors.mintFee = "Mint fee is required (enter 0 for free)"
-    else if (parseAmount(values.mintFee) === null) errors.mintFee = AMOUNT_FORMAT_ERROR
+    if (!values.mintFee.trim()) errors.mintFee = t("tokenCreator.errors.mintFeeRequired")
+    else if (parseAmount(values.mintFee) === null) errors.mintFee = amountFormatError
 
-    if (!values.description.trim()) errors.description = "Description is required"
-    else if (values.description.length > DESCRIPTION_MAX) errors.description = `Maximum ${DESCRIPTION_MAX} characters allowed`
+    if (!values.description.trim()) errors.description = t("tokenCreator.errors.descriptionRequired")
+    else if (values.description.length > DESCRIPTION_MAX) {
+        errors.description = t("validation.maxChars", { max: DESCRIPTION_MAX })
+    }
 
     return errors
 }
 
-const SUBMIT_LABELS: Partial<Record<CreateTokenStep, string>> = {
-    submitting: "Submitting Transaction...",
-    confirming: "Confirming on Chain...",
-    saving: "Saving Metadata...",
+const SUBMIT_LABEL_KEYS: Partial<Record<CreateTokenStep, ParseKeys>> = {
+    submitting: "tokenCreator.submit.submitting",
+    confirming: "tokenCreator.submit.confirming",
+    saving: "tokenCreator.submit.saving",
 }
 
 const TokenForm = () => {
+    const { t } = useTranslation()
     const { values, setField, fieldError, errors, touchAll, reset: resetValues } = useFormValidation(
         INITIAL_VALUES,
-        validate
+        createValidator(t)
     )
     const [image, setImage] = React.useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined)
     const [imageTouched, setImageTouched] = React.useState(false)
-    const [imageFileError, setImageFileError] = React.useState<string | undefined>(undefined)
+    /* Stored as a code (not a message) so it follows the language switch */
+    const [imageFileError, setImageFileError] = React.useState<ImageFileError | undefined>(undefined)
     const { success, error: toastError } = useToast()
     const navigate = useNavigate()
 
@@ -112,7 +127,7 @@ const TokenForm = () => {
     const { canTransact } = useNetworkGuard()
     const { step, error, isBusy, txUrl, submit, retrySave, reset: resetFlow } = useCreateToken()
 
-    /* Tên/symbol hiển thị ở modal thành công: chụp lại lúc submit vì form sẽ bị reset */
+    /* Snapshot of name/symbol for the success modal, since the form is reset on success */
     const [created, setCreated] = React.useState({ name: "", symbol: "" })
 
     React.useEffect(() => {
@@ -125,24 +140,34 @@ const TokenForm = () => {
         return () => URL.revokeObjectURL(url)
     }, [image])
 
-    const imageError = imageFileError ?? (imageTouched && !image ? "Please select an image" : undefined)
+    const imageFileErrorMessage = imageFileError
+        ? imageFileError === "invalidType"
+            ? t("validation.invalidImageType")
+            : t("validation.imageTooLarge", { size: IMAGE_MAX_SIZE_MB })
+        : undefined
+    const imageError =
+        imageFileErrorMessage ?? (imageTouched && !image ? t("tokenCreator.errors.imageRequired") : undefined)
     const socialLinksValid = !socialEnabled || validateSocialLinks(socialValues)
 
     const handleImageSelected = ([file]: File[]) => {
         if (isBusy) return
         setImageTouched(true)
 
-        /* Drag-drop có thể bypass thuộc tính accept nên phải validate */
+        /* Drag-and-drop can bypass the accept attribute, so validate again */
         const fileError = validateImageFile(file)
         if (fileError) {
             setImageFileError(fileError)
-            toastError(fileError)
+            toastError(
+                fileError === "invalidType"
+                    ? t("validation.invalidImageType")
+                    : t("validation.imageTooLarge", { size: IMAGE_MAX_SIZE_MB })
+            )
             return
         }
 
         setImageFileError(undefined)
         setImage(file)
-        success("Token image uploaded successfully")
+        success(t("tokenCreator.notices.imageUploaded"))
     }
 
     const handleRemoveImage = () => {
@@ -167,11 +192,11 @@ const TokenForm = () => {
         setImageTouched(true)
         setSubmitAttempted(true)
 
-        /* Chặn double-submit và chặn tạo lại khi tx đã on-chain mà chưa lưu được metadata */
+        /* Block double-submit, and re-creation when the tx is on-chain but metadata is not saved yet */
         if (isBusy || step === "save-failed") return
         if (Object.keys(errors).length > 0 || !image || !socialLinksValid) return
         if (!canTransact) {
-            toastError("Please connect your wallet on Sepolia to create a token")
+            toastError(t("tokenCreator.notices.connectToast"))
             return
         }
 
@@ -193,54 +218,56 @@ const TokenForm = () => {
         })
     }
 
+    const submitLabelKey = SUBMIT_LABEL_KEYS[step]
+
     return (
         <>
             <form onSubmit={handleSubmit} noValidate className="[&_label]:text-xs [&_label]:font-medium">
-                {/* disabled cả fieldset: khoá toàn bộ input/nút trong lúc giao dịch đang chạy */}
+                {/* Disabling the whole fieldset locks every input and button while a transaction runs */}
                 <fieldset disabled={isBusy} className="flex min-w-0 flex-col gap-5">
                     <div className="grid gap-5 sm:grid-cols-2">
                         <Input
-                            label="Name"
+                            label={t("tokenCreator.form.name")}
                             required
                             maxLength={NAME_MAX}
-                            placeholder="Ex: Zoken"
-                            hint="Max 32 characters in your name"
+                            placeholder={t("tokenCreator.form.namePlaceholder")}
+                            hint={t("tokenCreator.form.nameHint")}
                             value={values.name}
                             onChange={(e) => setField("name", e.target.value)}
                             error={fieldError("name")}
                         />
                         <Input
-                            label="Symbol"
+                            label={t("tokenCreator.form.symbol")}
                             required
                             maxLength={SYMBOL_MAX}
-                            placeholder="Ex: ZKN"
-                            hint="Max 8 characters in your symbol"
+                            placeholder={t("tokenCreator.form.symbolPlaceholder")}
+                            hint={t("tokenCreator.form.symbolHint")}
                             value={values.symbol}
                             onChange={(e) => setField("symbol", e.target.value)}
                             error={fieldError("symbol")}
                         />
                         <Input
-                            label="Max Supply"
+                            label={t("tokenCreator.form.maxSupply")}
                             required
                             inputMode="decimal"
                             placeholder="10000000000"
-                            hint="Hard cap of the token (18 decimals)"
+                            hint={t("tokenCreator.form.maxSupplyHint")}
                             value={values.maxSupply}
                             onChange={(e) => setField("maxSupply", e.target.value)}
                             error={fieldError("maxSupply")}
                         />
                         <Input
-                            label="Initial Supply"
+                            label={t("tokenCreator.form.initialSupply")}
                             required
                             inputMode="decimal"
                             placeholder="0"
-                            hint="Minted to your wallet on deploy (0 allowed)"
+                            hint={t("tokenCreator.form.initialSupplyHint")}
                             value={values.initialSupply}
                             onChange={(e) => setField("initialSupply", e.target.value)}
                             error={fieldError("initialSupply")}
                         />
                         <Input
-                            label="Amount per mint"
+                            label={t("tokenCreator.form.amountPerMint")}
                             required
                             inputMode="decimal"
                             placeholder="100"
@@ -249,11 +276,11 @@ const TokenForm = () => {
                             error={fieldError("amountPerMint")}
                         />
                         <Input
-                            label="Mint Fee (ETH)"
+                            label={t("tokenCreator.form.mintFee")}
                             required
                             inputMode="decimal"
                             placeholder="0.012"
-                            hint="Fee a minter pays per mint, in Sepolia ETH"
+                            hint={t("tokenCreator.form.mintFeeHint")}
                             value={values.mintFee}
                             onChange={(e) => setField("mintFee", e.target.value)}
                             error={fieldError("mintFee")}
@@ -263,11 +290,12 @@ const TokenForm = () => {
                     <div className="grid gap-5 sm:grid-cols-2">
                         <div className="flex flex-col gap-1.5">
                             <span className="text-xs font-medium">
-                                <span className="mr-0.5 text-destructive">*</span>Image
+                                <span className="mr-0.5 text-destructive">*</span>
+                                {t("tokenCreator.form.image")}
                             </span>
                             <Dropzone
                                 accept={IMAGE_ACCEPT}
-                                hint={`png, .jpg, .svg, max ${IMAGE_MAX_SIZE_MB}MB`}
+                                hint={t("tokenCreator.form.imageHint", { size: IMAGE_MAX_SIZE_MB })}
                                 onFilesSelected={handleImageSelected}
                                 previewUrl={previewUrl}
                                 onRemove={previewUrl ? handleRemoveImage : undefined}
@@ -277,14 +305,14 @@ const TokenForm = () => {
                         </div>
 
                         <Textarea
-                            label="Description"
+                            label={t("tokenCreator.form.description")}
                             required
                             value={values.description}
                             maxLength={DESCRIPTION_MAX}
                             onChange={(e) => setField("description", e.target.value)}
-                            placeholder="Ex: First community token on Zoken..."
+                            placeholder={t("tokenCreator.form.descriptionPlaceholder")}
                             error={fieldError("description")}
-                            className="min-h-28 bg-[#F5FBFB] focus-visible:bg-background"
+                            className="min-h-28"
                         />
                     </div>
 
@@ -297,19 +325,23 @@ const TokenForm = () => {
                     />
 
                     {!canTransact && (
-                        <p role="alert" className="rounded-md bg-amber-50 p-3 text-xs text-amber-800">
-                            Connect your wallet on Sepolia Testnet to create a token.
+                        <p
+                            role="alert"
+                            className="rounded-md bg-amber-50 p-3 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
+                        >
+                            {t("tokenCreator.notices.connect")}
                         </p>
                     )}
 
                     <CreateTokenProgress step={step} txUrl={txUrl} />
 
                     {step === "save-failed" && (
-                        <div role="alert" className="flex flex-col gap-3 rounded-md border border-destructive/40 bg-red-50 p-3">
+                        <div
+                            role="alert"
+                            className="flex flex-col gap-3 rounded-md border border-destructive/40 bg-red-50 p-3 dark:bg-red-950/40"
+                        >
                             <p className="text-xs text-destructive">{error}</p>
-                            <p className="text-xs text-muted-foreground">
-                                Your token is already deployed on-chain. Retry saving instead of creating it again.
-                            </p>
+                            <p className="text-xs text-muted-foreground">{t("tokenCreator.notices.onChainSaved")}</p>
                             <div className="flex gap-2">
                                 <Button
                                     type="button"
@@ -317,10 +349,10 @@ const TokenForm = () => {
                                     onClick={retrySave}
                                     className="rounded-full bg-teal-600 text-white hover:bg-teal-700"
                                 >
-                                    Retry saving
+                                    {t("tokenCreator.notices.retrySaving")}
                                 </Button>
                                 <Button type="button" size="sm" variant="outline" onClick={resetAll} className="rounded-full">
-                                    Discard
+                                    {t("tokenCreator.notices.discard")}
                                 </Button>
                             </div>
                         </div>
@@ -331,7 +363,7 @@ const TokenForm = () => {
                         disabled={isBusy || !canTransact || step === "save-failed"}
                         className="h-11"
                     >
-                        {SUBMIT_LABELS[step] ?? "Create"}
+                        {submitLabelKey ? t(submitLabelKey) : t("tokenCreator.form.create")}
                     </SubmitButton>
                 </fieldset>
             </form>

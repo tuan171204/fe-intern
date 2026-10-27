@@ -39,8 +39,8 @@ export type CreateTokenStep =
     | "save-failed" // tx đã on-chain nhưng lưu backend lỗi -> cho retry
     | "error"
 
-const SAVE_MAX_ATTEMPTS = 3
-const SAVE_RETRY_DELAY_MS = 3000
+const SAVE_MAX_ATTEMPTS = 6
+const SAVE_RETRY_DELAY_MS = 5000
 
 /* Lỗi lấy receipt (rate-limit, timeout) KHÔNG có nghĩa tx thất bại -> thử lại vài lần trước khi báo lỗi */
 const RECEIPT_MAX_RECHECKS = 5

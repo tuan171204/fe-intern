@@ -1,4 +1,6 @@
 import * as React from "react"
+import type { ParseKeys } from "i18next"
+import { useTranslation } from "react-i18next"
 
 import { Avatar } from "../../../components/ui/avatar"
 import { Card, CardHeader, CardTitle } from "../../../components/ui/card"
@@ -18,77 +20,86 @@ import { LEADERBOARD_ROWS, type LeaderboardRow } from "../../../mocks/leaderboar
 
 type Chain = "bnb" | "base"
 
+/* Chain names are brand names and intentionally not translated */
 const CHAINS: TabOption<Chain>[] = [
     { value: "bnb", label: "BNB Chain" },
     { value: "base", label: "Base" },
 ]
 
-const COLUMNS = [
-    { label: "Rank", align: "left" },
-    { label: "Token", align: "left" },
-    { label: "Creator", align: "left" },
-    { label: "24h Chg", align: "right" },
-    { label: "Market Cap", align: "right" },
-    { label: "Volume (24h)", align: "right" },
-    { label: "Token Price", align: "right" },
-] as const
+const COLUMNS: { labelKey: ParseKeys; align: "left" | "right" }[] = [
+    { labelKey: "leaderboard.columns.rank", align: "left" },
+    { labelKey: "leaderboard.columns.token", align: "left" },
+    { labelKey: "leaderboard.columns.creator", align: "left" },
+    { labelKey: "leaderboard.columns.change", align: "right" },
+    { labelKey: "leaderboard.columns.marketCap", align: "right" },
+    { labelKey: "leaderboard.columns.volume", align: "right" },
+    { labelKey: "leaderboard.columns.price", align: "right" },
+]
 
-/* Thay thế cho 1 dòng bảng trên Mobile/Tablet - tránh phải cuộn ngang bảng 7 cột */
-const LeaderboardRowCard = ({ row }: { row: LeaderboardRow }) => (
-    <div
-        className={cn(
-            "flex flex-col gap-3 rounded-xl border border-teal-600/20 bg-background p-3.5",
-            row.isCurrentUser && "border-transparent bg-teal-600 text-white"
-        )}
-    >
-        <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-                <span
-                    className={cn(
-                        "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
-                        row.isCurrentUser ? "bg-white/20 text-white" : "bg-teal-50 text-teal-600"
-                    )}
-                >
-                    #{row.rank}
-                </span>
-                <Avatar fallback={row.name} alt={row.name} size="md" />
-                <div className="flex min-w-0 flex-col leading-tight">
-                    <span className="truncate text-sm font-medium">{row.name}</span>
-                    <CopyAddress
-                        address={row.symbol}
-                        short={false}
-                        className={cn("text-[10px]", row.isCurrentUser && "text-white/80")}
-                    />
+const CARD_STATS: { labelKey: ParseKeys; field: "marketCap" | "volume" | "price" }[] = [
+    { labelKey: "leaderboard.columns.marketCap", field: "marketCap" },
+    { labelKey: "leaderboard.card.volume24h", field: "volume" },
+    { labelKey: "leaderboard.card.price", field: "price" },
+]
+
+/* Replaces a table row on Mobile/Tablet to avoid horizontal scrolling of a 7-column table */
+const LeaderboardRowCard = ({ row }: { row: LeaderboardRow }) => {
+    const { t } = useTranslation()
+
+    return (
+        <div
+            className={cn(
+                "flex flex-col gap-3 rounded-xl border border-teal-600/20 bg-background p-3.5",
+                row.isCurrentUser && "border-transparent bg-teal-600 text-white"
+            )}
+        >
+            <div className="flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-2">
+                    <span
+                        className={cn(
+                            "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                            row.isCurrentUser ? "bg-white/20 text-white" : "bg-teal-50 text-teal-600"
+                        )}
+                    >
+                        #{row.rank}
+                    </span>
+                    <Avatar fallback={row.name} alt={row.name} size="md" />
+                    <div className="flex min-w-0 flex-col leading-tight">
+                        <span className="truncate text-sm font-medium">{row.name}</span>
+                        <CopyAddress
+                            address={row.symbol}
+                            short={false}
+                            className={cn("text-[10px]", row.isCurrentUser && "text-white/80")}
+                        />
+                    </div>
                 </div>
+
+                <span className={cn("shrink-0 text-sm font-semibold", row.isCurrentUser ? "text-white" : "text-teal-600")}>
+                    {row.change}
+                </span>
             </div>
 
-            <span className={cn("shrink-0 text-sm font-semibold", row.isCurrentUser ? "text-white" : "text-teal-600")}>
-                {row.change}
-            </span>
+            <dl className="grid grid-cols-3 gap-2 text-center">
+                {CARD_STATS.map(({ labelKey, field }) => (
+                    <div key={field} className={cn("rounded-lg p-2", row.isCurrentUser ? "bg-white/10" : "bg-muted/60")}>
+                        <dt className={cn("truncate text-[9px]", row.isCurrentUser ? "text-white/70" : "text-muted-foreground")}>
+                            {t(labelKey)}
+                        </dt>
+                        <dd className="mt-0.5 truncate text-xs font-semibold">{row[field]}</dd>
+                    </div>
+                ))}
+            </dl>
+
+            <p className={cn("truncate text-[11px]", row.isCurrentUser ? "text-white/70" : "text-muted-foreground")}>
+                {t("leaderboard.card.creator")}:{" "}
+                <span className={row.isCurrentUser ? "text-white" : "text-foreground"}>{row.creator}</span>
+            </p>
         </div>
-
-        <dl className="grid grid-cols-3 gap-2 text-center">
-            {[
-                { label: "Market Cap", value: row.marketCap },
-                { label: "Volume 24h", value: row.volume },
-                { label: "Price", value: row.price },
-            ].map(({ label, value }) => (
-                <div key={label} className={cn("rounded-lg p-2", row.isCurrentUser ? "bg-white/10" : "bg-muted/60")}>
-                    <dt className={cn("truncate text-[9px]", row.isCurrentUser ? "text-white/70" : "text-muted-foreground")}>
-                        {label}
-                    </dt>
-                    <dd className="mt-0.5 truncate text-xs font-semibold">{value}</dd>
-                </div>
-            ))}
-        </dl>
-
-        <p className={cn("truncate text-[11px]", row.isCurrentUser ? "text-white/70" : "text-muted-foreground")}>
-            Creator: <span className={row.isCurrentUser ? "text-white" : "text-foreground"}>{row.creator}</span>
-        </p>
-    </div>
-)
+    )
+}
 
 const LeaderboardTable = () => {
+    const { t } = useTranslation()
     const [chain, setChain] = React.useState<Chain>("bnb")
 
     return (
@@ -97,12 +108,12 @@ const LeaderboardTable = () => {
                 <CardHeader className="flex-wrap p-4">
                     <CardTitle id="top-creators-title" className="flex items-center gap-2 font-medium">
                         <Icon name="bar-chart" size="sm" className="text-teal-600" aria-hidden="true" />
-                        Top 50 Creators
+                        {t("leaderboard.topCreators")}
                     </CardTitle>
                     <Tabs options={CHAINS} value={chain} onChange={setChain} />
                 </CardHeader>
 
-                {/* < lg: Card, xếp 1 cột Mobile / 2 cột Tablet. >= lg: bảng đầy đủ 7 cột */}
+                {/* < lg: cards (1 column Mobile / 2 columns Tablet). >= lg: full 7-column table */}
                 <div className="grid grid-cols-1 gap-2.5 p-3 sm:grid-cols-2 lg:hidden">
                     {LEADERBOARD_ROWS.map((row) => (
                         <LeaderboardRowCard key={row.rank} row={row} />
@@ -113,12 +124,12 @@ const LeaderboardTable = () => {
                     <Table className="min-w-[760px]">
                         <TableHeader>
                             <TableRow className="border-0 bg-teal-50 hover:bg-teal-50">
-                                {COLUMNS.map(({ label, align }) => (
+                                {COLUMNS.map(({ labelKey, align }) => (
                                     <TableHead
-                                        key={label}
+                                        key={labelKey}
                                         className={cn("first:rounded-l-md last:rounded-r-md", align === "right" && "text-right")}
                                     >
-                                        {label}
+                                        {t(labelKey)}
                                     </TableHead>
                                 ))}
                             </TableRow>

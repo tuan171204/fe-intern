@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import { Link, NavLink, useLocation } from "react-router-dom"
 
 import cn from "../../utils/cn"
@@ -19,12 +20,14 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
         isActive ? "bg-teal-600 font-medium text-white" : "text-foreground/80 hover:bg-accent hover:text-foreground"
     )
 
+/* Brand names are intentionally not translated */
 const SOCIALS = [
     { label: "Twitter / X", href: "https://x.com", icon: "x-twitter" as const },
     { label: "Telegram", href: "https://t.me", icon: "telegram" as const },
 ]
 
 const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) => {
+    const { t } = useTranslation()
     const { pathname } = useLocation()
     const hasActiveChild = !!item.children?.some((child) => child.to === pathname)
     const [open, setOpen] = React.useState(hasActiveChild)
@@ -48,7 +51,7 @@ const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void
                 )}
             >
                 <Icon name={item.icon} size="md" aria-hidden="true" />
-                {item.label}
+                {t(item.labelKey)}
                 <Icon
                     name="chevron-down"
                     size="sm"
@@ -66,7 +69,7 @@ const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void
                     {item.children?.map((child) => (
                         <li key={child.to}>
                             <NavLink to={child.to} onClick={onNavigate} className={linkClass}>
-                                {child.label}
+                                {t(child.labelKey)}
                             </NavLink>
                         </li>
                     ))}
@@ -76,66 +79,72 @@ const NavGroup = ({ item, onNavigate }: { item: NavItem; onNavigate?: () => void
     )
 }
 
-const SidebarPanel = ({ onNavigate, onClose }: { onNavigate?: () => void; onClose?: () => void }) => (
-    <div className="flex h-full flex-col">
-        <div className="relative flex h-16 shrink-0 items-center justify-center border-b border-border">
-            <Link to="/" className="text-lg font-bold text-teal-600">
-                ACW3
-            </Link>
-            {onClose && (
-                <button
-                    type="button"
-                    onClick={onClose}
-                    aria-label="Close menu"
-                    className={cn(
-                        "absolute right-3 rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
-                        focusRing
-                    )}
-                >
-                    <Icon name="close" size="lg" />
-                </button>
-            )}
-        </div>
+const SidebarPanel = ({ onNavigate, onClose }: { onNavigate?: () => void; onClose?: () => void }) => {
+    const { t } = useTranslation()
 
-        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto p-4">
-            <ul className="flex flex-col gap-1">
-                {NAV_ITEMS.map((item) => (
-                    <li key={item.label}>
-                        {item.to ? (
-                            <NavLink to={item.to} onClick={onNavigate} className={linkClass}>
-                                <Icon name={item.icon} size="md" aria-hidden="true" />
-                                {item.label}
-                            </NavLink>
-                        ) : (
-                            <NavGroup item={item} onNavigate={onNavigate} />
-                        )}
-                    </li>
-                ))}
-            </ul>
-        </nav>
-
-        <ul className="flex shrink-0 flex-col gap-1 border-t border-border p-4">
-            {SOCIALS.map(({ label, href, icon }) => (
-                <li key={label}>
-                    <a
-                        href={href}
-                        target="_blank"
-                        rel="noreferrer"
+    return (
+        <div className="flex h-full flex-col">
+            <div className="relative flex h-16 shrink-0 items-center justify-center border-b border-border">
+                <Link to="/" className="text-lg font-bold text-teal-600">
+                    {t("nav.appName")}
+                </Link>
+                {onClose && (
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label={t("nav.closeMenu")}
                         className={cn(
-                            "flex items-center gap-2 rounded-full px-3 py-2 text-xs text-foreground/80 transition-colors hover:bg-accent hover:text-foreground",
+                            "absolute right-3 rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
                             focusRing
                         )}
                     >
-                        <Icon name={icon} size="md" />
-                        {label}
-                    </a>
-                </li>
-            ))}
-        </ul>
-    </div >
-)
+                        <Icon name="close" size="lg" />
+                    </button>
+                )}
+            </div>
+
+            <nav aria-label={t("nav.mainNavigation")} className="flex-1 overflow-y-auto p-4">
+                <ul className="flex flex-col gap-1">
+                    {NAV_ITEMS.map((item) => (
+                        <li key={item.labelKey}>
+                            {item.to ? (
+                                <NavLink to={item.to} onClick={onNavigate} className={linkClass}>
+                                    <Icon name={item.icon} size="md" aria-hidden="true" />
+                                    {t(item.labelKey)}
+                                </NavLink>
+                            ) : (
+                                <NavGroup item={item} onNavigate={onNavigate} />
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+
+            <ul className="flex shrink-0 flex-col gap-1 border-t border-border p-4">
+                {SOCIALS.map(({ label, href, icon }) => (
+                    <li key={label}>
+                        <a
+                            href={href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={cn(
+                                "flex items-center gap-2 rounded-full px-3 py-2 text-xs text-foreground/80 transition-colors hover:bg-accent hover:text-foreground",
+                                focusRing
+                            )}
+                        >
+                            <Icon name={icon} size="md" />
+                            {label}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
+}
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+    const { t } = useTranslation()
+
     React.useEffect(() => {
         if (!isOpen) return
         const onKeyDown = (e: KeyboardEvent) => e.key === "Escape" && onClose()
@@ -161,7 +170,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     <aside
                         role="dialog"
                         aria-modal="true"
-                        aria-label="Menu"
+                        aria-label={t("nav.menu")}
                         className="absolute inset-y-0 left-0 w-64 bg-background shadow-xl animate-in slide-in-from-left duration-200"
                     >
                         <SidebarPanel onNavigate={onClose} onClose={onClose} />
