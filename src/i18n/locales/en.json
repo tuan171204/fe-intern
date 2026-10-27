@@ -59,6 +59,14 @@
         "nextPage": "Next page",
         "page": "Page {{page}}"
     },
+    "export": {
+        "button": "Export",
+        "menuLabel": "Export format",
+        "csv": "CSV (.csv)",
+        "excel": "Excel (.xlsx)",
+        "success": "Exported {{total}} tokens to {{format}}",
+        "failed": "Failed to export data. Please try again."
+    },
     "wallet": {
         "connectWallet": "Connect Wallet",
         "connect": "Connect",

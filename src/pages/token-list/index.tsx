@@ -3,15 +3,19 @@ import { useTranslation } from "react-i18next"
 
 import { getTokens } from "../../api/token"
 import { Button } from "../../components/ui/button"
+import { ExportMenu } from "../../components/ui/export-menu"
 import Pagination from "../../components/ui/pagination"
 import { usePaginatedTokens } from "../../hooks/usePaginatedTokens"
 import { useTokenOnchainData } from "../../hooks/useTokenOnchainData"
+import { useToast } from "../../store/ToastContext"
 import type { Token } from "../../types/tokens"
+import { dateStamp, exportTable, type ExportFormat } from "../../utils/export-data"
 import MintModal from "./components/MintModal"
 import TokenDetailModal from "./components/TokenDetailModal"
 import TokenListHeader from "./components/TokenListHeader"
 import TokenRow from "./components/TokenRow"
 import TokenRowSkeleton from "./components/TokenRowSkeleton"
+import { buildTokenExportTable } from "./components/export-rows"
 
 const TOKENS_PER_PAGE = 10
 const SKELETON_ROWS = 5
@@ -20,6 +24,7 @@ const POST_MINT_REFETCH_DELAY_MS = 4000
 
 const TokenList = () => {
     const { t } = useTranslation()
+    const { success, error: toastError } = useToast()
     const [page, setPage] = React.useState(1)
     const [detailTokenAddress, setDetailTokenAddress] = React.useState<string | null>(null)
     const [mintingToken, setMintingToken] = React.useState<Token | null>(null)
@@ -40,6 +45,21 @@ const TokenList = () => {
         setPage(nextPage)
         window.scrollTo({ top: 0, behavior: "smooth" })
     }
+
+    /* Exports the tokens of the current page, including their on-chain values */
+    const handleExport = async (format: ExportFormat) => {
+        try {
+            const table = buildTokenExportTable(items, onchain.byAddress)
+            await exportTable(table, format, `tokens-page-${page}-${dateStamp()}`, "Tokens")
+            success(t("export.success", { total: items.length, format: format === "csv" ? "CSV" : "Excel" }))
+        } catch {
+            toastError(t("export.failed"))
+        }
+    }
+
+    /* Wait for on-chain data so the exported file is not missing balance / mint progress */
+    const exportDisabled =
+        loading || !!error || items.length === 0 || onchain.supplyLoading || onchain.balanceLoading
 
     const renderRows = () => {
         if (loading) {
@@ -94,6 +114,10 @@ const TokenList = () => {
                     </Button>
                 </div>
             )}
+
+            <div className="mb-2.5 flex justify-end">
+                <ExportMenu onExport={handleExport} disabled={exportDisabled} />
+            </div>
 
             <div role="table" aria-label={t("tokenList.tableLabel")} className="flex w-full flex-col gap-2.5">
                 <TokenListHeader />
