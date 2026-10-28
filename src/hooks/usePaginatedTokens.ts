@@ -1,5 +1,6 @@
 import * as React from "react"
 
+import i18n from "../i18n"
 import type { PaginationMeta, PaginationParams, Token, TokenListResponse } from "../types/tokens"
 import { getErrorMessage } from "../utils/api"
 
@@ -24,7 +25,7 @@ export function usePaginatedTokens(fetcher: TokenListFetcher, page: number, limi
                 setPagination(res.pagination)
             })
             .catch((err: unknown) => {
-                if (!cancelled) setError(getErrorMessage(err, "Failed to load tokens"))
+                if (!cancelled) setError(getErrorMessage(err, i18n.t("errors.loadTokens")))
             })
             .finally(() => {
                 if (!cancelled) setLoading(false)

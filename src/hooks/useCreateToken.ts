@@ -7,20 +7,21 @@ import { createToken } from "../api/token"
 import { EXPLORER_URL, SEPOLIA_CHAIN_ID } from "../config/network"
 import { TokenFactoryABI } from "../constants/abi"
 import { TOKEN_DECIMALS, TOKEN_FACTORY_ADDRESS } from "../constants/contract"
+import i18n from "../i18n"
 import { useToast } from "../store/ToastContext"
 import { getErrorMessage, getToken } from "../utils/api"
-import { RECEIPT_UNCONFIRMED_MESSAGE, getCreateTokenErrorMessage } from "../utils/token-errors"
+import { getCreateTokenErrorMessage, getReceiptUnconfirmedMessage } from "../utils/token-errors"
 import { isUserRejection } from "../utils/web3-errors"
 
 export interface CreateTokenInput {
     name: string
     symbol: string
-    /** Lượng mint sẵn cho owner lúc deploy. */
+    /** Amount minted to the owner on deploy. */
     initialSupply: string
-    /** Tổng cung tối đa, vd "10000000" (đơn vị token, chưa nhân decimals) */
+    /** Maximum total supply, e.g. "10000000" (token units, not multiplied by decimals yet) */
     maxSupply: string
     amountPerMint: string
-    /** Mint fee theo ETH, vd "0.012" */
+    /** Mint fee in ETH, e.g. "0.012" */
     mintFee: string
     description: string
     image: File
@@ -32,39 +33,39 @@ export interface CreateTokenInput {
 
 export type CreateTokenStep =
     | "idle"
-    | "submitting" // simulate + chờ user xác nhận trong MetaMask
-    | "confirming" // đã có txHash, chờ block xác nhận
-    | "saving" // POST metadata lên backend
+    | "submitting" // simulate + wait for the user to confirm in MetaMask
+    | "confirming" // txHash received, waiting for block confirmation
+    | "saving" // POST metadata to the backend
     | "success"
-    | "save-failed" // tx đã on-chain nhưng lưu backend lỗi -> cho retry
+    | "save-failed" // tx is on-chain but saving to the backend failed -> allow retry
     | "error"
 
 const SAVE_MAX_ATTEMPTS = 6
 const SAVE_RETRY_DELAY_MS = 5000
 
-/* Lỗi lấy receipt (rate-limit, timeout) KHÔNG có nghĩa tx thất bại -> thử lại vài lần trước khi báo lỗi */
+/* A receipt lookup failure (rate limit, timeout) does NOT mean the tx failed -> retry a few times before reporting */
 const RECEIPT_MAX_RECHECKS = 5
 const RECEIPT_RECHECK_DELAY_MS = 5_000
 
-/* Phải còn đủ thời gian sống của JWT để hoàn tất: ký tx + chờ block + lưu metadata */
+/* The JWT must live long enough to finish: sign tx + wait for the block + save metadata */
 const SESSION_MIN_REMAINING_MS = 5 * 60 * 1000
 
 const sleep = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms))
 
-/** Chỉ retry khi lỗi mạng / 5xx (RPC của backend có thể chưa thấy tx) */
+/** Only retry on network errors / 5xx (the backend RPC may not see the tx yet) */
 const shouldRetry = (err: unknown) => isAxiosError(err) && (!err.response || err.response.status >= 500)
 
-/** 401/403: interceptor đã tự logout + toast "session expired" */
+/** 401/403: the interceptor already logged the user out and showed the "session expired" toast */
 const isAuthError = (err: unknown) =>
     isAxiosError(err) && (err.response?.status === 401 || err.response?.status === 403)
 
-/** Backend báo token đã tồn tại: nếu xảy ra ở lần retry thì lần gửi trước đã lưu thành công (mất response) */
+/** The backend says the token already exists: on a retry this means the previous request was saved (its response was lost) */
 const isAlreadySaved = (err: unknown) =>
     isAxiosError<{ message?: string }>(err) &&
     err.response?.status === 400 &&
     err.response.data?.message === "Token existed."
 
-/** true nếu JWT sắp hết hạn (hoặc không có) -> không cho bắt đầu giao dịch tốn gas */
+/** True if the JWT is about to expire (or missing) -> do not start a transaction that costs gas */
 const isSessionExpiringSoon = (): boolean => {
     const token = getToken()
     if (!token) return true
@@ -77,7 +78,7 @@ const isSessionExpiringSoon = (): boolean => {
     }
 }
 
-/** Dữ liệu form -> tham số createStandardToken(name, symbol, initialSupply, maxSupply, amountPerMint, mintFee) */
+/** Form data -> arguments of createStandardToken(name, symbol, initialSupply, maxSupply, amountPerMint, mintFee) */
 const buildCreateTokenArgs = (input: CreateTokenInput) =>
     [
         input.name,
@@ -98,16 +99,16 @@ export function useCreateToken() {
     const [txHash, setTxHash] = React.useState<Hash | undefined>(undefined)
     const [error, setError] = React.useState<string | null>(null)
 
-    /* stepRef cập nhật đồng bộ -> chặn double-submit trong cùng 1 tick (state chỉ đổi sau khi re-render) */
+    /* stepRef updates synchronously -> blocks a double submit within the same tick (state only changes after a re-render) */
     const stepRef = React.useRef<CreateTokenStep>("idle")
     const setStep = React.useCallback((next: CreateTokenStep) => {
         stepRef.current = next
         setStepState(next)
     }, [])
 
-    /* Giữ dữ liệu form (kèm File) để bước lưu / retry dùng lại mà không cần nhập lại */
+    /* Keeps the form data (including the File) so the save / retry step can reuse it without re-entering */
     const inputRef = React.useRef<CreateTokenInput | null>(null)
-    /* Chặn gọi POST /tokens chồng nhau (2 request song song -> request sau nhận "Token existed.") */
+    /* Prevents overlapping POST /tokens calls (two parallel requests -> the second gets "Token existed.") */
     const savingRef = React.useRef(false)
     const recheckCount = React.useRef(0)
 
@@ -143,21 +144,21 @@ export function useCreateToken() {
                             xUrl: input.xUrl,
                         })
                         setStep("success")
-                        success("Token created successfully")
+                        success(i18n.t("tokenCreator.notices.created"))
                         return
                     } catch (err) {
-                        /* Lần gửi trước đã lưu xong nhưng response bị mất -> coi như thành công */
+                        /* The previous attempt was saved but its response was lost -> treat as success */
                         if (attempt > 1 && isAlreadySaved(err)) {
                             setStep("success")
-                            success("Token created successfully")
+                            success(i18n.t("tokenCreator.notices.created"))
                             return
                         }
                         if (attempt < SAVE_MAX_ATTEMPTS && shouldRetry(err)) {
                             await sleep(SAVE_RETRY_DELAY_MS)
                             continue
                         }
-                        const message = getErrorMessage(err, "Failed to save token metadata")
-                        setError(`Transaction confirmed on-chain, but saving metadata failed: ${message}`)
+                        const message = getErrorMessage(err, i18n.t("errors.saveMetadata"))
+                        setError(i18n.t("tokenCreator.notices.saveFailed", { message }))
                         setStep("save-failed")
                         if (!isAuthError(err)) toastError(message)
                         return
@@ -170,7 +171,7 @@ export function useCreateToken() {
         [setStep, success, toastError]
     )
 
-    /* Bước 3 -> 4: receipt thành công thì mới gọi backend */
+    /* Step 3 -> 4: only call the backend once the receipt is successful */
     React.useEffect(() => {
         if (step !== "confirming" || !txHash || !inputRef.current) return
 
@@ -182,13 +183,13 @@ export function useCreateToken() {
                 }, RECEIPT_RECHECK_DELAY_MS)
                 return () => window.clearTimeout(timer)
             }
-            fail(RECEIPT_UNCONFIRMED_MESSAGE)
+            fail(getReceiptUnconfirmedMessage())
             return
         }
         if (!receipt.isSuccess) return
 
         if (receipt.data.status !== "success") {
-            fail("The transaction reverted on-chain. No token was created.")
+            fail(i18n.t("tokenCreator.notices.reverted"))
             return
         }
         void saveMetadata(txHash, inputRef.current)
@@ -202,13 +203,13 @@ export function useCreateToken() {
             }
 
             if (!address || !publicClient) {
-                fail("Please connect your wallet on Sepolia to create a token")
+                fail(i18n.t("tokenCreator.notices.connectToast"))
                 return
             }
 
-            /* Tránh trường hợp tx on-chain xong nhưng JWT hết hạn -> không lưu được metadata */
+            /* Avoid the case where the tx lands on-chain but the JWT expires and the metadata cannot be saved */
             if (isSessionExpiringSoon()) {
-                toastError("Your session is about to expire. Please sign in again before creating a token.")
+                toastError(i18n.t("auth.sessionExpiring"))
                 return
             }
 
@@ -220,7 +221,7 @@ export function useCreateToken() {
             try {
                 const args = buildCreateTokenArgs(input)
 
-                /* Simulate: bắt revert trước khi mở MetaMask, tránh tốn gas cho giao dịch chắc chắn fail */
+                /* Simulate: catch reverts before opening MetaMask, so no gas is wasted on a transaction that will certainly fail */
                 await publicClient.simulateContract({
                     account: address,
                     address: TOKEN_FACTORY_ADDRESS,
@@ -242,7 +243,7 @@ export function useCreateToken() {
             } catch (err) {
                 const message = getCreateTokenErrorMessage(err)
                 if (isUserRejection(err)) {
-                    /* User chủ động huỷ: đưa form về trạng thái ban đầu */
+                    /* The user cancelled on purpose: return the form to its initial state */
                     setStep("idle")
                     toastError(message)
                 } else {
@@ -253,7 +254,7 @@ export function useCreateToken() {
         [address, publicClient, writeContractAsync, fail, toastError, setStep]
     )
 
-    /** Chỉ gọi lại API lưu metadata với txHash cũ */
+    /** Only calls the save-metadata API again with the existing txHash */
     const retrySave = React.useCallback(() => {
         if (stepRef.current !== "save-failed" || !txHash || !inputRef.current) return
         void saveMetadata(txHash, inputRef.current)

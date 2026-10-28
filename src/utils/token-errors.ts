@@ -1,3 +1,4 @@
+import i18n from "../i18n"
 import { getWalletErrorMessage, isUserRejection } from "./web3-errors"
 
 interface ErrorLike {
@@ -7,7 +8,7 @@ interface ErrorLike {
     cause?: unknown
 }
 
-/** Gộp name/message của cả chuỗi `cause` thành 1 chuỗi */
+/** Flattens name/message of the whole `cause` chain into one lowercase string for matching. */
 const flatten = (error: unknown): string => {
     const parts: string[] = []
     let current: unknown = error
@@ -21,14 +22,13 @@ const flatten = (error: unknown): string => {
     return parts.join(" | ").toLowerCase()
 }
 
-export const REJECTED_MESSAGE = "You rejected the transaction in MetaMask."
+/*
+ * Messages are resolved through functions (not module-level constants)
+ * so they always follow the language selected at the time the error happens.
+ */
 
-export const RATE_LIMIT_MESSAGE = "The RPC node is rate-limiting requests. Please wait a few seconds and try again."
-export const NETWORK_MESSAGE = "Cannot reach the RPC node. Check your connection and try again."
-
-/** Không xác nhận được receipt (lỗi RPC/mạng) - giao dịch vẫn CÓ THỂ đã thành công */
-export const RECEIPT_UNCONFIRMED_MESSAGE =
-    "We couldn't confirm the transaction (RPC/network issue). It may still go through. Check the Etherscan link before trying again."
+/** The receipt could not be confirmed (RPC / network error): the transaction MAY still have succeeded. */
+export const getReceiptUnconfirmedMessage = () => i18n.t("errors.receiptUnconfirmed")
 
 /** 429 / -32005 (Alchemy, Infura, publicnode...) */
 const isRateLimited = (text: string) =>
@@ -48,60 +48,52 @@ const isGasProblem = (text: string) =>
     text.includes("gas required exceeds") ||
     text.includes("exceeds block gas limit")
 
-/** Lỗi khi gửi giao dịch tạo token / chờ receipt  */
+/** Errors while sending the create-token transaction / waiting for its receipt. */
 export function getCreateTokenErrorMessage(error: unknown): string {
-    if (isUserRejection(error)) return REJECTED_MESSAGE
+    if (isUserRejection(error)) return i18n.t("errors.rejectedTx")
 
     const text = flatten(error)
 
-    if (isRateLimited(text)) return RATE_LIMIT_MESSAGE
+    if (isRateLimited(text)) return i18n.t("errors.rateLimit")
     if (text.includes("insufficient funds") || text.includes("insufficientfunds")) {
-        return "Not enough Sepolia ETH to pay gas. Get some from a faucet and try again."
+        return i18n.t("errors.insufficientEthCreate")
     }
-    if (isGasProblem(text)) {
-        return "Gas is too low or the gas estimate failed. Raise the gas limit in MetaMask and try again."
-    }
-    if (text.includes("chainmismatch")) {
-        return "Your wallet is on the wrong network. Please switch to Sepolia."
-    }
+    if (isGasProblem(text)) return i18n.t("errors.gasTooLow")
+    if (text.includes("chainmismatch")) return i18n.t("errors.chainMismatch")
     if (text.includes("reverted") || text.includes("executionreverted")) {
-        return "The contract rejected this transaction. Check name, symbol, supply and mint fee."
+        return i18n.t("errors.createReverted")
     }
-    if (isNetworkFailure(text)) return NETWORK_MESSAGE
+    if (isNetworkFailure(text)) return i18n.t("errors.rpcUnreachable")
 
-    return getWalletErrorMessage(error, REJECTED_MESSAGE)
+    return getWalletErrorMessage(error, i18n.t("errors.rejectedTx"))
 }
 
-/** Lỗi khi mint token: simulate / gửi giao dịch / chờ receipt */
+/** Errors while minting a token: simulate / send transaction / wait for receipt. */
 export function getMintTokenErrorMessage(error: unknown): string {
-    if (isUserRejection(error)) return REJECTED_MESSAGE
+    if (isUserRejection(error)) return i18n.t("errors.rejectedTx")
 
     const text = flatten(error)
 
-    if (isRateLimited(text)) return RATE_LIMIT_MESSAGE
+    if (isRateLimited(text)) return i18n.t("errors.rateLimit")
     if (
         text.includes("insufficient funds") ||
         text.includes("insufficientfunds") ||
         text.includes("transaction creation failed")
     ) {
-        return "Not enough Sepolia ETH to pay the mint fee and gas. Get some from a faucet and try again."
+        return i18n.t("errors.insufficientEthMint")
     }
-    if (isGasProblem(text)) {
-        return "Gas is too low or the gas estimate failed. Raise the gas limit in MetaMask and try again."
-    }
-    if (text.includes("chainmismatch")) {
-        return "Your wallet is on the wrong network. Please switch to Sepolia."
-    }
+    if (isGasProblem(text)) return i18n.t("errors.gasTooLow")
+    if (text.includes("chainmismatch")) return i18n.t("errors.chainMismatch")
     if (text.includes("max supply") || text.includes("maxsupply") || text.includes("exceeds max")) {
-        return "Max supply reached. This token can't be minted any further."
+        return i18n.t("errors.maxSupplyReached")
     }
     if (text.includes("mint fee") || text.includes("incorrect fee") || text.includes("insufficient fee")) {
-        return "The mint fee sent doesn't match what the contract requires."
+        return i18n.t("errors.feeMismatch")
     }
     if (text.includes("reverted") || text.includes("executionreverted")) {
-        return "The contract rejected this mint. The max supply may have been reached or the fee is incorrect."
+        return i18n.t("errors.mintReverted")
     }
-    if (isNetworkFailure(text)) return NETWORK_MESSAGE
+    if (isNetworkFailure(text)) return i18n.t("errors.rpcUnreachable")
 
-    return getWalletErrorMessage(error, REJECTED_MESSAGE)
+    return getWalletErrorMessage(error, i18n.t("errors.rejectedTx"))
 }

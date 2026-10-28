@@ -1,3 +1,5 @@
+import i18n from "../i18n"
+
 interface ErrorLike {
     name?: unknown
     code?: unknown
@@ -6,7 +8,7 @@ interface ErrorLike {
     cause?: unknown
 }
 
-/** Duyệt toàn bộ chuỗi `cause` (viem / wagmi / MetaMask đều bọc lỗi lồng nhau). */
+/** Walks the whole `cause` chain (viem / wagmi / MetaMask all wrap errors in nested causes). */
 const errorChain = (error: unknown): ErrorLike[] => {
     const chain: ErrorLike[] = []
     let current: unknown = error
@@ -17,36 +19,34 @@ const errorChain = (error: unknown): ErrorLike[] => {
     return chain
 }
 
-/** Người dùng bấm Reject / đóng popup MetaMask (EIP-1193 code 4001). */
+/** The user clicked Reject / closed the MetaMask popup (EIP-1193 code 4001). */
 export const isUserRejection = (error: unknown) =>
     errorChain(error).some((e) => e.code === 4001 || e.name === "UserRejectedRequestError")
 
-/** Không tìm thấy provider (chưa cài MetaMask hoặc bị tắt). */
+/** No provider found (MetaMask is not installed or is disabled). */
 export const isProviderNotFound = (error: unknown) =>
     errorChain(error).some((e) => e.name === "ProviderNotFoundError")
 
-/** MetaMask đang có một yêu cầu khác chờ xử lý (code -32002). */
+/** MetaMask already has another request waiting for confirmation (code -32002). */
 export const isRequestPending = (error: unknown) =>
     errorChain(error).some((e) => e.code === -32002 || e.name === "ResourceUnavailableRpcError")
 
 /**
- * Thông báo cho người dùng từ lỗi của ví.
- * `rejectedMessage`: nội dung riêng khi người dùng từ chối (kết nối / chuyển mạng).
+ * Builds a user-facing message from a wallet error.
+ * `rejectedMessage`: custom (already translated) text used when the user rejects the request.
+ * The default is evaluated on every call, so it always follows the current language.
  */
 export function getWalletErrorMessage(
     error: unknown,
-    rejectedMessage = "You rejected the request in MetaMask."
+    rejectedMessage = i18n.t("errors.rejectedRequest")
 ): string {
-    if (isProviderNotFound(error)) {
-        return "MetaMask not found. Please install the MetaMask extension and reload the page."
-    }
+    if (isProviderNotFound(error)) return i18n.t("errors.providerNotFound")
     if (isUserRejection(error)) return rejectedMessage
-    if (isRequestPending(error)) {
-        return "MetaMask already has a pending request. Open the MetaMask extension to confirm or cancel it."
-    }
+    if (isRequestPending(error)) return i18n.t("errors.requestPending")
 
+    /* Library messages (viem / MetaMask) are English only and cannot be translated here */
     const [first] = errorChain(error)
     if (typeof first?.shortMessage === "string" && first.shortMessage) return first.shortMessage
     if (typeof first?.message === "string" && first.message) return first.message
-    return "Something went wrong. Please try again."
+    return i18n.t("errors.generic")
 }

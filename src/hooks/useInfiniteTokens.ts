@@ -1,5 +1,6 @@
 import * as React from "react"
 
+import i18n from "../i18n"
 import type { Token } from "../types/tokens"
 import { getErrorMessage } from "../utils/api"
 import type { TokenListFetcher } from "./usePaginatedTokens"
@@ -66,7 +67,7 @@ export function useInfiniteTokens(fetcher: TokenListFetcher, limit: number) {
                 setHasMore(more)
             } catch (err: unknown) {
                 if (gen !== generation.current) return
-                const message = getErrorMessage(err, "Failed to load tokens")
+                const message = getErrorMessage(err, i18n.t("errors.loadTokens"))
                 if (page === 1) setError(message)
                 else setLoadMoreError(message)
             } finally {

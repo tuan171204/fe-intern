@@ -1,27 +1,28 @@
 import * as React from "react"
 
 import { getProfile } from "../api/profile"
+import i18n from "../i18n"
 import type { UserProfile } from "../types/profile"
 import { UNAUTHORIZED_EVENT, clearToken, getErrorMessage, getToken, setToken } from "../utils/api"
 import { useToast } from "./ToastContext"
 
 export interface AuthUser {
     address: string
-    /** Thời điểm JWT hết hạn (ms) */
+    /** Time at which the JWT expires (ms) */
     expiresAt?: number
 }
 
 interface AuthContextValue {
     isLogged: boolean
     user: AuthUser | null
-    /** Nhận JWT từ API sign-in, lưu vào localStorage và cập nhật state */
+    /** Receives the JWT from the sign-in API, stores it in localStorage and updates the state */
     login: (token: string) => void
     logout: () => void
     profile: UserProfile | null
     profileLoading: boolean
     profileError: string | null
     fetchProfile: () => Promise<void>
-    /** Cập nhật profile trong context (vd: sau khi Edit Profile thành công) */
+    /** Updates the profile held in the context (e.g. after Edit Profile succeeds) */
     setProfile: (profile: UserProfile) => void
 }
 
@@ -31,7 +32,7 @@ interface JwtPayload {
     exp?: number
 }
 
-/* Giới hạn của setTimeout (~24.8 ngày) */
+/* Maximum delay supported by setTimeout (~24.8 days) */
 const MAX_TIMEOUT_MS = 2_147_483_647
 
 const AuthContext = React.createContext<AuthContextValue | undefined>(undefined)
@@ -45,7 +46,7 @@ const decodeJwt = (token: string): JwtPayload | null => {
     }
 }
 
-/** Trả về user nếu token hợp lệ và chưa hết hạn, ngược lại null */
+/** Returns the user if the token is valid and not expired, otherwise null */
 const parseUser = (token: string): AuthUser | null => {
     const payload = decodeJwt(token)
     if (!payload?.walletAddress) return null
@@ -71,7 +72,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = React.useCallback((token: string) => {
         const nextUser = parseUser(token)
-        if (!nextUser) throw new Error("Invalid token received from server.")
+        if (!nextUser) throw new Error(i18n.t("auth.invalidToken"))
         setToken(token)
         setUser(nextUser)
     }, [])
@@ -87,15 +88,18 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setProfileError(null)
         try {
             const data = await getProfile()
+            /* Ignore the response if the session changed while the request was in flight */
             if (getToken() === requestToken) setProfile(data)
         } catch (err) {
-            if (getToken() === requestToken) setProfileError(getErrorMessage(err, "Failed to load profile"))
+            if (getToken() === requestToken) {
+                setProfileError(getErrorMessage(err, i18n.t("errors.loadProfile")))
+            }
         } finally {
             setProfileLoading(false)
         }
     }, [])
 
-    /* Có phiên đăng nhập (khởi chạy app / vừa login) -> tải profile; đăng xuất -> xoá profile */
+    /* A session exists (app start / just logged in) -> load the profile; logged out -> clear it */
     const isLogged = !!user
     React.useEffect(() => {
         if (isLogged) {
@@ -106,7 +110,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [isLogged, fetchProfile])
 
-    /* JWT hết hạn khi app đang mở -> tự logout đúng lúc, không chờ API trả 401 */
+    /* JWT expires while the app is open -> log out exactly on time instead of waiting for a 401 */
     const expiresAt = user?.expiresAt
     React.useEffect(() => {
         if (!expiresAt) return
@@ -116,16 +120,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const timer = window.setTimeout(() => {
             clearToken()
             setUser(null)
-            error("Your session has expired. Please sign in again.")
+            error(i18n.t("auth.sessionExpired"))
         }, delay)
         return () => window.clearTimeout(timer)
     }, [expiresAt, error])
 
-    /* Token bị server từ chối (hết hạn/không hợp lệ): interceptor đã xoá token, ở đây reset state */
+    /* Token rejected by the server (expired / invalid): the interceptor already cleared it, so only reset the state here */
     React.useEffect(() => {
         const onUnauthorized = () => {
             setUser(null)
-            error("Your session has expired. Please sign in again.")
+            error(i18n.t("auth.sessionExpired"))
         }
         window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
         return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized)
