@@ -10,6 +10,7 @@ import { Dialog } from "../../../components/ui/dialog"
 import Icon, { type IconName } from "../../../components/ui/icon"
 import { Skeleton } from "../../../components/ui/skeleton"
 import { TOKEN_DECIMALS } from "../../../constants/contract"
+import i18n from "../../../i18n"
 import type { Token } from "../../../types/tokens"
 import { getErrorMessage, getImageUrl } from "../../../utils/api"
 import { toBigInt } from "../../../utils/token-math"
@@ -122,7 +123,10 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
     const [loadError, setLoadError] = React.useState<string | null>(null)
     const [reloadKey, setReloadKey] = React.useState(0)
 
-    /* Each time the popup opens (or on retry): load the token detail by contract address */
+    /* Each time the popup opens (or on retry): load the token detail by contract address.
+       `t` is intentionally NOT a dependency: its identity changes on every language switch,
+       which would refetch the token (and flash the skeleton) while the popup is open.
+       The error fallback uses the i18n instance directly instead. */
     React.useEffect(() => {
         setToken(null)
         setLoadError(null)
@@ -140,7 +144,7 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
                 if (!cancelled) setToken(res.data)
             })
             .catch((err: unknown) => {
-                if (!cancelled) setLoadError(getErrorMessage(err, t("errors.loadTokenDetail")))
+                if (!cancelled) setLoadError(getErrorMessage(err, i18n.t("errors.loadTokenDetail")))
             })
             .finally(() => {
                 if (!cancelled) setLoading(false)
@@ -149,7 +153,7 @@ const TokenDetailModal = ({ tokenAddress, onClose }: TokenDetailModalProps) => {
         return () => {
             cancelled = true
         }
-    }, [tokenAddress, reloadKey, t])
+    }, [tokenAddress, reloadKey])
 
     const renderBody = () => {
         if (loading) return <DetailSkeleton />
