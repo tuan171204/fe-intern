@@ -45,11 +45,12 @@ const ToastViewport = ({ items, onDismiss }: ToastViewportProps) => {
                     )}
                 >
                     <p className="flex-1">{item.message}</p>
+                    {/* `text-current/70` is not a valid Tailwind 3 class (currentColor has no alpha), so dim with opacity instead */}
                     <button
                         type="button"
                         onClick={() => onDismiss(item.id)}
                         aria-label={t("ui.dismissNotification")}
-                        className="shrink-0 rounded p-0.5 text-current/70 transition-colors hover:text-current"
+                        className="shrink-0 rounded p-0.5 opacity-70 transition-opacity hover:opacity-100"
                     >
                         <Icon name="close" size="md" />
                     </button>
