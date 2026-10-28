@@ -209,7 +209,7 @@
         },
         "social": {
             "title": "Add Social Links & Tags",
-            "hint": "Max 32 characters in your name",
+            "hint": "Add links so people can find and trust your project",
             "website": "Website"
         },
         "success": {
