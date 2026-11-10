@@ -4,26 +4,27 @@ import { useAccount, usePublicClient, useWaitForTransactionReceipt, useWriteCont
 
 import { EXPLORER_URL, SEPOLIA_CHAIN_ID } from "../config/network"
 import { StandardERC20ABI } from "../constants/erc20-abi"
+import i18n from "../i18n"
 import { useToast } from "../store/ToastContext"
-import { RECEIPT_UNCONFIRMED_MESSAGE, getMintTokenErrorMessage } from "../utils/token-errors"
+import { getMintTokenErrorMessage, getReceiptUnconfirmedMessage } from "../utils/token-errors"
 import { isUserRejection } from "../utils/web3-errors"
 
 export type MintTokenStep =
     | "idle"
-    | "submitting" // pre-flight check + chờ user xác nhận trong MetaMask
-    | "confirming" // đã có txHash, chờ block xác nhận
+    | "submitting" // pre-flight checks + waiting for the user to confirm in MetaMask
+    | "confirming" // txHash received, waiting for block confirmation
     | "success"
     | "error"
 
-/** Lỗi do mình chủ động chặn trước khi gửi tx (không phải lỗi từ ví/RPC) */
+/** Error raised by our own pre-flight checks before sending the tx (not an error from the wallet / RPC) */
 class MintPreflightError extends Error { }
 
-/* Lỗi lấy receipt (rate-limit, timeout) KHÔNG có nghĩa tx thất bại -> thử lại vài lần trước khi báo lỗi */
+/* A receipt lookup failure (rate limit, timeout) does NOT mean the tx failed -> retry a few times before reporting */
 const RECEIPT_MAX_RECHECKS = 5
 const RECEIPT_RECHECK_DELAY_MS = 5_000
 
 export interface UseMintTokenOptions {
-    /** Gọi 1 lần sau khi tx mint được xác nhận thành công */
+    /** Called once after the mint transaction is confirmed successfully */
     onSuccess?: () => void
 }
 
@@ -37,7 +38,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
     const [txHash, setTxHash] = React.useState<Hash | undefined>(undefined)
     const [error, setError] = React.useState<string | null>(null)
 
-    /* stepRef cập nhật đồng bộ -> chặn double-submit trong cùng 1 tick (state chỉ đổi sau khi re-render) */
+    /* stepRef updates synchronously -> blocks a double submit within the same tick (state only changes after a re-render) */
     const stepRef = React.useRef<MintTokenStep>("idle")
     const setStep = React.useCallback((next: MintTokenStep) => {
         stepRef.current = next
@@ -63,7 +64,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
         [setStep, toastError]
     )
 
-    /* Receipt thành công -> báo thành công + refetch; revert -> báo lỗi; lỗi RPC -> thử lại rồi mới báo */
+    /* Successful receipt -> report success + refetch; revert -> report error; RPC error -> retry before reporting */
     React.useEffect(() => {
         if (step !== "confirming" || !txHash) return
 
@@ -75,18 +76,18 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
                 }, RECEIPT_RECHECK_DELAY_MS)
                 return () => window.clearTimeout(timer)
             }
-            fail(RECEIPT_UNCONFIRMED_MESSAGE)
+            fail(getReceiptUnconfirmedMessage())
             return
         }
         if (!receipt.isSuccess) return
 
         if (receipt.data.status !== "success") {
-            fail("The mint transaction reverted on-chain. No tokens were minted.")
+            fail(i18n.t("mint.reverted"))
             return
         }
 
         setStep("success")
-        success("Minted successfully")
+        success(i18n.t("mint.toastSuccess"))
         onSuccessRef.current?.()
     }, [step, txHash, receipt.isError, receipt.isSuccess, receipt.error, receipt.data, refetchReceipt, fail, success, setStep])
 
@@ -95,7 +96,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
             if (stepRef.current === "submitting" || stepRef.current === "confirming") return
 
             if (!address || !publicClient) {
-                fail("Please connect your wallet on Sepolia to mint")
+                fail(i18n.t("mint.connectToast"))
                 return
             }
 
@@ -106,7 +107,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
             setStep("submitting")
 
             try {
-                /* Đọc lại số liệu mới nhất trên chain (1 multicall) */
+                /* Re-read the latest on-chain numbers (1 multicall) */
                 const [totalSupply, maxSupply, amountPerMint, mintFee] = await publicClient.multicall({
                     allowFailure: false,
                     contracts: [
@@ -117,23 +118,26 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
                     ] as const,
                 })
 
-                /* Kiểm tra giới hạn supply trước khi gọi contract */
+                /* Check the supply limit before calling the contract */
                 if (totalSupply >= maxSupply) {
-                    throw new MintPreflightError("Max supply reached. This token can't be minted any further.")
+                    throw new MintPreflightError(i18n.t("mint.soldOut"))
                 }
                 if (totalSupply + amountPerMint > maxSupply) {
-                    throw new MintPreflightError("The remaining supply is smaller than the amount per mint.")
+                    throw new MintPreflightError(i18n.t("mint.remainingTooLow"))
                 }
 
-                /* Kiểm tra số dư ETH: cần ít nhất mintFee (chưa tính gas) */
+                /* Check the ETH balance: at least mintFee is needed (gas not included) */
                 const balance = await publicClient.getBalance({ address })
                 if (balance < mintFee) {
                     throw new MintPreflightError(
-                        `Not enough Sepolia ETH. Minting needs ${formatEther(mintFee)} ETH plus gas, but your balance is ${formatEther(balance)} ETH.`
+                        i18n.t("mint.insufficientEth", {
+                            fee: formatEther(mintFee),
+                            balance: formatEther(balance),
+                        })
                     )
                 }
 
-                /* Simulate: bắt revert / thiếu ETH trước khi mở MetaMask */
+                /* Simulate: catch reverts / insufficient ETH before opening MetaMask */
                 await publicClient.simulateContract({
                     account: address,
                     address: token,
@@ -142,7 +146,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
                     value: mintFee,
                 })
 
-                /* Gửi giao dịch thật (mint() không có tham số, kèm mintFee) */
+                /* Send the real transaction (mint() takes no arguments, and carries the mintFee) */
                 const hash = await writeContractAsync({
                     address: token,
                     abi: StandardERC20ABI,
@@ -157,7 +161,7 @@ export function useMintToken({ onSuccess }: UseMintTokenOptions = {}) {
                 if (err instanceof MintPreflightError) {
                     fail(err.message)
                 } else if (isUserRejection(err)) {
-                    /* User chủ động huỷ: về trạng thái ban đầu, không coi là lỗi */
+                    /* The user cancelled on purpose: back to the initial state, not treated as an error */
                     setStep("idle")
                     toastError(getMintTokenErrorMessage(err))
                 } else {

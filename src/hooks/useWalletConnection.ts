@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useAccount, useConnect, useDisconnect, type Connector } from "wagmi"
 
+import i18n from "../i18n"
 import { useToast } from "../store/ToastContext"
 import { getWalletErrorMessage } from "../utils/web3-errors"
 
@@ -22,7 +23,7 @@ export function useWalletConnection() {
 
     const walletConnectors = React.useMemo(() => uniqueByName(connectors), [connectors])
 
-    // Connector đang chờ người dùng xác nhận trong ví
+    // Connector currently waiting for the user's confirmation in the wallet
     const pendingConnector = variables?.connector
     const pendingConnectorId = isPending && typeof pendingConnector !== "function" ? pendingConnector?.id : undefined
 
@@ -32,11 +33,11 @@ export function useWalletConnection() {
                 { connector: target },
                 {
                     onSuccess: () => {
-                        success("Wallet connected successfully")
+                        success(i18n.t("wallet.toast.connected"))
                         onConnected?.()
                     },
                     onError: (err) =>
-                        showError(getWalletErrorMessage(err, "You rejected the connection request in MetaMask.")),
+                        showError(getWalletErrorMessage(err, i18n.t("errors.rejectedConnection"))),
                 }
             )
         },
@@ -44,13 +45,13 @@ export function useWalletConnection() {
     )
 
     const disconnectWallet = React.useCallback(() => {
-        disconnect(undefined, { onSuccess: () => success("Wallet disconnected") })
+        disconnect(undefined, { onSuccess: () => success(i18n.t("wallet.toast.disconnected")) })
     }, [disconnect, success])
 
     return {
         address,
         isConnected,
-        /** Đang kết nối hoặc đang khôi phục kết nối cũ khi tải trang */
+        /** Connecting, or restoring a previous connection on page load */
         isBusy: isConnecting || isReconnecting || isPending,
         isRestoring: isReconnecting,
         walletConnectors,

@@ -8,10 +8,14 @@ export interface ExportTable {
 
 const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-/* Cells starting with these characters can run as formulas in Excel / Sheets (CSV injection) */
+/* Cells starting with these characters can run as formulas when a CSV is opened in Excel / Sheets (CSV injection) */
 const FORMULA_PREFIX = /^[=+\-@\t\r]/
 
-/** Neutralizes formula injection: user-controlled values (e.g. token names) are exported as plain text */
+/**
+ * Neutralizes formula injection: user-controlled values (e.g. token names) are exported as plain text.
+ * CSV ONLY: in an .xlsx file strings are written as explicit string cells and are never evaluated,
+ * so prefixing them would just show a stray apostrophe in the data.
+ */
 export const sanitizeCell = (value: ExportCell): ExportCell =>
     typeof value === "string" && FORMULA_PREFIX.test(value) ? `'${value}` : value
 
@@ -24,8 +28,12 @@ const escapeCsv = (value: ExportCell): string => {
 export const toCsv = ({ headers, rows }: ExportTable): string =>
     "\uFEFF" + [headers, ...rows].map((row) => row.map(escapeCsv).join(",")).join("\r\n")
 
-/** YYYYMMDD, used in export file names */
-export const dateStamp = (): string => new Date().toISOString().slice(0, 10).replace(/-/g, "")
+/** YYYYMMDD in the user's LOCAL time zone, used in export file names (toISOString would use UTC and can be off by a day) */
+export const dateStamp = (): string => {
+    const now = new Date()
+    const pad = (n: number) => String(n).padStart(2, "0")
+    return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`
+}
 
 const downloadBlob = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob)
@@ -35,8 +43,8 @@ const downloadBlob = (blob: Blob, filename: string) => {
     document.body.appendChild(link)
     link.click()
     link.remove()
-    /* Revoke on the next tick so the browser has started the download */
-    window.setTimeout(() => URL.revokeObjectURL(url), 0)
+    /* Revoke later: revoking immediately can cancel the download in some browsers */
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 /** Downloads the table as .csv or .xlsx. The xlsx library is loaded lazily, only when needed. */
@@ -46,17 +54,17 @@ export async function exportTable(
     baseName: string,
     sheetName = "Sheet1"
 ): Promise<void> {
-    const safe: ExportTable = { headers: table.headers, rows: table.rows.map((row) => row.map(sanitizeCell)) }
     const filename = `${baseName}.${format}`
 
     if (format === "csv") {
+        const safe: ExportTable = { headers: table.headers, rows: table.rows.map((row) => row.map(sanitizeCell)) }
         downloadBlob(new Blob([toCsv(safe)], { type: "text/csv;charset=utf-8" }), filename)
         return
     }
 
     const XLSX = await import("xlsx")
-    const sheet = XLSX.utils.aoa_to_sheet([safe.headers, ...safe.rows])
-    sheet["!cols"] = safe.headers.map((header) => ({ wch: Math.max(header.length + 2, 16) }))
+    const sheet = XLSX.utils.aoa_to_sheet([table.headers, ...table.rows])
+    sheet["!cols"] = table.headers.map((header) => ({ wch: Math.max(header.length + 2, 16) }))
 
     const book = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(book, sheet, sheetName)

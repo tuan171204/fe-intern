@@ -1,6 +1,6 @@
 # AC Tools (ACW3) – Token & NFT dApp
 
-A frontend dApp running on **Sepolia Testnet**: sign in with your wallet (SIWE), create ERC-20 tokens through a smart contract, browse a real-time token list, and mint tokens.
+A frontend dApp running on **Sepolia Testnet**: sign in with your wallet (SIWE), create ERC-20 tokens through a smart contract, browse a real-time token list, and mint tokens. The UI supports **light / dark mode** and **English / Vietnamese**.
 
 ## Overview
 
@@ -8,9 +8,12 @@ A frontend dApp running on **Sepolia Testnet**: sign in with your wallet (SIWE),
 | --- | --- |
 | **Sign-In with Ethereum (SIWE)** | Connect MetaMask → sign a message → receive a JWT from the backend. |
 | **Create Token** | Calls `createStandardToken` on the TokenFactory → waits for on-chain confirmation → saves metadata (image, description, social links) to the backend. |
-| **Token List** | Metadata from the API + on-chain `totalSupply` / `balanceOf` (multicall, auto-refetch every ~12s). |
+| **Token List** | Metadata from the API + on-chain `totalSupply` / `balanceOf` (multicall, auto-refetch every ~12s). Numeric pagination. |
 | **Mint Token** | Checks remaining supply and ETH balance, simulates the transaction, then calls `mint()` with the mint fee. |
-| **Profile** | View / edit your profile and the tokens you created. |
+| **Profile** | View / edit your profile. The "Tokens" table of your created tokens uses **infinite scroll**. |
+| **Export Data** | The Token List page can export the current page (including on-chain values) as **CSV** or **Excel (.xlsx)**. |
+| **Dark Mode** | Light / dark toggle, follows the OS preference on the first visit and is saved in `localStorage`. |
+| **Multi-language (i18n)** | English / Vietnamese via `react-i18next`; the choice is saved in `localStorage`. |
 | **Chain Guard** | Automatically asks the wallet to switch to Sepolia (`chainId 11155111`). |
 
 > The NFT pages (`/nft/*`) and the Leaderboard currently use **mock data** (`src/mocks`) and are not connected to an API or contract yet.
@@ -21,6 +24,8 @@ A frontend dApp running on **Sepolia Testnet**: sign in with your wallet (SIWE),
 - **Tailwind CSS 3** (+ `tailwindcss-animate`, `class-variance-authority`)
 - **Wagmi v2** + **Viem** + **@tanstack/react-query**
 - **React Router v7**, **Axios**
+- **i18next** + **react-i18next** (EN / VI)
+- **xlsx** (lazy-loaded, only when exporting to Excel)
 - Web3: MetaMask (injected connector), Sepolia Testnet
 
 ## Requirements
@@ -135,9 +140,10 @@ src/
 ├─ components/   # Shared UI, layout, wallet, routing
 ├─ config/       # wagmi & network (Sepolia) config
 ├─ constants/    # ABIs, contract addresses
-├─ hooks/        # useCreateToken, useMintToken, useTokenOnchainData...
+├─ hooks/        # useCreateToken, useMintToken, useInfiniteTokens, useTokenOnchainData...
+├─ i18n/         # i18next setup + locales/en.json, locales/vi.json
 ├─ mocks/        # Mock data (NFT, Leaderboard)
 ├─ pages/        # connect, token-creator, token-list, profile...
-├─ store/        # AuthContext, WalletAuthContext, ToastContext
-└─ utils/        # api, validators, web3 helpers
+├─ store/        # AuthContext, WalletAuthContext, ThemeContext, ToastContext
+└─ utils/        # api, validators, web3 helpers, export-data (CSV / Excel)
 ```
