@@ -10,7 +10,7 @@ import ProfileCard from "./components/ProfileCard"
 import ProfileCardSkeleton from "./components/ProfileCardSkeleton"
 
 /* Tokens fetched per request by the infinite scroll table */
-const TOKENS_PER_PAGE = 10
+const TOKENS_PER_PAGE = 1
 
 const StatCard = ({ label, value }: { label: string; value: number }) => (
     <div className="rounded-lg bg-background p-4">
